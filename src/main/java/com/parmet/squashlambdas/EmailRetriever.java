@@ -3,26 +3,12 @@ package com.parmet.squashlambdas;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import biweekly.Biweekly;
-import biweekly.ICalendar;
 import com.amazonaws.services.s3.AmazonS3;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.io.CharStreams;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.ContentType;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import org.apache.commons.mail.util.MimeMessageParser;
-import org.jsoup.Jsoup;
 
 public class EmailRetriever {
   private final AmazonS3 s3;
@@ -42,97 +28,11 @@ public class EmailRetriever {
       MimeMessageParser parser = new MimeMessageParser(message);
       return new EmailData(
           parser.getSubject(),
-          getTextFromMessage(message),
+          new BodyExtractor().getEventsFromMessage(message).toString(),
           Iterables.getOnlyElement(
-              Iterables.getOnlyElement(getEventsFromMessage(message)).getEvents()));
-    }
-  }
-
-  private List<ICalendar> getEventsFromMessage(MimeMessage message)
-      throws MessagingException, IOException {
-    if (message.isMimeType("text/calendar")) {
-      return null;
-    } else if (message.isMimeType("multipart/*")) {
-      MimeMultipart mimeMultipart = (MimeMultipart) message.getContent();
-      return getEventsFromMimeMultipart(mimeMultipart);
-    } else {
-      return ImmutableList.of();
-    }
-  }
-
-  private List<ICalendar> getEventsFromMimeMultipart(MimeMultipart mimeMultipart)
-      throws MessagingException, IOException {
-    int count = mimeMultipart.getCount();
-    if (count == 0) {
-      throw new MessagingException("Multipart with no body parts not supported.");
-    }
-    boolean multipartAlt =
-        new ContentType(mimeMultipart.getContentType()).match("multipart/alternative");
-    if (multipartAlt) {
-      // Alternatives appear in an order of increasing faithfulness to the original content.
-      return getEventFromBodyPart(mimeMultipart.getBodyPart(count - 1));
-    }
-    List<ICalendar> l = new ArrayList<>();
-    for (int i = 0; i < count; i++) {
-      BodyPart bodyPart = mimeMultipart.getBodyPart(i);
-      l.addAll(getEventFromBodyPart(bodyPart));
-    }
-    return l;
-  }
-
-  private List<ICalendar> getEventFromBodyPart(BodyPart bodyPart)
-      throws IOException, MessagingException {
-    if (bodyPart.isMimeType("text/calendar")) {
-      try (InputStreamReader isr = new InputStreamReader(bodyPart.getInputStream(), UTF_8)) {
-        String str = CharStreams.toString(isr);
-        return Biweekly.parse(str).all();
-      }
-    } else {
-      return ImmutableList.of();
-    }
-  }
-
-  private String getTextFromMessage(Message message) throws IOException, MessagingException {
-    if (message.isMimeType("text/plain")) {
-      return message.getContent().toString();
-    } else if (message.isMimeType("multipart/*")) {
-      MimeMultipart mimeMultipart = (MimeMultipart) message.getContent();
-      return getTextFromMimeMultipart(mimeMultipart);
-    } else {
-      return "";
-    }
-  }
-
-  private String getTextFromMimeMultipart(MimeMultipart mimeMultipart)
-      throws IOException, MessagingException {
-    int count = mimeMultipart.getCount();
-    if (count == 0) {
-      throw new MessagingException("Multipart with no body parts not supported.");
-    }
-    boolean multipartAlt =
-        new ContentType(mimeMultipart.getContentType()).match("multipart/alternative");
-    if (multipartAlt) {
-      // Alternatives appear in an order of increasing faithfulness to the original content.
-      return getTextFromBodyPart(mimeMultipart.getBodyPart(count - 1));
-    }
-    StringBuilder result = new StringBuilder();
-    for (int i = 0; i < count; i++) {
-      BodyPart bodyPart = mimeMultipart.getBodyPart(i);
-      result.append(getTextFromBodyPart(bodyPart));
-    }
-    return result.toString();
-  }
-
-  private String getTextFromBodyPart(BodyPart bodyPart) throws IOException, MessagingException {
-    if (bodyPart.isMimeType("text/plain")) {
-      return (String) bodyPart.getContent();
-    } else if (bodyPart.isMimeType("text/html")) {
-      String html = (String) bodyPart.getContent();
-      return Jsoup.parse(html).text();
-    } else if (bodyPart.getContent() instanceof MimeMultipart) {
-      return getTextFromMimeMultipart((MimeMultipart) bodyPart.getContent());
-    } else {
-      return "";
+              Iterables.getOnlyElement(
+                      new CalendarExtractor().getEventsFromMessage(message).toList())
+                  .getEvents()));
     }
   }
 }
