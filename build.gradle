@@ -58,10 +58,10 @@ dependencies {
   compile 'com.google.guava:guava:24.1-jre'
   compile 'com.google.code.gson:gson:2.8.2'
   compile 'com.google.code.findbugs:annotations:3.0.1'
+  compile 'net.sf.biweekly:biweekly:0.6.1'
   compile 'org.apache.commons:commons-email:1.5'
   compile 'org.apache.commons:commons-lang3:3.7'
   compile 'org.jsoup:jsoup:1.11.2'
-  compile 'org.mnode.ical4j:ical4j:2.2.0'
 
 
 
