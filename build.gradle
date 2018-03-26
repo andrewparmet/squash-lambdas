@@ -55,16 +55,15 @@ dependencies {
   compile 'com.amazonaws:aws-lambda-java-core:1.2.0'  
   compile 'com.diffplug.durian:durian:3.4.0'
   compile 'com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.1'
-  compile 'com.google.guava:guava:24.1-jre'
   compile 'com.google.code.gson:gson:2.8.2'
   compile 'com.google.code.findbugs:annotations:3.0.1'
+  compile 'com.google.guava:guava:24.1-jre'
+  compile 'com.google.mug:mug:1.10'
   compile 'net.sf.biweekly:biweekly:0.6.1'
   compile 'org.apache.commons:commons-email:1.5'
   compile 'org.apache.commons:commons-lang3:3.7'
   compile 'org.jsoup:jsoup:1.11.2'
-
-
-
+  
   compile 'org.apache.logging.log4j:log4j-core:2.11.0'
   compile 'org.apache.logging.log4j:log4j-api:2.11.0'
   compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.11.0'
