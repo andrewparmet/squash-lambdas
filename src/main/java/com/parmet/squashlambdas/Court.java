@@ -6,18 +6,19 @@ import static com.parmet.squashlambdas.Sport.HARDBALL;
 import static com.parmet.squashlambdas.Sport.RACQUETS;
 import static com.parmet.squashlambdas.Sport.SQUASH;
 import static com.parmet.squashlambdas.Sport.TENNIS;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum Court {
-  COURT_1 (SQUASH),
-  COURT_2 (SQUASH),
-  COURT_3 (SQUASH),
-  COURT_5 (HARDBALL),
-  COURT_6 (HARDBALL),
-  COURT_7 (HARDBALL),
-  TENNIS_COURT (TENNIS),
-  RACQUETS_COURT (RACQUETS);
+  COURT_1(SQUASH),
+  COURT_2(SQUASH),
+  COURT_3(SQUASH),
+  COURT_5(HARDBALL),
+  COURT_6(HARDBALL),
+  COURT_7(HARDBALL),
+  TENNIS_COURT(TENNIS),
+  RACQUETS_COURT(RACQUETS);
 
   private static final Pattern LOCATION = Pattern.compile(".*Court: Court #(\\d)");
 
@@ -27,7 +28,7 @@ public enum Court {
     this.sport = checkNotNull(sport, "sport");
   }
 
-  /** "Tennis & Racquet Club / Court: Court #7" */
+  /** e.g., "Tennis & Racquet Club / Court: Court #7" */
   public static Court fromLocationString(String location) {
     Matcher m = LOCATION.matcher(location);
     checkArgument(m.matches(), "Unable to parse location from %s", location);
@@ -50,7 +51,7 @@ public enum Court {
             String.format("Unknown court number %s for location %s", courtNum, location));
     }
   }
-  
+
   public Sport getSport() {
     return sport;
   }

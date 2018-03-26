@@ -1,6 +1,7 @@
 package com.parmet.squashlambdas;
 
 import static com.google.common.truth.Truth.assertThat;
+
 import com.google.common.collect.ImmutableSet;
 import com.parmet.squashlambdas.testutils.EmailReturningS3;
 import com.parmet.squashlambdas.testutils.TestUtils;

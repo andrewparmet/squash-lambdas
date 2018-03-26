@@ -1,6 +1,7 @@
 package com.parmet.squashlambdas;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import biweekly.component.VEvent;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
