@@ -1,9 +1,12 @@
 package com.parmet.squashlambdas;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import biweekly.Biweekly;
+import biweekly.ICalendar;
 import com.amazonaws.services.s3.AmazonS3;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.io.CharStreams;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,9 +19,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
-import net.fortuna.ical4j.model.Calendar;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.jsoup.Jsoup;
 
@@ -43,11 +44,12 @@ public class EmailRetriever {
       return new EmailData(
           parser.getSubject(),
           getTextFromMessage(message),
-          Iterables.getOnlyElement(getEventsFromMessage(message)));
+          Iterables.getOnlyElement(
+              Iterables.getOnlyElement(getEventsFromMessage(message)).getEvents()));
     }
   }
 
-  private List<Calendar> getEventsFromMessage(MimeMessage message)
+  private List<ICalendar> getEventsFromMessage(MimeMessage message)
       throws MessagingException, IOException, ParserException {
     if (message.isMimeType("text/calendar")) {
       return null;
@@ -59,7 +61,7 @@ public class EmailRetriever {
     }
   }
 
-  private List<Calendar> getEventsFromMimeMultipart(MimeMultipart mimeMultipart)
+  private List<ICalendar> getEventsFromMimeMultipart(MimeMultipart mimeMultipart)
       throws MessagingException, IOException, ParserException {
     int count = mimeMultipart.getCount();
     if (count == 0) {
@@ -70,7 +72,7 @@ public class EmailRetriever {
     if (multipartAlt)
       // Alternatives appear in an order of increasing faithfulness to the original content.
       return getEventFromBodyPart(mimeMultipart.getBodyPart(count - 1));
-    List<Calendar> l = new ArrayList<>();
+    List<ICalendar> l = new ArrayList<>();
     for (int i = 0; i < count; i++) {
       BodyPart bodyPart = mimeMultipart.getBodyPart(i);
       l.addAll(getEventFromBodyPart(bodyPart));
@@ -78,13 +80,12 @@ public class EmailRetriever {
     return l;
   }
 
-  private List<Calendar> getEventFromBodyPart(BodyPart bodyPart)
+  private List<ICalendar> getEventFromBodyPart(BodyPart bodyPart)
       throws IOException, ParserException, MessagingException {
     if (bodyPart.isMimeType("text/calendar")) {
       try (InputStreamReader isr = new InputStreamReader(bodyPart.getInputStream())) {
-        CalendarBuilder builder = new CalendarBuilder();
-        Calendar calendar = builder.build(isr);
-        return ImmutableList.of(calendar);
+        String str = CharStreams.toString(isr);
+        return Biweekly.parse(str).all();
       }
     } else {
       return ImmutableList.of();
