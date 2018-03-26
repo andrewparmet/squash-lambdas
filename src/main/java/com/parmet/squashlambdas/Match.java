@@ -1,6 +1,7 @@
 package com.parmet.squashlambdas;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.collect.ImmutableSet;
 import java.time.Instant;
 import java.util.Set;

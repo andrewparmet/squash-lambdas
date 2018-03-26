@@ -1,6 +1,7 @@
 package com.parmet.squashlambdas;
 
 import static com.google.common.truth.Truth.assertThat;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.parmet.squashlambdas.testutils.TestUtils;

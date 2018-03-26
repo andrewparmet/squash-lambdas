@@ -1,6 +1,7 @@
 package com.parmet.squashlambdas;
 
 import static com.google.common.base.Throwables.throwIfUnchecked;
+
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;

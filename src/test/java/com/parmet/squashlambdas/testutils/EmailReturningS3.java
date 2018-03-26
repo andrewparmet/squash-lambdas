@@ -1,6 +1,7 @@
 package com.parmet.squashlambdas.testutils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.bizo.awsstubs.services.s3.AmazonS3Stub;
 
 public class EmailReturningS3 extends AmazonS3Stub {

@@ -1,6 +1,8 @@
 package com.parmet.squashlambdas;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import biweekly.Biweekly;
 import biweekly.ICalendar;
 import com.amazonaws.services.s3.AmazonS3;
@@ -35,9 +37,7 @@ public class EmailRetriever {
 
   public EmailData retrieveEmail() throws Exception {
     String email = s3.getObjectAsString(bucket, key);
-    System.setProperty(
-        "net.fortuna.ical4j.timezone.cache.impl", "net.fortuna.ical4j.util.MapTimeZoneCache");
-    try (InputStream is = new ByteArrayInputStream(email.getBytes())) {
+    try (InputStream is = new ByteArrayInputStream(email.getBytes(UTF_8))) {
       MimeMessage message = new MimeMessage(null, is);
       MimeMessageParser parser = new MimeMessageParser(message);
       return new EmailData(
@@ -68,9 +68,10 @@ public class EmailRetriever {
     }
     boolean multipartAlt =
         new ContentType(mimeMultipart.getContentType()).match("multipart/alternative");
-    if (multipartAlt)
+    if (multipartAlt) {
       // Alternatives appear in an order of increasing faithfulness to the original content.
       return getEventFromBodyPart(mimeMultipart.getBodyPart(count - 1));
+    }
     List<ICalendar> l = new ArrayList<>();
     for (int i = 0; i < count; i++) {
       BodyPart bodyPart = mimeMultipart.getBodyPart(i);
@@ -82,7 +83,7 @@ public class EmailRetriever {
   private List<ICalendar> getEventFromBodyPart(BodyPart bodyPart)
       throws IOException, MessagingException {
     if (bodyPart.isMimeType("text/calendar")) {
-      try (InputStreamReader isr = new InputStreamReader(bodyPart.getInputStream())) {
+      try (InputStreamReader isr = new InputStreamReader(bodyPart.getInputStream(), UTF_8)) {
         String str = CharStreams.toString(isr);
         return Biweekly.parse(str).all();
       }
@@ -110,9 +111,10 @@ public class EmailRetriever {
     }
     boolean multipartAlt =
         new ContentType(mimeMultipart.getContentType()).match("multipart/alternative");
-    if (multipartAlt)
+    if (multipartAlt) {
       // Alternatives appear in an order of increasing faithfulness to the original content.
       return getTextFromBodyPart(mimeMultipart.getBodyPart(count - 1));
+    }
     StringBuilder result = new StringBuilder();
     for (int i = 0; i < count; i++) {
       BodyPart bodyPart = mimeMultipart.getBodyPart(i);

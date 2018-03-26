@@ -1,6 +1,7 @@
 package com.parmet.squashlambdas;
 
 import static com.google.common.truth.Truth.assertThat;
+
 import biweekly.component.VEvent;
 import biweekly.property.Attendee;
 import biweekly.property.Organizer;
@@ -43,10 +44,11 @@ public class EmailRetrieverTest {
   public static EmailData emailData() {
     return new EmailData(
         "Tennis & Racquet Club Reservation Confirmation",
-        "Hello Andrew Parmet, A reservation including you has been made via the Tennis & Racquet Club "
-            + "court reservation system. Reservation details: Court: Court #7 - Hardball Date: Wednesday, "
-            + "March 28th 2018 Time: 09:00 PM to 09:45 PM To cancel your spot or the whole reservation "
-            + "please log into Club Locker and use the My Reservations area.",
+        "Hello Andrew Parmet, A reservation including you has been made via the Tennis & Racquet "
+            + "Club court reservation system. Reservation details: Court: Court #7 - Hardball "
+            + "Date: Wednesday, March 28th 2018 Time: 09:00 PM to 09:45 PM To cancel your spot "
+            + "or the whole reservation please log into Club Locker and use the My Reservations "
+            + "area.",
         event());
   }
 }

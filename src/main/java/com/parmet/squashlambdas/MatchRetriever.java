@@ -3,6 +3,7 @@ package com.parmet.squashlambdas;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
+
 import biweekly.component.VEvent;
 import biweekly.property.Attendee;
 import com.amazonaws.services.s3.AmazonS3;
