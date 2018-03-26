@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class EmailRetrieverTest {
   @Test
-  public void testRetrieveEmail() throws Exception {
+  public void testRetrieveEmail() {
     AmazonS3 s3 =
         new EmailReturningS3(
             TestUtils.getResourceAsString("fpdc9cule6ne0okl6jrtdcpv2fpaov031jom6n81"));
