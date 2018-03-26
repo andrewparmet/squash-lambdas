@@ -4,27 +4,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.ImmutableSet;
 import java.time.Instant;
 import java.util.Set;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class Match {
-  enum Sport {
-    SQUASH,
-    TENNIS,
-    RACQUETS
-  }
-
-  enum Court {
-    COURT_1,
-    COURT_2,
-    COURT_3,
-    COURT_4,
-    COURT_5,
-    COURT_6,
-    COURT_7,
-    TENNIS_COURT,
-    RACQUETS_COURT
-  }
-
   private final Sport sport;
   private final ImmutableSet<String> otherPlayers;
   private final Instant start;
@@ -37,6 +21,39 @@ public class Match {
     this.otherPlayers = ImmutableSet.copyOf(otherPlayers);
     this.start = checkNotNull(start, "start");
     this.end = checkNotNull(end, "end");
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (obj == this) {
+      return true;
+    }
+    if (obj.getClass() != getClass()) {
+      return false;
+    }
+
+    Match rhs = (Match) obj;
+    return new EqualsBuilder()
+        .append(sport, rhs.sport)
+        .append(court, rhs.court)
+        .append(otherPlayers, rhs.otherPlayers)
+        .append(start, rhs.start)
+        .append(end, rhs.end)
+        .build();
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder()
+        .append(sport)
+        .append(court)
+        .append(otherPlayers)
+        .append(start)
+        .append(end)
+        .build();
   }
 
   @Override
