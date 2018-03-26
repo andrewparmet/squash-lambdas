@@ -19,23 +19,22 @@ import javax.mail.MessagingException;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import net.fortuna.ical4j.data.ParserException;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.jsoup.Jsoup;
 
 public class EmailRetriever {
   private final AmazonS3 s3;
-  private final S3EmailNotification note;
+  private final String bucket;
+  private final String key;
 
-  public EmailRetriever(AmazonS3 s3, S3EmailNotification note) {
+  public EmailRetriever(AmazonS3 s3, String bucket, String key) {
     this.s3 = checkNotNull(s3, "s3");
-    this.note = checkNotNull(note, "note");
+    this.bucket = checkNotNull(bucket, "bucket");
+    this.key = checkNotNull(key, "key");
   }
 
   public EmailData retrieveEmail() throws Exception {
-    String email =
-        s3.getObjectAsString(
-            note.getS3ObjectInfo().getBucketName(), note.getS3ObjectInfo().getObjectKey());
+    String email = s3.getObjectAsString(bucket, key);
     System.setProperty(
         "net.fortuna.ical4j.timezone.cache.impl", "net.fortuna.ical4j.util.MapTimeZoneCache");
     try (InputStream is = new ByteArrayInputStream(email.getBytes())) {
@@ -50,7 +49,7 @@ public class EmailRetriever {
   }
 
   private List<ICalendar> getEventsFromMessage(MimeMessage message)
-      throws MessagingException, IOException, ParserException {
+      throws MessagingException, IOException {
     if (message.isMimeType("text/calendar")) {
       return null;
     } else if (message.isMimeType("multipart/*")) {
@@ -62,7 +61,7 @@ public class EmailRetriever {
   }
 
   private List<ICalendar> getEventsFromMimeMultipart(MimeMultipart mimeMultipart)
-      throws MessagingException, IOException, ParserException {
+      throws MessagingException, IOException {
     int count = mimeMultipart.getCount();
     if (count == 0) {
       throw new MessagingException("Multipart with no body parts not supported.");
@@ -81,7 +80,7 @@ public class EmailRetriever {
   }
 
   private List<ICalendar> getEventFromBodyPart(BodyPart bodyPart)
-      throws IOException, ParserException, MessagingException {
+      throws IOException, MessagingException {
     if (bodyPart.isMimeType("text/calendar")) {
       try (InputStreamReader isr = new InputStreamReader(bodyPart.getInputStream())) {
         String str = CharStreams.toString(isr);

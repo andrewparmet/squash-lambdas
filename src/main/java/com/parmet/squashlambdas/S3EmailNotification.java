@@ -1,18 +1,71 @@
 package com.parmet.squashlambdas;
 
-import java.time.OffsetDateTime;
+import static com.google.common.base.Preconditions.checkNotNull;
+import java.time.Instant;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class S3EmailNotification {
   private String eventVersion;
   private String eventSource;
   private String awsRegion;
-  private OffsetDateTime eventTime;
+  private Instant eventTime;
   private String eventName;
   private S3CreateObjectInfo s3;
 
+  public S3EmailNotification(
+      String eventVersion,
+      String eventSource,
+      String awsRegion,
+      Instant eventTime,
+      String eventName,
+      S3CreateObjectInfo s3) {
+    this.eventVersion = checkNotNull(eventVersion, "eventVersion");
+    this.eventSource = checkNotNull(eventSource, "eventSource");
+    this.awsRegion = checkNotNull(awsRegion, "awsRegion");
+    this.eventTime = checkNotNull(eventTime, "eventTime");
+    this.eventName = checkNotNull(eventName, "eventName");
+    this.s3 = checkNotNull(s3, "s3");
+  }
+
   public S3CreateObjectInfo getS3ObjectInfo() {
     return s3;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (obj == this) {
+      return true;
+    }
+    if (obj.getClass() != getClass()) {
+      return false;
+    }
+
+    S3EmailNotification rhs = (S3EmailNotification) obj;
+    return new EqualsBuilder()
+        .append(eventVersion, rhs.eventVersion)
+        .append(eventSource, rhs.eventSource)
+        .append(awsRegion, rhs.awsRegion)
+        .append(eventTime, rhs.eventTime)
+        .append(eventName, rhs.eventName)
+        .append(s3, rhs.s3)
+        .build();
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder()
+        .append(eventVersion)
+        .append(eventSource)
+        .append(awsRegion)
+        .append(eventTime)
+        .append(eventName)
+        .append(s3)
+        .build();
   }
 
   @Override
