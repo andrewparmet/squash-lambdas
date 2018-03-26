@@ -19,7 +19,7 @@ public class MatchRetriever {
     this.note = checkNotNull(note, "note");
   }
 
-  public Match getMatch() throws Exception {
+  public Match getMatch() {
     return fromEmailData(
         new EmailRetriever(
                 s3, note.getS3ObjectInfo().getBucketName(), note.getS3ObjectInfo().getObjectKey())

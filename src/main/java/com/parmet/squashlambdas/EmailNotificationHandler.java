@@ -1,7 +1,5 @@
 package com.parmet.squashlambdas;
 
-import static com.google.common.base.Throwables.throwIfUnchecked;
-
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -22,16 +20,11 @@ public class EmailNotificationHandler implements RequestHandler<Object, Object> 
 
   @Override
   public Object handleRequest(Object input, Context context) {
-    try {
-      S3EmailNotification note = fromInputObject(input);
-      new EmailRetriever(
-              S3, note.getS3ObjectInfo().getBucketName(), note.getS3ObjectInfo().getObjectKey())
-          .retrieveEmail();
-      return "Hello world; received: " + input;
-    } catch (Exception ex) {
-      throwIfUnchecked(ex);
-      throw new RuntimeException(ex);
-    }
+    S3EmailNotification note = fromInputObject(input);
+    new EmailRetriever(
+            S3, note.getS3ObjectInfo().getBucketName(), note.getS3ObjectInfo().getObjectKey())
+        .retrieveEmail();
+    return "Hello world; received: " + input;
   }
 
   static S3EmailNotification fromInputObject(Object input) {

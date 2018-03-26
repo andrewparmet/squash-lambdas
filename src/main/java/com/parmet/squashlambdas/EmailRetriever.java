@@ -21,18 +21,20 @@ public class EmailRetriever {
     this.key = checkNotNull(key, "key");
   }
 
-  public EmailData retrieveEmail() throws Exception {
-    String email = s3.getObjectAsString(bucket, key);
-    try (InputStream is = new ByteArrayInputStream(email.getBytes(UTF_8))) {
-      MimeMessage message = new MimeMessage(null, is);
-      MimeMessageParser parser = new MimeMessageParser(message);
-      return new EmailData(
-          parser.getSubject(),
-          new BodyExtractor().getEventsFromMessage(message).toString(),
-          Iterables.getOnlyElement(
-              Iterables.getOnlyElement(
-                      new CalendarExtractor().getEventsFromMessage(message).toList())
-                  .getEvents()));
-    }
+  public EmailData retrieveEmail() {
+    return Utils.wrap(() -> {
+      String email = s3.getObjectAsString(bucket, key);
+      try (InputStream is = new ByteArrayInputStream(email.getBytes(UTF_8))) {
+        MimeMessage message = new MimeMessage(null, is);
+        MimeMessageParser parser = new MimeMessageParser(message);
+        return new EmailData(
+            parser.getSubject(),
+            new BodyExtractor().getEventsFromMessage(message).toString(),
+            Iterables.getOnlyElement(
+                Iterables.getOnlyElement(
+                    new CalendarExtractor().getEventsFromMessage(message).toList())
+                .getEvents()));
+      }
+    });
   }
 }

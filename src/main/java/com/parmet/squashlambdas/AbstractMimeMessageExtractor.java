@@ -3,7 +3,6 @@ package com.parmet.squashlambdas;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.function.Supplier;
 import javax.mail.BodyPart;
@@ -20,7 +19,7 @@ public abstract class AbstractMimeMessageExtractor<T> {
   }
 
   public Appendable2<T> getEventsFromMessage(MimeMessage message) {
-    try {
+    return Utils.wrap(() -> {
       if (message.isMimeType("text/calendar")) {
         return null;
       } else if (message.isMimeType("multipart/*")) {
@@ -29,11 +28,7 @@ public abstract class AbstractMimeMessageExtractor<T> {
       } else {
         return newInstance.get();
       }
-    } catch (IOException ex) {
-      throw new UncheckedIOException(ex);
-    } catch (MessagingException ex) {
-      throw new UncheckedMessagingException(ex);
-    }
+    });
   }
 
   private Appendable2<T> getFromMimeMultipart(MimeMultipart mimeMultipart)
