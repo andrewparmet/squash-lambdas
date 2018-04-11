@@ -1,8 +1,9 @@
 package com.parmet.squashlambdas;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.UnmodifiableIterator;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class AppendableList<T> implements Appendable2<T> {
@@ -26,7 +27,7 @@ public class AppendableList<T> implements Appendable2<T> {
   }
 
   @Override
-  public Iterator<T> iterator() {
-    return delegate.iterator();
+  public UnmodifiableIterator<T> iterator() {
+    return Iterators.unmodifiableIterator(delegate.iterator());
   }
 }

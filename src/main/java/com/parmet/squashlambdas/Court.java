@@ -32,24 +32,7 @@ public enum Court {
   public static Court fromLocationString(String location) {
     Matcher m = LOCATION.matcher(location);
     checkArgument(m.matches(), "Unable to parse location from %s", location);
-    int courtNum = Integer.parseInt(m.group(1));
-    switch (courtNum) {
-      case 1:
-        return COURT_1;
-      case 2:
-        return COURT_2;
-      case 3:
-        return COURT_3;
-      case 5:
-        return COURT_5;
-      case 6:
-        return COURT_6;
-      case 7:
-        return COURT_7;
-      default:
-        throw new IllegalArgumentException(
-            String.format("Unknown court number %s for location %s", courtNum, location));
-    }
+    return valueOf("COURT_" + Integer.parseInt(m.group(1)));
   }
 
   public Sport getSport() {

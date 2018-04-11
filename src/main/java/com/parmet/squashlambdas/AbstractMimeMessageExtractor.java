@@ -56,7 +56,7 @@ public abstract class AbstractMimeMessageExtractor<T> {
       return getFromMimeMultipart((MimeMultipart) bodyPart.getContent());
     }
 
-    for (MimeTypeAndParser<T> typeAndParser : typeAndParsers()) {
+    for (MimeParser<T> typeAndParser : parsers()) {
       if (typeAndParser.isFor(bodyPart)) {
         return newInstance.get().appendAll(typeAndParser.parse(bodyPart));
       }
@@ -65,5 +65,5 @@ public abstract class AbstractMimeMessageExtractor<T> {
     return newInstance.get();
   }
 
-  protected abstract List<MimeTypeAndParser<T>> typeAndParsers();
+  protected abstract List<MimeParser<T>> parsers();
 }
