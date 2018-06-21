@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.match;
 
 public enum Sport {
   SQUASH,

@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.email;
 
 import static com.google.common.base.Throwables.throwIfUnchecked;
 
@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import javax.mail.MessagingException;
 
-public class Utils {
+class Utils {
   public static <T, R> R wrap(IoMsgSupplier<R> sup) {
     try {
       return sup.get();

@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.email;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -11,7 +11,7 @@ import javax.mail.internet.ContentType;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-public abstract class AbstractMimeMessageExtractor<T> {
+abstract class AbstractMimeMessageExtractor<T> {
   private Supplier<? extends Appendable2<T>> newInstance;
 
   protected AbstractMimeMessageExtractor(Supplier<? extends Appendable2<T>> newInstance) {

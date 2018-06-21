@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.s3;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

@@ -1,10 +1,9 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.email;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Iterator;
 
-public class AppendableString implements Appendable2<StringBuilder> {
-
+class AppendableString implements Appendable2<StringBuilder> {
   private final StringBuilder delegate = new StringBuilder();
 
   public AppendableString() {}

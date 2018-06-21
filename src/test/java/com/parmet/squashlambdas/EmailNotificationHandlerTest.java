@@ -4,6 +4,10 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.parmet.squashlambdas.s3.BucketInfo;
+import com.parmet.squashlambdas.s3.S3CreateObjectInfo;
+import com.parmet.squashlambdas.s3.S3EmailNotification;
+import com.parmet.squashlambdas.s3.S3ObjectInfo;
 import com.parmet.squashlambdas.testutils.TestUtils;
 import java.time.Instant;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.email;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;

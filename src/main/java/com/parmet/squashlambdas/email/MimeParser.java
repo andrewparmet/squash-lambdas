@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.email;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -14,7 +14,7 @@ import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import org.jsoup.Jsoup;
 
-public class MimeParser<T> {
+class MimeParser<T> {
   public static final MimeParser<StringBuilder> TEXT_PLAIN =
       new MimeParser<>(
           "text/plain",

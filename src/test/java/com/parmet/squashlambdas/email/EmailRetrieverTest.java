@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.email;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -6,6 +6,8 @@ import biweekly.component.VEvent;
 import biweekly.property.Attendee;
 import biweekly.property.Organizer;
 import com.amazonaws.services.s3.AmazonS3;
+import com.parmet.squashlambdas.email.EmailData;
+import com.parmet.squashlambdas.email.EmailRetriever;
 import com.parmet.squashlambdas.testutils.EmailReturningS3;
 import com.parmet.squashlambdas.testutils.TestUtils;
 import java.sql.Date;

@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.s3;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -36,16 +36,25 @@ public class S3CreateObjectInfo {
     }
 
     S3CreateObjectInfo rhs = (S3CreateObjectInfo) obj;
-    return new EqualsBuilder().append(bucket, rhs.bucket).append(object, rhs.object).build();
+    return new EqualsBuilder()
+        .append(bucket, rhs.bucket)
+        .append(object, rhs.object)
+        .build();
   }
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder().append(bucket).append(object).build();
+    return new HashCodeBuilder()
+        .append(bucket)
+        .append(object)
+        .build();
   }
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("bucket", bucket).append("object", object).build();
+    return new ToStringBuilder(this)
+        .append("bucket", bucket)
+        .append("object", object)
+        .build();
   }
 }

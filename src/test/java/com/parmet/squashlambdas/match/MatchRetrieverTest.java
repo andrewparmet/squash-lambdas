@@ -1,8 +1,16 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.match;
 
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.common.collect.ImmutableSet;
+import com.parmet.squashlambdas.email.EmailData;
+import com.parmet.squashlambdas.email.EmailRetrieverTest;
+import com.parmet.squashlambdas.match.Match;
+import com.parmet.squashlambdas.match.MatchRetriever;
+import com.parmet.squashlambdas.s3.BucketInfo;
+import com.parmet.squashlambdas.s3.S3CreateObjectInfo;
+import com.parmet.squashlambdas.s3.S3EmailNotification;
+import com.parmet.squashlambdas.s3.S3ObjectInfo;
 import com.parmet.squashlambdas.testutils.EmailReturningS3;
 import com.parmet.squashlambdas.testutils.TestUtils;
 import java.time.Instant;
@@ -16,7 +24,6 @@ public class MatchRetrieverTest {
 
     Match expected =
         new Match(
-            Sport.HARDBALL,
             Court.COURT_7,
             ImmutableSet.of(),
             Instant.parse("2018-03-29T01:00:00Z"),
@@ -29,7 +36,6 @@ public class MatchRetrieverTest {
     assertThat(getMatch(TestUtils.getResourceAsString("fpdc9cule6ne0okl6jrtdcpv2fpaov031jom6n81")))
         .isEqualTo(
             new Match(
-                Sport.HARDBALL,
                 Court.COURT_7,
                 ImmutableSet.of(),
                 Instant.parse("2018-03-29T01:00:00Z"),
