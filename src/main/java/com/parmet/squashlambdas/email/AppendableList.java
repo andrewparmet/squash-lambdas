@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.email;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
@@ -6,7 +6,7 @@ import com.google.common.collect.UnmodifiableIterator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AppendableList<T> implements Appendable2<T> {
+class AppendableList<T> implements Appendable2<T> {
   private final List<T> delegate = new ArrayList<>();
 
   public AppendableList() {}

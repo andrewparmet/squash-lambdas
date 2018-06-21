@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.match;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -10,14 +10,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class Match {
-  private final Sport sport;
   private final ImmutableSet<String> otherPlayers;
   private final Instant start;
   private final Instant end;
   private final Court court;
 
-  public Match(Sport sport, Court court, Set<String> otherPlayers, Instant start, Instant end) {
-    this.sport = checkNotNull(sport, "sport");
+  public Match(Court court, Set<String> otherPlayers, Instant start, Instant end) {
     this.court = checkNotNull(court, "court");
     this.otherPlayers = ImmutableSet.copyOf(otherPlayers);
     this.start = checkNotNull(start, "start");
@@ -38,7 +36,6 @@ public class Match {
 
     Match rhs = (Match) obj;
     return new EqualsBuilder()
-        .append(sport, rhs.sport)
         .append(court, rhs.court)
         .append(otherPlayers, rhs.otherPlayers)
         .append(start, rhs.start)
@@ -49,7 +46,6 @@ public class Match {
   @Override
   public int hashCode() {
     return new HashCodeBuilder()
-        .append(sport)
         .append(court)
         .append(otherPlayers)
         .append(start)
@@ -60,7 +56,6 @@ public class Match {
   @Override
   public String toString() {
     return new ToStringBuilder(this)
-        .append("sport", sport)
         .append("court", court)
         .append("otherPlayers", otherPlayers)
         .append("start", start)

@@ -1,8 +1,8 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.email;
 
 import java.io.IOException;
 import javax.mail.MessagingException;
 
-public interface IoMsgSupplier<R> {
+interface IoMsgSupplier<R> {
   R get() throws IOException, MessagingException, Exception;
 }

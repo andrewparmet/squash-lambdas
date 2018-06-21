@@ -9,6 +9,9 @@ import com.fatboyindustrial.gsonjavatime.InstantConverter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.parmet.squashlambdas.match.Match;
+import com.parmet.squashlambdas.match.MatchRetriever;
+import com.parmet.squashlambdas.s3.S3EmailNotification;
 import java.time.Instant;
 
 public class EmailNotificationHandler implements RequestHandler<Object, Object> {
@@ -21,9 +24,16 @@ public class EmailNotificationHandler implements RequestHandler<Object, Object> 
   @Override
   public Object handleRequest(Object input, Context context) {
     S3EmailNotification note = fromInputObject(input);
-    new EmailRetriever(
-            S3, note.getS3ObjectInfo().getBucketName(), note.getS3ObjectInfo().getObjectKey())
-        .retrieveEmail();
+
+    Match match = new MatchRetriever(S3, note).getMatch();
+
+    // Todo: Google API calls
+    // 1. If created, create
+    // 2. If deleted, delete
+    // 3. If player added, delete and create new
+
+    // Catch exception and email myself failure
+
     return "Hello world; received: " + input;
   }
 

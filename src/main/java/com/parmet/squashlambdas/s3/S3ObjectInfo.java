@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.s3;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -6,15 +6,15 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class BucketInfo {
-  private String name;
+public class S3ObjectInfo {
+  private String key;
 
-  public BucketInfo(String name) {
-    this.name = checkNotNull(name, "name");
+  public S3ObjectInfo(String key) {
+    this.key = checkNotNull(key, "key");
   }
 
-  public String getName() {
-    return name;
+  public String getKey() {
+    return key;
   }
 
   @Override
@@ -29,17 +29,23 @@ public class BucketInfo {
       return false;
     }
 
-    BucketInfo rhs = (BucketInfo) obj;
-    return new EqualsBuilder().append(name, rhs.name).build();
+    S3ObjectInfo rhs = (S3ObjectInfo) obj;
+    return new EqualsBuilder()
+        .append(key, rhs.key)
+        .build();
   }
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder().append(name).build();
+    return new HashCodeBuilder()
+        .append(key)
+        .build();
   }
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("name", name).build();
+    return new ToStringBuilder(this)
+        .append("key", key)
+        .build();
   }
 }

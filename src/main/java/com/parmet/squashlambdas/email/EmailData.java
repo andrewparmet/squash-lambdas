@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.email;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -44,7 +44,11 @@ public class EmailData {
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder().append(subject).append(body).append(event).build();
+    return new HashCodeBuilder()
+        .append(subject)
+        .append(body)
+        .append(event)
+        .build();
   }
 
   @Override

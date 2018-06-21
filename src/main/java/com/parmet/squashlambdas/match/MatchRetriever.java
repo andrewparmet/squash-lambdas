@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.match;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.not;
@@ -7,6 +7,9 @@ import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import biweekly.component.VEvent;
 import biweekly.property.Attendee;
 import com.amazonaws.services.s3.AmazonS3;
+import com.parmet.squashlambdas.email.EmailData;
+import com.parmet.squashlambdas.email.EmailRetriever;
+import com.parmet.squashlambdas.s3.S3EmailNotification;
 import java.util.List;
 import java.util.Set;
 
@@ -30,7 +33,6 @@ public class MatchRetriever {
     VEvent event = data.getEvent();
     Court court = Court.fromLocationString(event.getLocation().getValue());
     return new Match(
-        court.getSport(),
         court,
         notMe(event.getAttendees()),
         event.getDateStart().getValue().toInstant(),

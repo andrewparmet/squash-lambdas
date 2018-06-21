@@ -1,8 +1,8 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.email;
 
 import javax.mail.MessagingException;
 
-public class UncheckedMessagingException extends RuntimeException {
+class UncheckedMessagingException extends RuntimeException {
   public UncheckedMessagingException(MessagingException ex) {
     super(ex);
   }

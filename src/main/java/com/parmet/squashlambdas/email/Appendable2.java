@@ -1,8 +1,8 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.email;
 
 import com.google.common.collect.ImmutableList;
 
-public interface Appendable2<T> extends Iterable<T> {
+interface Appendable2<T> extends Iterable<T> {
   Appendable2<T> append(T toAppend);
 
   default Appendable2<T> appendAll(Appendable2<T> toAppends) {

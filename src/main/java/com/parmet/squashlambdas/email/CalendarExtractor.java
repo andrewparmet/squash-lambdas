@@ -1,10 +1,10 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.email;
 
 import biweekly.ICalendar;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 
-public class CalendarExtractor extends AbstractMimeMessageExtractor<ICalendar> {
+class CalendarExtractor extends AbstractMimeMessageExtractor<ICalendar> {
   private static final ImmutableList<MimeParser<ICalendar>> TYPE_AND_PARSERS =
       ImmutableList.of(MimeParser.TEXT_CALENDAR);
 

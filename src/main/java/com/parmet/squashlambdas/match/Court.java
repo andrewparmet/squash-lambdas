@@ -1,11 +1,11 @@
-package com.parmet.squashlambdas;
+package com.parmet.squashlambdas.match;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.parmet.squashlambdas.Sport.HARDBALL;
-import static com.parmet.squashlambdas.Sport.RACQUETS;
-import static com.parmet.squashlambdas.Sport.SQUASH;
-import static com.parmet.squashlambdas.Sport.TENNIS;
+import static com.parmet.squashlambdas.match.Sport.HARDBALL;
+import static com.parmet.squashlambdas.match.Sport.RACQUETS;
+import static com.parmet.squashlambdas.match.Sport.SQUASH;
+import static com.parmet.squashlambdas.match.Sport.TENNIS;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
