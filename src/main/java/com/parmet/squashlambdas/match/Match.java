@@ -3,6 +3,7 @@ package com.parmet.squashlambdas.match;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.collect.ImmutableSet;
+import com.parmet.squashlambdas.email.EmailData;
 import java.time.Instant;
 import java.util.Set;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -20,6 +21,10 @@ public class Match {
     this.otherPlayers = ImmutableSet.copyOf(otherPlayers);
     this.start = checkNotNull(start, "start");
     this.end = checkNotNull(end, "end");
+  }
+
+  public static Match getFromEmailData(EmailData email) {
+    return new MatchRetriever(email).getMatch();
   }
 
   @Override

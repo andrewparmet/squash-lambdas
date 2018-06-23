@@ -8,10 +8,12 @@ import biweekly.property.Organizer;
 import com.amazonaws.services.s3.AmazonS3;
 import com.parmet.squashlambdas.email.EmailData;
 import com.parmet.squashlambdas.email.EmailRetriever;
+import com.parmet.squashlambdas.integration.MatchIntegrationTests;
 import com.parmet.squashlambdas.testutils.EmailReturningS3;
 import com.parmet.squashlambdas.testutils.TestUtils;
 import java.sql.Date;
 import java.time.Instant;
+import java.util.Optional;
 import org.junit.Test;
 
 public class EmailRetrieverTest {
@@ -19,7 +21,7 @@ public class EmailRetrieverTest {
   public void testRetrieveEmail() {
     AmazonS3 s3 =
         new EmailReturningS3(
-            TestUtils.getResourceAsString("fpdc9cule6ne0okl6jrtdcpv2fpaov031jom6n81"));
+            TestUtils.getResourceAsString(MatchIntegrationTests.class, "reservationCreated2"));
     EmailData data = new EmailRetriever(s3, "", "").retrieveEmail();
     assertThat(data).isEqualTo(emailData());
   }
@@ -51,6 +53,6 @@ public class EmailRetrieverTest {
             + "Date: Wednesday, March 28th 2018 Time: 09:00 PM to 09:45 PM To cancel your spot "
             + "or the whole reservation please log into Club Locker and use the My Reservations "
             + "area.",
-        event());
+        Optional.of(event()));
   }
 }

@@ -1,13 +1,21 @@
 package com.parmet.squashlambdas.s3;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
+import com.fatboyindustrial.gsonjavatime.InstantConverter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import java.time.Instant;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class S3EmailNotification {
+  private static final Gson GSON =
+      new GsonBuilder()
+        .registerTypeAdapter(Instant.class, new InstantConverter())
+        .create();
+
   private String eventVersion;
   private String eventSource;
   private String awsRegion;
@@ -28,6 +36,12 @@ public class S3EmailNotification {
     this.eventTime = checkNotNull(eventTime, "eventTime");
     this.eventName = checkNotNull(eventName, "eventName");
     this.s3 = checkNotNull(s3, "s3");
+  }
+
+  public static S3EmailNotification fromInputObject(Object input) {
+    JsonElement json = GSON.toJsonTree(input);
+    return GSON.fromJson(
+        json.getAsJsonObject().getAsJsonArray("Records").get(0), S3EmailNotification.class);
   }
 
   public S3CreateObjectInfo getS3ObjectInfo() {
