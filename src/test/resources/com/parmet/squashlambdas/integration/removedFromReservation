@@ -1,0 +1,132 @@
+Return-Path: <andrewparmet+caf_=squash=joecool@peanuts.com>
+Received: from mail-oi0-f53.google.com (mail-oi0-f53.google.com [209.85.218.53])
+ by inbound-smtp.us-east-1.amazonaws.com with SMTP id hoaioshcc0n0tev950dbm4t673cofuojes399ag1
+ for joecool@peanuts.com;
+ Mon, 23 Apr 2018 15:33:29 +0000 (UTC)
+X-SES-Spam-Verdict: PASS
+X-SES-Virus-Verdict: PASS
+Received-SPF: pass (spfCheck: domain of _spf.google.com designates 209.85.218.53 as permitted sender) client-ip=209.85.218.53; envelope-from=andrewparmet+caf_=squash=joecool@peanuts.com; helo=mail-oi0-f53.google.com;
+Authentication-Results: amazonses.com;
+ spf=pass (spfCheck: domain of _spf.google.com designates 209.85.218.53 as permitted sender) client-ip=209.85.218.53; envelope-from=andrewparmet+caf_=squash=joecool@peanuts.com; helo=mail-oi0-f53.google.com;
+ dkim=pass header.i=@amazonses.com;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFGNHRMcUNDcXdhMzh3aytkV0tLWFU4RXRuM250dEVNM01vdUprN2dYV25ZaDYvOFRDcTFLalpvRWg5dXUyM2RLTVF1bjZiOU1NVXUrMkVyZUQ1R0ZVQUFMY2k5VkJWYURNRnp1eDlrcnJkbXYrVU1ZK0NST3NrRXZGV2s0ZDVIWWNPRUovWEIzVkJ4T1dBZ0t0VkdUN1o0SmU0N0JBV0lqck05OVZndTBxK3VicVE5ZUxzK0lCZkFpMW1FNVZDOGdPN0ZMcmh3MklBSXVaRGUxK05Hem9iMDJNY3hzWjRSNklsZFd1YnYwVGdXWW5TSDJEbUJqVUFjbDdFbXBxQ1JwY0FjUDVuMFI5V0MyN3lYUWhhdlhTTVJuTXhQenBEaytyVjlTc0JmOXF0KzNiaHgxVjdFY2ZubzhjZDFSNGFMV090WGFpQnJXVzJBU0gzUGdTMUNYbDk=
+X-SES-DKIM-SIGNATURE: a=rsa-sha256; q=dns/txt; b=PyVL+/OYPSx6q+K2Q4MJONs37FwKoAVVQK0gEQxlJks7SGKXIYT8pFKiqnqvJ7Nai/Lq/l3V9YrsgFYODtgZ1Z9R3s4XHYRlA6nIvihF5TLzV1oxHPH4mD0TZMJ8V1v5N81QPUgVENzO4lqx/ikYjU9ie00sRz944bUtUBDKs1U=; c=relaxed/simple; s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1524497610; v=1; bh=iD16JoC47fECte6MAhI0Rp8Iu48A/8aybVHzrtlHYRs=; h=From:To:Cc:Bcc:Subject:Date:Message-ID:MIME-Version:Content-Type:X-SES-RECEIPT;
+Received: by mail-oi0-f53.google.com with SMTP id f63-v6so14680583oic.4
+        for <joecool@peanuts.com>; Mon, 23 Apr 2018 08:33:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:delivered-to:dkim-signature:dkim-signature:from
+         :to:reply-to:subject:message-id:content-transfer-encoding:date
+         :mime-version:feedback-id;
+        bh=iD16JoC47fECte6MAhI0Rp8Iu48A/8aybVHzrtlHYRs=;
+        b=gU5OVpHuc6GkyVo+KT5mo0DmxtcB72KCNe0Gj1eKZcrbCj8+RY49dgCOi6k1Ojjo94
+         FPALlWP85VupiJhi20ISUqn85XxXgW/i1E/rGHAVdqIK3IeO+7NMhZ2x9ZPK+NFYhfny
+         fKcw2F2WN6Um+9lNbsnVu0vqQF95PwQGvn5SL7cISaRTWvNz8sGpubQUqNT5ykaZGlQX
+         RZN20031Q8X9mh10otGL0eNsk+bj+Cmpymd6f6ZoVYSNAf6W819wEV+G9FzCwjBkyHct
+         4fkTEzzxpHu0bX9CCS4LFr3Xvcx2myfNTx4Y5UqRehg4H4GvyWZBabxmNOqEO4cxof/N
+         idOw==
+X-Gm-Message-State: ALQs6tBEXkRYOCEfZmL4iuHWuZKdTdhheKGOVnQLvkUzECJ3GNDbOYY3
+	0ASXP3sTKwxJFtODTX/9+KTyBVRh9DMWXzU8h/8z8GuOoD9ZXrE=
+X-Received: by 2002:aca:e308:: with SMTP id a8-v6mr13932529oih.237.1524497609114;
+        Mon, 23 Apr 2018 08:33:29 -0700 (PDT)
+X-Forwarded-To: joecool@peanuts.com
+X-Forwarded-For: andrewparmet@gmail.com joecool@peanuts.com
+Delivered-To: joecool@peanuts.com
+Received: by 2002:a9d:1df0:0:0:0:0:0 with SMTP id w45-v6csp2976105otw;
+        Mon, 23 Apr 2018 08:33:27 -0700 (PDT)
+X-Google-Smtp-Source: AB8JxZoli6XiRa4u4LxsFC0WLJsjooeJPBn/P+f/FJeZrVYWwEFCO6hGD+XHfbeEif1+nT2p5G17
+X-Received: by 10.55.214.80 with SMTP id t77mr23084648qki.150.1524497607235;
+        Mon, 23 Apr 2018 08:33:27 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1524497607; cv=none;
+        d=google.com; s=arc-20160816;
+        b=To32fJ3f8CErRAvqH2agW2xFaDVdtQSJxt5MEdWasSgqZqj+SntTmY8Q1yIUIr99ey
+         ia+C6MFizs44YIhaFvFsrkVz2yvoNvceahAPS8s8xSv7iipxSA3P7/cg1nGEg6AlykHZ
+         5PSnII1xZsU+2Wk6Obdfek9Q5HoyP3GG6U2UubvMEWaFcRDHJ2zt5Y+Nu2+OBkgdQc0L
+         L8pAsVnXvQlqf6eKV9E4ytb+MucHYs+7YTxmJzLHKCv+04Lj6hC97myzuXCCWPzrR00i
+         5lkEpD3fOTHdU/Kza5ApDTb2jzcLZ/9cH3ZaMP9zqTeiyIQ9XLMDN0X/Lm0TW2QgQjzv
+         JXKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=feedback-id:mime-version:date:content-transfer-encoding:message-id
+         :subject:reply-to:to:from:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=iD16JoC47fECte6MAhI0Rp8Iu48A/8aybVHzrtlHYRs=;
+        b=MeqruuPzfVkOVHnm5mISZ1AuaGHG1paAtZDplWoi0bdpLDtnCnlN0nveW3FbQhGDBl
+         2WR/fguodHlvJ9JgS94Trk8MBQn7BJONuQG2CAHe5ZEz4LWlGom68IpWnl+FFo85U09a
+         aKnyCiudMEzISiarnnwEpWfTV5WcqzvJKoHgmo6E1CHnKchRXfMdNpVdGxThG+l4cfPe
+         KnvTfof9AzyvESpLFNerzGuRouYDijFXV5O7CNEQNrpRDth3O/MteejFpxGNg+ysIQR1
+         mD3sz4y6OJlkCaQXRVUNGOWfzD1NCbzVfQvaW+nB+iu0+LnCBCuPfpo35JgKSGrfS1ol
+         RM0w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=temperror (no key for signature) header.i=@clublocker.com header.s=dkim header.b=3OV+mFtr;
+       dkim=pass header.i=@amazonses.com header.s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug header.b=W6Y5Vgy7;
+       spf=pass (google.com: domain of srs0=xeqbq4=hm=amazonses.com=01000162f3235b38-7f1da3d6-f8b0-4c3a-9bec-91e8d186c938-000000@parmet.com designates 66.96.187.2 as permitted sender) smtp.mailfrom=SRS0=XEqBQ4=HM=amazonses.com=01000162f3235b38-7f1da3d6-f8b0-4c3a-9bec-91e8d186c938-000000@parmet.com
+Return-Path: <SRS0=XEqBQ4=HM=amazonses.com=01000162f3235b38-7f1da3d6-f8b0-4c3a-9bec-91e8d186c938-000000@parmet.com>
+Received: from bosmailout02.eigbox.net (bosmailout02.eigbox.net. [66.96.187.2])
+        by mx.google.com with ESMTPS id q46-v6si1536173qtb.16.2018.04.23.08.33.27
+        for <joecool@peanuts.com>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Apr 2018 08:33:27 -0700 (PDT)
+Received-SPF: pass (google.com: domain of srs0=xeqbq4=hm=amazonses.com=01000162f3235b38-7f1da3d6-f8b0-4c3a-9bec-91e8d186c938-000000@parmet.com designates 66.96.187.2 as permitted sender) client-ip=66.96.187.2;
+Authentication-Results: mx.google.com;
+       dkim=temperror (no key for signature) header.i=@clublocker.com header.s=dkim header.b=3OV+mFtr;
+       dkim=pass header.i=@amazonses.com header.s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug header.b=W6Y5Vgy7;
+       spf=pass (google.com: domain of srs0=xeqbq4=hm=amazonses.com=01000162f3235b38-7f1da3d6-f8b0-4c3a-9bec-91e8d186c938-000000@parmet.com designates 66.96.187.2 as permitted sender) smtp.mailfrom=SRS0=XEqBQ4=HM=amazonses.com=01000162f3235b38-7f1da3d6-f8b0-4c3a-9bec-91e8d186c938-000000@parmet.com
+Received: from bosmailscan06.eigbox.net ([10.20.15.6])
+	by bosmailout02.eigbox.net with esmtp (Exim)
+	id 1fAdT4-0005ux-UX
+	for joecool@peanuts.com; Mon, 23 Apr 2018 11:33:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=clublocker.com; s=dkim; h=MIME-Version:Date:Content-Transfer-Encoding:
+	Message-ID:Subject:Reply-To:To:From:Content-Type:Sender:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=iD16JoC47fECte6MAhI0Rp8Iu48A/8aybVHzrtlHYRs=; b=3OV+mFtr7/BGwp08nK1LqyhQEl
+	nNMQYKpeNRCMv+WYiLvKaTGewfDp1DrOukuNZVI/DsXZq4uHNtn3Y2ZynyBUIdX0i7BkaFpcnpzvS
+	59PX1jGf4xDw6kMQN67i2cjSRGjzlng/WK7rAFvbg7Fh84oSyYeSkP0YwAEWle97yW+3/kw6c1TP1
+	xSN+qw1do9ZSxgVsOObPkoeAcajJHn1jrw9orAtcQodKmhb7JEAQjmo/g0qkPcZNFKoH2s+b1Cd2R
+	OLQDkx8Cu3fDKWHe5A2IZOpkKgcTXvy7zv447o6724ZQeWvd35AITl70WbtnPkF7B/rShD+4jTQZU
+	9IBcRE+Q==;
+Received: from [10.115.3.11] (helo=smtp.maileig.com)
+	by bosmailscan06.eigbox.net with esmtp (Exim)
+	id 1fAdT4-0003Um-Qg
+	for joecool@peanuts.com; Mon, 23 Apr 2018 11:33:26 -0400
+Received: from a8-200.smtp-out.amazonses.com ([54.240.8.200])
+	by bosimpinc11 with bizsmtp
+	id drZP1x02v4JxAGN01rZQ9i; Mon, 23 Apr 2018 11:33:24 -0400
+X-EN-OrigIP: 54.240.8.200
+X-EN-IMPSID: drZP1x02v4JxAGN01rZQ9i
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1524497603;
+	h=Content-Type:From:To:Reply-To:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Feedback-ID;
+	bh=iD16JoC47fECte6MAhI0Rp8Iu48A/8aybVHzrtlHYRs=;
+	b=W6Y5Vgy7Cwr1io+Xq/37VUFql6KWAjjsseSISC5BipBjyvyuqMqinmkHibZkUIlD
+	mKDBSGH/npKnDdOsFeBgcG6wAPj4FzZGP4sTczOWOjwgYVAa30zwSqUKl3zMJyhAezV
+	WC+j+3ufGoaSuIg5SGIhqHxcKkcTUzmAI/2RWXBA=
+Content-Type: text/html
+From: Club Locker <no-reply@clublocker.com>
+To: joecool@peanuts.com
+Reply-To: tony.hollins@tandr.org
+Subject: You've been removed from a reservation at Tennis & Racquet Club
+Message-ID: <01000162f3235b38-7f1da3d6-f8b0-4c3a-9bec-91e8d186c938-000000@email.amazonses.com>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 23 Apr 2018 15:33:23 +0000
+MIME-Version: 1.0
+X-SES-Outgoing: 2018.04.23-54.240.8.200
+Feedback-ID: 1.us-east-1.nvEQFBLrnsYYlHOIclFpo0WN7dgvcT2b+eS5HXR6suE=:AmazonSES
+
+<p>
+Hello Andrew Parmet,
+</p>
+<p>
+You've been removed from a reservation at=
+ Tennis & Racquet Club by the player that initially booked it or a club pro=
+.
+</p>
+<p>
+Reservation details:<br/>
+<strong> Court: </strong> Court #1 - =
+Squash <br/>
+<strong> Date: </strong> Thursday, April 26th 2018 <br/>
+<strong> Time: </strong> 06:45 PM to 07:30 PM <br/>
+</p>

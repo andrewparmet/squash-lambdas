@@ -3,10 +3,11 @@ package com.parmet.squashlambdas.email;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import biweekly.ICalendar;
 import com.amazonaws.services.s3.AmazonS3;
-import com.google.common.collect.Iterables;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.List;
 import javax.mail.internet.MimeMessage;
 import org.apache.commons.mail.util.MimeMessageParser;
 
@@ -30,10 +31,13 @@ public class EmailRetriever {
         return new EmailData(
             parser.getSubject(),
             new BodyExtractor().getEventsFromMessage(message).toString(),
-            Iterables.getOnlyElement(
-                Iterables.getOnlyElement(
-                    new CalendarExtractor().getEventsFromMessage(message).toList())
-                .getEvents()));
+            new CalendarExtractor()
+                .getEventsFromMessage(message)
+                .toList()
+                .stream()
+                .map(ICalendar::getEvents)
+                .flatMap(List::stream)
+                .findFirst());
       }
     });
   }

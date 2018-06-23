@@ -4,13 +4,11 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.common.collect.ImmutableSet;
 import com.parmet.squashlambdas.email.EmailData;
+import com.parmet.squashlambdas.email.EmailRetriever;
 import com.parmet.squashlambdas.email.EmailRetrieverTest;
+import com.parmet.squashlambdas.integration.MatchIntegrationTests;
 import com.parmet.squashlambdas.match.Match;
 import com.parmet.squashlambdas.match.MatchRetriever;
-import com.parmet.squashlambdas.s3.BucketInfo;
-import com.parmet.squashlambdas.s3.S3CreateObjectInfo;
-import com.parmet.squashlambdas.s3.S3EmailNotification;
-import com.parmet.squashlambdas.s3.S3ObjectInfo;
 import com.parmet.squashlambdas.testutils.EmailReturningS3;
 import com.parmet.squashlambdas.testutils.TestUtils;
 import java.time.Instant;
@@ -20,7 +18,7 @@ public class MatchRetrieverTest {
   @Test
   public void fromEmailDataTest() throws Exception {
     EmailData data = EmailRetrieverTest.emailData();
-    Match match = MatchRetriever.fromEmailData(data);
+    Match match = Match.getFromEmailData(data);
 
     Match expected =
         new Match(
@@ -33,7 +31,9 @@ public class MatchRetrieverTest {
 
   @Test
   public void testHardballAlone() throws Exception {
-    assertThat(getMatch(TestUtils.getResourceAsString("fpdc9cule6ne0okl6jrtdcpv2fpaov031jom6n81")))
+    assertThat(
+        getMatch(
+            TestUtils.getResourceAsString(MatchIntegrationTests.class, "reservationCreated2")))
         .isEqualTo(
             new Match(
                 Court.COURT_7,
@@ -44,16 +44,10 @@ public class MatchRetrieverTest {
 
   public static Match getMatch(String body) {
     return new MatchRetriever(
+        new EmailRetriever(
             new EmailReturningS3(body),
-            new S3EmailNotification(
-                "2.0",
-                "aws:s3",
-                "us-east-1",
-                Instant.parse("2018-03-26T00:27:50.117Z"),
-                "ObjectCreated:Put",
-                new S3CreateObjectInfo(
-                    new BucketInfo("parmet-squash-emails"),
-                    new S3ObjectInfo("emails/some-file-name"))))
+            "parmet-squash-emails",
+            "emails/some-file-name").retrieveEmail())
         .getMatch();
   }
 }

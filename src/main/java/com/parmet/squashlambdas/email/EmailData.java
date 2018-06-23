@@ -3,6 +3,7 @@ package com.parmet.squashlambdas.email;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import biweekly.component.VEvent;
+import java.util.Optional;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -10,16 +11,24 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class EmailData {
   private final String subject;
   private final String body;
-  private final VEvent event;
+  private final Optional<VEvent> event;
 
-  public EmailData(String subject, String body, VEvent event) {
+  public EmailData(String subject, String body, Optional<VEvent> event) {
     this.subject = checkNotNull(subject, "subject");
     this.body = checkNotNull(body, "htmlBody");
     this.event = checkNotNull(event, "event");
   }
 
-  public VEvent getEvent() {
+  public Optional<VEvent> getEvent() {
     return event;
+  }
+
+  public String getSubject() {
+    return subject;
+  }
+
+  public String getBody() {
+    return body;
   }
 
   @Override
