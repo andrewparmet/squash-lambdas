@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import javax.mail.BodyPart;
 import javax.mail.MessagingException;
+import javax.mail.Part;
 import org.jsoup.Jsoup;
 
 class MimeParser<T> {
@@ -39,24 +39,24 @@ class MimeParser<T> {
           });
 
   private final String mimeType;
-  private final IoMsgFunction<? super BodyPart, ? extends Appendable2<T>> parser;
+  private final IoMsgFunction<? super Part, ? extends Appendable2<T>> parser;
 
   private MimeParser(
-      String mimeType, IoMsgFunction<? super BodyPart, ? extends Appendable2<T>> parser) {
+      String mimeType, IoMsgFunction<? super Part, ? extends Appendable2<T>> parser) {
     this.mimeType = checkNotNull(mimeType, "mimeType");
     this.parser = checkNotNull(parser, "parser");
   }
 
-  public boolean isFor(BodyPart bodyPart) throws MessagingException {
-    return bodyPart.isMimeType(mimeType);
+  public boolean isFor(Part part) throws MessagingException {
+    return part.isMimeType(mimeType);
   }
 
-  public Appendable2<T> parse(BodyPart bodyPart) throws IOException, MessagingException {
+  public Appendable2<T> parse(Part part) throws IOException, MessagingException {
     checkArgument(
-        isFor(bodyPart),
-        "Cannot parse bodyPart with type %s using parser for type %s",
-        bodyPart.getContentType(),
+        isFor(part),
+        "Cannot parse part with type %s using parser for type %s",
+        part.getContentType(),
         mimeType);
-    return parser.apply(bodyPart);
+    return parser.apply(part);
   }
 }
