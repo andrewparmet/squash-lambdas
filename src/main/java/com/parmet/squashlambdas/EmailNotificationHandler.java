@@ -10,6 +10,7 @@ import com.parmet.squashlambdas.email.EmailData;
 import com.parmet.squashlambdas.email.EmailRetriever;
 import com.parmet.squashlambdas.s3.S3CreateObjectInfo;
 import com.parmet.squashlambdas.s3.S3EmailNotification;
+import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +26,7 @@ public class EmailNotificationHandler implements RequestHandler<Object, Object> 
       S3CreateObjectInfo info = S3EmailNotification.fromInputObject(input).getS3ObjectInfo();
       EmailData email =
           new EmailRetriever(S3, info.getBucketName(), info.getObjectKey()).retrieveEmail();
-      ChangeSummary changeSummary = ChangeSummary.fromEmail(email);
+      Optional<ChangeSummary> changeSummary = ChangeSummary.fromEmail(email);
 
       // TODO: Google API calls
       // 1. If created, create

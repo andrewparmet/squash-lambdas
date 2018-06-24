@@ -1,6 +1,7 @@
 package com.parmet.squashlambdas.integration;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth8.assertThat;
 
 import com.google.common.collect.ImmutableSet;
 import com.parmet.squashlambdas.cal.Action;
@@ -11,13 +12,14 @@ import com.parmet.squashlambdas.match.Court;
 import com.parmet.squashlambdas.match.Match;
 import com.parmet.squashlambdas.testutils.TestUtils;
 import java.time.Instant;
+import java.util.Optional;
 import org.junit.Test;
 
 public class IntegrationTests {
   @Test
   public void testReservationCreated() throws Exception {
     assertThat(getSummary("reservationCreated"))
-        .isEqualTo(
+        .hasValue(
             summary(
                 Action.CREATE,
                 new Match(
@@ -30,7 +32,7 @@ public class IntegrationTests {
   @Test
   public void testReservationCreated2() throws Exception {
     assertThat(getSummary("reservationCreated2"))
-        .isEqualTo(
+        .hasValue(
             summary(
                 Action.CREATE,
                 new Match(
@@ -43,7 +45,7 @@ public class IntegrationTests {
   @Test
   public void testReservationCreated3() throws Exception {
     assertThat(getSummary("reservationCreated3"))
-        .isEqualTo(
+        .hasValue(
             summary(
                 Action.CREATE,
                 new Match(
@@ -56,7 +58,7 @@ public class IntegrationTests {
   @Test
   public void testReservationJoined() throws Exception {
     assertThat(getSummary("someoneJoinsMyReservation"))
-        .isEqualTo(
+        .hasValue(
             summary(
                 Action.UPDATE,
                 new Match(
@@ -69,7 +71,7 @@ public class IntegrationTests {
   @Test
   public void testReservationJoined2() throws Exception {
     assertThat(getSummary("someoneJoinsMyReservation2"))
-        .isEqualTo(
+        .hasValue(
             summary(
                 Action.UPDATE,
                 new Match(
@@ -82,7 +84,7 @@ public class IntegrationTests {
   @Test
   public void testReservationJoined3() throws Exception {
     assertThat(getSummary("someoneJoinsMyReservation3"))
-        .isEqualTo(
+        .hasValue(
             summary(
                 Action.UPDATE,
                 new Match(
@@ -95,7 +97,7 @@ public class IntegrationTests {
   @Test
   public void testReservationJoined4() throws Exception {
     assertThat(getSummary("someoneJoinsMyReservation4"))
-        .isEqualTo(
+        .hasValue(
             summary(
                 Action.UPDATE,
                 new Match(
@@ -108,7 +110,7 @@ public class IntegrationTests {
   @Test
   public void testRemovedFromReservation() throws Exception {
     assertThat(getSummary("removedFromReservation"))
-        .isEqualTo(
+        .hasValue(
             summary(
                 Action.DELETE,
                 new Match(
@@ -121,7 +123,7 @@ public class IntegrationTests {
   @Test
   public void testJoinReservationWithPlayer() throws Exception {
     assertThat(getSummary("joinReservationWithPlayer"))
-        .isEqualTo(
+        .hasValue(
             summary(
                 Action.CREATE,
                 new Match(
@@ -134,7 +136,7 @@ public class IntegrationTests {
   @Test
   public void testJoinReservationWithPlayer2() throws Exception {
     assertThat(getSummary("joinReservationWithPlayer2"))
-        .isEqualTo(
+        .hasValue(
             summary(
                 Action.CREATE,
                 new Match(
@@ -147,7 +149,7 @@ public class IntegrationTests {
   @Test
   public void testPlayerHasBeenRemoved() throws Exception {
     assertThat(getSummary("playerHasBeenRemoved"))
-        .isEqualTo(
+        .hasValue(
             summary(
                 Action.UPDATE,
                 new Match(
@@ -157,7 +159,12 @@ public class IntegrationTests {
                     Instant.parse("2018-03-21T00:15:00Z"))));
   }
 
-  private static ChangeSummary getSummary(String fileName) {
+  @Test
+  public void testReminder() throws Exception {
+    assertThat(getSummary("reminder")).isEmpty();
+  }
+
+  private static Optional<ChangeSummary> getSummary(String fileName) {
     return ChangeSummary.fromEmail(
         EmailRetrieverTest.fromBody(TestUtils.getResourceAsString(fileName)));
   }

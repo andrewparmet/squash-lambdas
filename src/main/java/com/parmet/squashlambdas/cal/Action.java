@@ -3,7 +3,7 @@ package com.parmet.squashlambdas.cal;
 import java.util.stream.Stream;
 
 public enum Action {
-  CREATE, UPDATE, DELETE;
+  CREATE, UPDATE, DELETE, NONE;
 
   public static Action parseFromSubject(String body) {
     if (Stream.of(
@@ -21,6 +21,11 @@ public enum Action {
       return DELETE;
     }
 
-    throw new IllegalArgumentException();
+    if (Stream.of(
+        "This is a reminder").anyMatch(body::contains)) {
+      return NONE;
+    }
+
+    throw new IllegalArgumentException("Unable to parse action from " + body);
   }
 }
