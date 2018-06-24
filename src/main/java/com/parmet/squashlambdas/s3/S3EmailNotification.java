@@ -1,6 +1,7 @@
 package com.parmet.squashlambdas.s3;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.fatboyindustrial.gsonjavatime.InstantConverter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

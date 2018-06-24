@@ -34,13 +34,24 @@ public class MatchIntegrationTests {
   }
 
   @Test
+  public void testReservationCreated3() throws Exception {
+    assertThat(getMatch("reservationCreated3"))
+        .isEqualTo(
+            new Match(
+                Court.COURT_2,
+                ImmutableSet.of("Philipp Rimmler"),
+                Instant.parse("2018-03-26T22:45:00Z"),
+                Instant.parse("2018-03-26T23:30:00Z")));
+  }
+
+  @Test
   public void testReservationJoined() throws Exception {
     assertThat(getMatch("someoneJoinsMyReservation"))
         .isEqualTo(
             new Match(
                 Court.COURT_2,
                 ImmutableSet.of("Stephen Santulli"),
-                Instant.parse("2018-05-28T23:30:00Z"),
+                Instant.parse("2018-05-31T23:30:00Z"),
                 Instant.parse("2018-06-01T00:15:00Z")));
   }
 
@@ -52,7 +63,7 @@ public class MatchIntegrationTests {
                 Court.COURT_3,
                 ImmutableSet.of("Aaron bhole (Guest)"),
                 Instant.parse("2018-06-29T00:15:00Z"),
-                Instant.parse("2018-03-29T01:00:00Z")));
+                Instant.parse("2018-06-29T01:00:00Z")));
   }
 
   @Test
@@ -62,8 +73,8 @@ public class MatchIntegrationTests {
             new Match(
                 Court.COURT_1,
                 ImmutableSet.of("James Wall"),
-                Instant.parse("2018-06-28T22:45:00Z"),
-                Instant.parse("2018-06-28T23:30:00Z")));
+                Instant.parse("2018-06-12T22:45:00Z"),
+                Instant.parse("2018-06-12T23:30:00Z")));
   }
 
   @Test
@@ -84,8 +95,8 @@ public class MatchIntegrationTests {
             new Match(
                 Court.COURT_1,
                 ImmutableSet.of(),
-                Instant.parse("2018-04-29T22:45:00Z"),
-                Instant.parse("2018-04-29T23:30:00Z")));
+                Instant.parse("2018-04-26T22:45:00Z"),
+                Instant.parse("2018-04-26T23:30:00Z")));
   }
 
   @Test
@@ -108,6 +119,17 @@ public class MatchIntegrationTests {
                 ImmutableSet.of("Bruce Chafee"),
                 Instant.parse("2018-04-25T22:00:00Z"),
                 Instant.parse("2018-04-25T22:45:00Z")));
+  }
+
+  @Test
+  public void testPlayerHasBeenRemoved() throws Exception {
+    assertThat(getMatch("playerHasBeenRemoved"))
+        .isEqualTo(
+            new Match(
+                Court.COURT_3,
+                ImmutableSet.of(),
+                Instant.parse("2018-03-20T23:30:00Z"),
+                Instant.parse("2018-03-21T00:15:00Z")));
   }
 
   private static Match getMatch(String fileName) {

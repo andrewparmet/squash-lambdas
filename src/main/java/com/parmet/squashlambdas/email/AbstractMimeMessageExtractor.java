@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
+import javax.mail.Part;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
@@ -20,13 +21,11 @@ abstract class AbstractMimeMessageExtractor<T> {
 
   public Appendable2<T> getEventsFromMessage(MimeMessage message) {
     return Utils.wrap(() -> {
-      if (message.isMimeType("text/calendar")) {
-        return null;
-      } else if (message.isMimeType("multipart/*")) {
+      if (message.isMimeType("multipart/*")) {
         MimeMultipart mimeMultipart = (MimeMultipart) message.getContent();
         return getFromMimeMultipart(mimeMultipart);
       } else {
-        return newInstance.get();
+        return getFromPart(message);
       }
     });
   }
@@ -41,24 +40,24 @@ abstract class AbstractMimeMessageExtractor<T> {
         new ContentType(mimeMultipart.getContentType()).match("multipart/alternative");
     if (multipartAlt) {
       // Alternatives appear in an order of increasing faithfulness to the original content.
-      return newInstance.get().appendAll(getFromBodyPart(mimeMultipart.getBodyPart(count - 1)));
+      return newInstance.get().appendAll(getFromPart(mimeMultipart.getBodyPart(count - 1)));
     }
     Appendable2<T> t = newInstance.get();
     for (int i = 0; i < count; i++) {
       BodyPart bodyPart = mimeMultipart.getBodyPart(i);
-      t.appendAll(getFromBodyPart(bodyPart));
+      t.appendAll(getFromPart(bodyPart));
     }
     return t;
   }
 
-  private Appendable2<T> getFromBodyPart(BodyPart bodyPart) throws IOException, MessagingException {
-    if (bodyPart.getContent() instanceof MimeMultipart) {
-      return getFromMimeMultipart((MimeMultipart) bodyPart.getContent());
+  private Appendable2<T> getFromPart(Part part) throws IOException, MessagingException {
+    if (part.getContent() instanceof MimeMultipart) {
+      return getFromMimeMultipart((MimeMultipart) part.getContent());
     }
 
     for (MimeParser<T> typeAndParser : parsers()) {
-      if (typeAndParser.isFor(bodyPart)) {
-        return newInstance.get().appendAll(typeAndParser.parse(bodyPart));
+      if (typeAndParser.isFor(part)) {
+        return newInstance.get().appendAll(typeAndParser.parse(part));
       }
     }
 

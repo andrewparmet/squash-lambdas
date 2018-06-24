@@ -1,6 +1,7 @@
 package com.parmet.squashlambdas.cal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.parmet.squashlambdas.email.EmailData;
 import com.parmet.squashlambdas.match.Match;
 import org.apache.commons.lang3.builder.EqualsBuilder;

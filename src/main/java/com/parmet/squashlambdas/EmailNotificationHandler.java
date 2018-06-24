@@ -18,7 +18,8 @@ public class EmailNotificationHandler implements RequestHandler<Object, Object> 
   @Override
   public Object handleRequest(Object input, Context context) {
     S3CreateObjectInfo info = S3EmailNotification.fromInputObject(input).getS3ObjectInfo();
-    EmailData data = new EmailRetriever(S3, info.getBucketName(), info.getObjectKey()).retrieveEmail();
+    EmailData data =
+        new EmailRetriever(S3, info.getBucketName(), info.getObjectKey()).retrieveEmail();
     Match match = Match.getFromEmailData(data);
 
     // TODO: Google API calls
