@@ -5,9 +5,9 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.parmet.squashlambdas.cal.ChangeSummary;
 import com.parmet.squashlambdas.email.EmailData;
 import com.parmet.squashlambdas.email.EmailRetriever;
-import com.parmet.squashlambdas.match.Match;
 import com.parmet.squashlambdas.s3.S3CreateObjectInfo;
 import com.parmet.squashlambdas.s3.S3EmailNotification;
 
@@ -18,9 +18,9 @@ public class EmailNotificationHandler implements RequestHandler<Object, Object> 
   @Override
   public Object handleRequest(Object input, Context context) {
     S3CreateObjectInfo info = S3EmailNotification.fromInputObject(input).getS3ObjectInfo();
-    EmailData data =
+    EmailData email =
         new EmailRetriever(S3, info.getBucketName(), info.getObjectKey()).retrieveEmail();
-    Match match = Match.getFromEmailData(data);
+    ChangeSummary changeSummary = ChangeSummary.fromEmail(email);
 
     // TODO: Google API calls
     // 1. If created, create
