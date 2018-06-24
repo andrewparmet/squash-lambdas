@@ -1,6 +1,7 @@
 package com.parmet.squashlambdas.match;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.parmet.squashlambdas.email.EmailData;
 import com.parmet.squashlambdas.match.TimeParser.StartAndEnd;
 import java.util.Set;
