@@ -1,0 +1,12 @@
+<configuration>
+  <google>
+    <credsLocation>s3</credsLocation>
+  </google>
+  
+  <aws>
+    <googleCalCreds>
+      <bucket>${env:CREDS_BUCKET}</bucket>
+      <key>${env:CREDS_KEY}</key>
+    </googleCalCreds>
+  </aws>
+</configuration>

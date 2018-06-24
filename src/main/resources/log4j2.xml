@@ -1,4 +1,3 @@
-
 <Configuration status="INFO" shutdownHook="disable" packages="com.gemstone.gemfire.internal.logging.log4j,log4j.extensions">
   <Appenders>
     <Console name="STDOUT" target="SYSTEM_OUT">
