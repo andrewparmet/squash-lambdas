@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.parmet.squashlambdas.email.EmailData;
 import com.parmet.squashlambdas.match.Match;
+import java.util.Optional;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -17,7 +18,7 @@ public class ChangeSummary {
     this.match = checkNotNull(match, "match");
   }
 
-  public static ChangeSummary fromEmail(EmailData email) {
+  public static Optional<ChangeSummary> fromEmail(EmailData email) {
     return new ChangeSummaryRetriever(email).getChangeSummary();
   }
 

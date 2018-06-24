@@ -77,7 +77,8 @@ dependencies {
 
   testCompile 'junit:junit:4.12'
   testCompile 'org.assertj:assertj-core:3.9.1'
-  testCompile 'com.google.truth:truth:0.39'
+  testCompile 'com.google.truth:truth:0.40'
+  testCompile 'com.google.truth.extensions:truth-java8-extension:0.40'
   testCompile fileTree(dir: 'src/test/lib', include: ['*.jar'])
 }
 
