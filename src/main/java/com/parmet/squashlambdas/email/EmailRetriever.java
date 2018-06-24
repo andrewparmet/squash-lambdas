@@ -22,7 +22,7 @@ public class EmailRetriever {
   }
 
   public EmailData retrieveEmail() {
-    return Utils.wrap(() -> {
+    return EmailUtils.get(() -> {
       String email = s3.getObjectAsString(bucket, key);
       try (InputStream is = new ByteArrayInputStream(email.getBytes(UTF_8))) {
         MimeMessage message = new MimeMessage(null, is);

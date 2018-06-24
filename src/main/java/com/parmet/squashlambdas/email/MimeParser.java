@@ -6,6 +6,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import biweekly.Biweekly;
 import biweekly.ICalendar;
 import com.google.common.io.CharStreams;
+import com.parmet.squashlambdas.email.EmailUtils.IoMsgFunction;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;

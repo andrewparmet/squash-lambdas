@@ -6,8 +6,16 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import javax.mail.MessagingException;
 
-class Utils {
-  public static <T, R> R wrap(IoMsgSupplier<R> sup) {
+class EmailUtils {
+  interface IoMsgFunction<T, R> {
+    R apply(T t) throws IOException, MessagingException;
+  }
+
+  interface IoMsgSupplier<R> {
+    R get() throws IOException, MessagingException;
+  }
+
+  public static <R> R get(IoMsgSupplier<R> sup) {
     try {
       return sup.get();
     } catch (IOException ex) {
