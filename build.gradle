@@ -48,6 +48,7 @@ dependencyUpdates.resolutionStrategy = {
 
 repositories {
   mavenCentral()
+  maven { url "https://jitpack.io" }
 }
 
 dependencies {
@@ -57,11 +58,12 @@ dependencies {
   compile 'com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.1'
   compile 'com.google.code.gson:gson:2.8.2'
   compile 'com.google.code.findbugs:annotations:3.0.1'
-  compile 'com.google.guava:guava:24.1-jre'
+  compile 'com.google.guava:guava:25.1-jre'
   compile 'com.google.mug:mug:1.10'
-  compile 'com.google.api-client:google-api-client:1.23.0'
   compile 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
-  compile 'com.google.apis:google-api-services-calendar:v3-rev305-1.23.0'
+  compile('com.google.apis:google-api-services-calendar:v3-rev305-1.23.0') {
+    exclude group: 'com.google.guava'
+  }
   compile 'net.sf.biweekly:biweekly:0.6.1'
   compile 'org.apache.commons:commons-email:1.5'
   compile 'org.apache.commons:commons-lang3:3.7'
