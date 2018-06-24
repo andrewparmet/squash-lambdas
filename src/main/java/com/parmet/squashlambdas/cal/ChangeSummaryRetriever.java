@@ -14,7 +14,7 @@ class ChangeSummaryRetriever {
 
   public ChangeSummary getChangeSummary() {
     return new ChangeSummary(
-        Action.parseFromSubject(email.getSubject()),
+        Action.parseFromSubject(email.getBody()),
         Match.getFromEmailData(email));
   }
 }

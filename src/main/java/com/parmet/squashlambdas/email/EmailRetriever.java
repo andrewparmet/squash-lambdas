@@ -9,7 +9,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 import javax.mail.internet.MimeMessage;
-import org.apache.commons.mail.util.MimeMessageParser;
 
 public class EmailRetriever {
   private final AmazonS3 s3;
@@ -27,9 +26,8 @@ public class EmailRetriever {
       String email = s3.getObjectAsString(bucket, key);
       try (InputStream is = new ByteArrayInputStream(email.getBytes(UTF_8))) {
         MimeMessage message = new MimeMessage(null, is);
-        MimeMessageParser parser = new MimeMessageParser(message);
         return new EmailData(
-            parser.getSubject(),
+            message.getSubject(),
             new BodyExtractor().getEventsFromMessage(message).toString(),
             new CalendarExtractor()
                 .getEventsFromMessage(message)
