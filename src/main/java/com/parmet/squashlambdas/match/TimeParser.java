@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
@@ -20,6 +19,7 @@ class TimeParser {
       Pattern.compile(".* Date: .*, (.*) (\\d{2}).* (.*) Time: (.*) to (.*) (AM|PM).*");
 
   private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("hh:mm a");
+  private static final ZoneId BOSTON = ZoneId.of("America/New_York");
 
   public static StartAndEnd parse(String body) {
     Matcher matcher = PATTERN.matcher(body);
@@ -27,21 +27,16 @@ class TimeParser {
     Month month = Month.valueOf(matcher.group(1).toUpperCase());
     int dayOfMonth = Integer.parseInt(matcher.group(2));
     int year = Integer.parseInt(matcher.group(3));
-    LocalTime startTime = LocalTime.parse(matcher.group(4), TIME);
-    LocalTime endTime = LocalTime.parse(matcher.group(5) + " " + matcher.group(6), TIME);
+    LocalTime start = LocalTime.parse(matcher.group(4), TIME);
+    LocalTime end = LocalTime.parse(matcher.group(5) + " " + matcher.group(6), TIME);
 
-    LocalDateTime start = LocalDateTime.of(
-                LocalDate.of(year, month, dayOfMonth),
-                LocalTime.of(startTime.getHour(), startTime.getMinute()));
-    LocalDateTime end = LocalDateTime.of(
-                LocalDate.of(year, month, dayOfMonth),
-                LocalTime.of(endTime.getHour(), endTime.getMinute()));
+    LocalDate date = LocalDate.of(year, month, dayOfMonth);
 
-    ZoneId offset = ZoneId.of("America/New_York");
+    return new StartAndEnd(inBoston(date, start), inBoston(date, end));
+  }
 
-    return new StartAndEnd(
-        OffsetDateTime.of(start, offset.getRules().getOffset(start)).toInstant(),
-        OffsetDateTime.of(end, offset.getRules().getOffset(end)).toInstant());
+  private static Instant inBoston(LocalDate date, LocalTime time) {
+    return LocalDateTime.of(date, time).atZone(BOSTON).toInstant();
   }
 
   static class StartAndEnd {
