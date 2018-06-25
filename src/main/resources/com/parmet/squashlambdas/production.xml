@@ -8,5 +8,6 @@
       <bucket>${env:CREDS_BUCKET}</bucket>
       <key>${env:CREDS_KEY}</key>
     </googleCalCreds>
+    <handledTopicArn>${env:HANDLED_TOPIC_ARN}</handledTopicArn>
   </aws>
 </configuration>

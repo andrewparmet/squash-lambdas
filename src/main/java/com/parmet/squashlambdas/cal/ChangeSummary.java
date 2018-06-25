@@ -29,6 +29,10 @@ public class ChangeSummary {
     Utils.run(() -> action.handle(match, manager));
   }
 
+  public Match getMatch() {
+    return match;
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (obj == null) {
