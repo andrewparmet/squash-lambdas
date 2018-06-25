@@ -11,19 +11,20 @@ import org.apache.logging.log4j.Logger;
 public class GoogleUtils {
   private static final Logger log = LogManager.getLogger();
 
-  public static void giveUserOwnership(Calendar calendar, String userEmail) throws IOException {
+  public static void giveUserOwnership(Calendar calendar, String calendarId, String userEmail)
+      throws IOException {
     calendar
         .acl()
         .insert(
-            "primary",
+            calendarId,
             new AclRule()
                 .setRole("owner")
                 .setScope(new Scope().setType("user").setValue(userEmail)))
         .execute();
   }
 
-  public static void printAcl(Calendar calendar) throws IOException {
-    Acl acl = calendar.acl().list("primary").execute();
+  public static void printAcl(Calendar calendar, String calendarId) throws IOException {
+    Acl acl = calendar.acl().list(calendarId).execute();
     for (AclRule rule : acl.getItems()) {
       log.info("{}:{}", rule.getId(), rule.getRole());
     }

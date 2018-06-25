@@ -12,7 +12,7 @@ import org.junit.Test;
 public class EventManagerTest extends ConfiguredTest {
   @Test
   public void testCreateMatch() throws Exception {
-    new EventManager(calendar()).create(
+    manager().create(
         new Match(
             Court.COURT_3,
             ImmutableSet.of(),
@@ -22,7 +22,7 @@ public class EventManagerTest extends ConfiguredTest {
 
   @Test
   public void testUpdateMatch() throws Exception {
-    new EventManager(calendar()).update(
+    manager().update(
         new Match(
             Court.COURT_3,
             ImmutableSet.of("Logan Ramseyer"),
@@ -32,11 +32,15 @@ public class EventManagerTest extends ConfiguredTest {
 
   @Test
   public void testDeleteMatch() throws Exception {
-    new EventManager(calendar()).delete(
+    manager().delete(
         new Match(
             Court.COURT_3,
             ImmutableSet.of("Logan Ramseyer"),
             Instant.parse("2018-06-25T23:30:00Z"),
             Instant.parse("2018-06-26T00:15:00Z")));
+  }
+
+  private EventManager manager() {
+    return new EventManager(calendar(), config().getString("google.calendarId"));
   }
 }
