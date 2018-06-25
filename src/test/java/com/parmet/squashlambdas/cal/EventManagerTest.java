@@ -5,8 +5,10 @@ import com.parmet.squashlambdas.match.Court;
 import com.parmet.squashlambdas.match.Match;
 import com.parmet.squashlambdas.testutil.ConfiguredTest;
 import java.time.Instant;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore // These actually modify a calendar
 public class EventManagerTest extends ConfiguredTest {
   @Test
   public void testCreateMatch() throws Exception {
