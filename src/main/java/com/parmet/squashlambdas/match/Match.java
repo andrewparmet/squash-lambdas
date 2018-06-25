@@ -1,7 +1,13 @@
 package com.parmet.squashlambdas.match;
 
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.api.client.util.DateTime;
+import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventDateTime;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 import com.parmet.squashlambdas.email.EmailData;
 import java.time.Instant;
@@ -11,6 +17,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class Match {
+  private final Instant createTime = Instant.now();
+
   private final ImmutableSet<String> otherPlayers;
   private final Instant start;
   private final Instant end;
@@ -25,6 +33,25 @@ public class Match {
 
   public static Match getFromEmailData(EmailData email) {
     return new MatchRetriever(email).getMatch();
+  }
+
+  public Instant getStart() {
+    return start;
+  }
+
+  public Instant getEnd() {
+    return end;
+  }
+
+  public Event toEvent() {
+    return new Event()
+        .setStart(new EventDateTime().setDateTime(new DateTime(start.toEpochMilli())))
+        .setEnd(new EventDateTime().setDateTime(new DateTime(end.toEpochMilli())))
+        .setLocation(court + ", Tennis and Racquet Club")
+        .setSummary(
+            UPPER_UNDERSCORE.to(UPPER_CAMEL, court.getSport().toString())
+                + (otherPlayers.isEmpty() ? "" : " v. " + Joiner.on(',').join(otherPlayers)))
+        .setDescription(toString());
   }
 
   @Override
@@ -61,6 +88,7 @@ public class Match {
   @Override
   public String toString() {
     return new ToStringBuilder(this)
+        .append("createTime", createTime)
         .append("court", court)
         .append("otherPlayers", otherPlayers)
         .append("start", start)
