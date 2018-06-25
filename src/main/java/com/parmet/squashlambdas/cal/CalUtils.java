@@ -8,7 +8,7 @@ import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class GoogleUtils {
+class CalUtils {
   private static final Logger log = LogManager.getLogger();
 
   public static void giveUserOwnership(Calendar calendar, String calendarId, String userEmail)
