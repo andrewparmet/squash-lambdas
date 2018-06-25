@@ -15,7 +15,6 @@ import com.google.api.services.calendar.CalendarScopes;
 import com.google.common.collect.ImmutableList;
 import com.parmet.squashlambdas.util.Utils;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -23,26 +22,21 @@ import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
-import org.apache.commons.configuration2.ex.ConfigurationException;
 
 class ConfigUtils {
-  public static Configuration loadConfiguration(String path) {
+  public static Configuration loadConfiguration(String file) {
     try {
-      return loadConfiguration(new File(path));
+      return new FileBasedConfigurationBuilder<>(XMLConfiguration.class)
+          .configure(
+              new Parameters()
+              .xml()
+              .setURL(ConfigUtils.class.getResource(file))
+              .setValidating(false)
+              .setThrowExceptionOnMissing(true))
+          .getConfiguration();
     } catch (Exception ex) {
       throw new RuntimeException(ex);
     }
-  }
-
-  private static Configuration loadConfiguration(File file) throws ConfigurationException {
-    return new FileBasedConfigurationBuilder<>(XMLConfiguration.class)
-        .configure(
-            new Parameters()
-                .xml()
-                .setFileName(file.getPath())
-                .setValidating(false)
-                .setThrowExceptionOnMissing(true))
-        .getConfiguration();
   }
 
   public static AmazonS3 configureS3() {
