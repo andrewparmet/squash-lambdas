@@ -28,9 +28,9 @@ public class EmailRetriever {
         MimeMessage message = new MimeMessage(null, is);
         return new EmailData(
             message.getSubject(),
-            new BodyExtractor().getEventsFromMessage(message).toString(),
+            new BodyExtractor().extract(message).toString(),
             new CalendarExtractor()
-                .getEventsFromMessage(message)
+                .extract(message)
                 .toList()
                 .stream()
                 .map(ICalendar::getEvents)
