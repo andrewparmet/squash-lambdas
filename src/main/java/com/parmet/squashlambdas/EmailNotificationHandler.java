@@ -27,16 +27,16 @@ public class EmailNotificationHandler implements RequestHandler<Object, Object> 
 
   @Override
   public Object handleRequest(Object input, Context context) {
+    log.info("Starting handling of {}", input);
     try {
       S3CreateObjectInfo info = S3EmailNotification.fromInputObject(input).getS3ObjectInfo();
       EmailData email =
           new EmailRetriever(s3, info.getBucketName(), info.getObjectKey()).retrieveEmail();
       ChangeSummary.fromEmail(email).ifPresent(summary -> summary.process(calendar));
+      return input;
     } catch (Throwable t) {
-      String msg = String.format("Caught error while processing input %s", input);
-      log.error(msg, t);
+      log.error(t);
+      throw t;
     }
-
-    return input;
   }
 }
