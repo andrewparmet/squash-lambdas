@@ -1,7 +1,5 @@
 package com.parmet.squashlambdas.match;
 
-import static com.google.common.base.CaseFormat.UPPER_CAMEL;
-import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.api.client.util.DateTime;
@@ -48,10 +46,12 @@ public class Match {
         .setStart(new EventDateTime().setDateTime(new DateTime(start.toEpochMilli())))
         .setEnd(new EventDateTime().setDateTime(new DateTime(end.toEpochMilli())))
         .setLocation(court + ", Tennis and Racquet Club")
-        .setSummary(
-            UPPER_UNDERSCORE.to(UPPER_CAMEL, court.getSport().toString())
-                + (otherPlayers.isEmpty() ? "" : " v. " + Joiner.on(',').join(otherPlayers)))
+        .setSummary(court.getSport() + renderOtherPlayers())
         .setDescription(toString());
+  }
+
+  private String renderOtherPlayers() {
+    return otherPlayers.isEmpty() ? " Match" : " v. " + Joiner.on(',').join(otherPlayers);
   }
 
   @Override

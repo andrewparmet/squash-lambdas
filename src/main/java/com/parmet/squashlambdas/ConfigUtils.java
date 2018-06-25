@@ -23,10 +23,13 @@ import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class ConfigUtils {
   public static Configuration loadConfiguration(String file) {
     try {
+      ToStringBuilder.setDefaultStyle(ToStringStyle.SHORT_PREFIX_STYLE);
       return new FileBasedConfigurationBuilder<>(XMLConfiguration.class)
           .configure(
               new Parameters()
