@@ -22,7 +22,7 @@ public class EmailNotificationHandler implements RequestHandler<Object, Object> 
   private final Calendar calendar;
 
   public EmailNotificationHandler() {
-    Configuration config = ConfigUtils.loadConfiguration(System.getenv("CONFIG_NAME" + ".xml"));
+    Configuration config = ConfigUtils.loadConfiguration(System.getenv("CONFIG_NAME") + ".xml");
     this.s3 = ConfigUtils.configureS3();
     this.calendar = ConfigUtils.configureCalendar(config, s3);
   }
