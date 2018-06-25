@@ -2,6 +2,7 @@ package com.parmet.squashlambdas.email;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import biweekly.Biweekly;
 import biweekly.ICalendar;
@@ -10,7 +11,6 @@ import com.parmet.squashlambdas.email.EmailUtils.IoMsgFunction;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import javax.mail.MessagingException;
 import javax.mail.Part;
 import org.jsoup.Jsoup;
@@ -33,9 +33,8 @@ class MimeParser<T> {
           "text/calendar",
           bodyPart -> {
             try (InputStream is = bodyPart.getInputStream();
-                InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-              String str = CharStreams.toString(isr);
-              return new AppendableList<>(Biweekly.parse(str).all());
+                InputStreamReader isr = new InputStreamReader(is, UTF_8)) {
+              return new AppendableList<>(Biweekly.parse(CharStreams.toString(isr)).all());
             }
           });
 

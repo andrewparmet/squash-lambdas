@@ -19,7 +19,7 @@ abstract class AbstractMimeMessageExtractor<T> {
     this.newInstance = checkNotNull(newInstance);
   }
 
-  public Appendable2<T> getEventsFromMessage(MimeMessage message) {
+  public Appendable2<T> extract(MimeMessage message) {
     return EmailUtils.get(() -> {
       if (message.isMimeType("multipart/*")) {
         MimeMultipart mimeMultipart = (MimeMultipart) message.getContent();
