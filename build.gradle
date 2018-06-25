@@ -53,7 +53,8 @@ repositories {
 }
 
 dependencies {
-  compile 'com.amazonaws:aws-java-sdk-s3:1.11.301'
+  compile 'com.amazonaws:aws-java-sdk-s3:1.11.354'
+  compile 'com.amazonaws:aws-java-sdk-sns:1.11.354'
   compile 'com.amazonaws:aws-lambda-java-core:1.2.0'  
   compile 'com.diffplug.durian:durian:3.4.0'
   compile 'com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.1'

@@ -3,9 +3,10 @@ package com.parmet.squashlambdas;
 import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -40,7 +41,11 @@ public class ConfigUtils {
   }
 
   public static AmazonS3 configureS3() {
-    return AmazonS3ClientBuilder.standard().withRegion(Regions.US_EAST_1).build();
+    return AmazonS3ClientBuilder.defaultClient();
+  }
+
+  public static AmazonSNS configureSns() {
+    return AmazonSNSClientBuilder.defaultClient();
   }
 
   public static Calendar configureCalendar(Configuration config, AmazonS3 s3) {

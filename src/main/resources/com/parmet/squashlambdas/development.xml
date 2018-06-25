@@ -3,4 +3,8 @@
     <credsLocation>local</credsLocation>
     <credsFileName>google-squash-project.json</credsFileName>
   </google>
+  
+  <aws>
+    <handledTopicArn>fake-arn</handledTopicArn>
+  </aws>
 </configuration>
