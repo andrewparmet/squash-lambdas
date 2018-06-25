@@ -41,7 +41,8 @@ public enum Action {
       return UPDATE;
     }
     if (Stream.of(
-        "You've been removed from a reservation").anyMatch(body::contains)) {
+        "You've been removed from a reservation",
+        "You have successfully cancelled a reservation").anyMatch(body::contains)) {
       return DELETE;
     }
 

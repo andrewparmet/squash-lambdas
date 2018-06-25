@@ -164,6 +164,19 @@ public class IntegrationTests {
     assertThat(getSummary("reminder")).isEmpty();
   }
 
+  @Test
+  public void testReservationReleased() throws Exception {
+    assertThat(getSummary("reservationReleased"))
+        .hasValue(
+            summary(
+                Action.DELETE,
+                new Match(
+                    Court.COURT_3,
+                    ImmutableSet.of(),
+                    Instant.parse("2018-06-29T00:15:00Z"),
+                    Instant.parse("2018-06-29T01:00:00Z"))));
+  }
+
   private static Optional<ChangeSummary> getSummary(String fileName) {
     return ChangeSummary.fromEmail(
         EmailRetrieverTest.fromBody(TestUtils.getResourceAsString(fileName)));
