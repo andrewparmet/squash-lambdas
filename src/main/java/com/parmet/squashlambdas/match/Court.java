@@ -22,11 +22,11 @@ public enum Court {
   TENNIS_COURT(TENNIS),
   RACQUETS_COURT(RACQUETS);
 
-  private static final Pattern PATTERN = Pattern.compile(".*Court: Court #(\\d) [/\\-].*");
+  private static final Pattern COURT = Pattern.compile(".*Court: Court #(\\d) [/\\-].*");
 
   private final Sport sport;
   private final String pretty =
-      UPPER_UNDERSCORE.to(UPPER_CAMEL, super.toString().replaceAll("_", " "));
+      UPPER_UNDERSCORE.to(UPPER_CAMEL, name().replaceAll("_", " "));
 
   private Court(Sport sport) {
     this.sport = checkNotNull(sport, "sport");
@@ -34,7 +34,7 @@ public enum Court {
 
   /** e.g., "Tennis & Racquet Club / Court: Court #7" */
   public static Court fromLocationString(String body) {
-    Matcher m = PATTERN.matcher(body);
+    Matcher m = COURT.matcher(body);
     checkArgument(m.matches(), "Unable to parse court from %s", body);
     return valueOf("COURT_" + Integer.parseInt(m.group(1)));
   }
