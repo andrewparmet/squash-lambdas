@@ -11,18 +11,20 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-class EventManager {
+public class EventManager {
   private static final Logger log = LogManager.getLogger();
 
   private final Calendar calendar;
+  private final String calendarId;
 
-  public EventManager(Calendar calendar) {
+  public EventManager(Calendar calendar, String calendarId) {
     this.calendar = checkNotNull(calendar, "calendar");
+    this.calendarId = checkNotNull(calendarId, "calendarId");
   }
 
   public void create(Match match) throws IOException {
     log.info("Creating match {}", match);
-    calendar.events().insert("primary", match.toEvent()).execute();
+    calendar.events().insert(calendarId, match.toEvent()).execute();
   }
 
   public void update(Match match) throws IOException {
@@ -33,13 +35,13 @@ class EventManager {
     if (events.size() > 1) {
       log.info("Found too many events to update; deleting them all. {}", events);
       for (Event event : events) {
-        calendar.events().delete("primary", event.getId()).execute();
+        calendar.events().delete(calendarId, event.getId()).execute();
       }
       create(match);
     } else {
       Event event = Iterables.getOnlyElement(events);
       log.info("Found one event to update: {}", event);
-      calendar.events().patch("primary", event.getId(), match.toEvent()).execute();
+      calendar.events().patch(calendarId, event.getId(), match.toEvent()).execute();
     }
   }
 
@@ -47,13 +49,13 @@ class EventManager {
     log.info("Deleting match {}", match);
     for (Event event : findEvents(match)) {
       log.info("Deleting event {}", event);
-      calendar.events().delete("primary", event.getId()).execute();
+      calendar.events().delete(calendarId, event.getId()).execute();
     }
   }
 
   private List<Event> findEvents(Match match) throws IOException {
-    return calendar.events().list("primary")
-        .setQ(match.getStart().toString() + " " + match.getEnd().toString())
+    return calendar.events().list(calendarId)
+        .setQ(match.getStart() + " " + match.getEnd())
         .execute()
         .getItems();
   }

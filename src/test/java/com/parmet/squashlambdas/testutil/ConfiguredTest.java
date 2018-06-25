@@ -14,6 +14,10 @@ public abstract class ConfiguredTest {
     return calendar;
   }
 
+  protected Configuration config() {
+    return config;
+  }
+
   @Before
   public void before() {
     this.config = ConfigUtils.loadConfiguration("test.xml");

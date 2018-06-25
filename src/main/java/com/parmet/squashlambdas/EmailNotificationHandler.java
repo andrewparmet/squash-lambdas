@@ -10,6 +10,7 @@ import com.google.common.base.Throwables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.parmet.squashlambdas.cal.ChangeSummary;
+import com.parmet.squashlambdas.cal.EventManager;
 import com.parmet.squashlambdas.email.EmailData;
 import com.parmet.squashlambdas.email.EmailRetriever;
 import com.parmet.squashlambdas.s3.S3CreateObjectInfo;
@@ -36,6 +37,8 @@ public class EmailNotificationHandler implements RequestHandler<Object, Object> 
   private final AmazonS3 s3;
   private final AmazonSNS sns;
   private final Calendar calendar;
+
+  private final String calendarId;
   private final String topicArn;
 
   public EmailNotificationHandler() {
@@ -43,6 +46,7 @@ public class EmailNotificationHandler implements RequestHandler<Object, Object> 
     this.s3 = ConfigUtils.configureS3();
     this.sns = ConfigUtils.configureSns();
     this.calendar = ConfigUtils.configureCalendar(config, s3);
+    this.calendarId = config.getString("google.calendarId");
     this.topicArn = config.getString("aws.handledTopicArn");
   }
 
@@ -55,7 +59,7 @@ public class EmailNotificationHandler implements RequestHandler<Object, Object> 
       EmailData email = getEmail(info);
       ChangeSummary.fromEmail(email).ifPresent(summary -> {
         addToContext("changeSummary", summary);
-        summary.process(calendar);
+        summary.process(new EventManager(calendar, calendarId));
         publishSuccess(summary);
       });
       return input;

@@ -1,6 +1,7 @@
 <configuration>
   <google>
     <credsLocation>s3</credsLocation>
+    <calendarId>primary</calendarId>
   </google>
   
   <aws>

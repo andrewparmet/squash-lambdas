@@ -2,6 +2,7 @@
   <google>
     <credsLocation>local</credsLocation>
     <credsFileName>google-squash-project.json</credsFileName>
+    <calendarId>primary</calendarId>
   </google>
   
   <aws>

@@ -2,7 +2,6 @@ package com.parmet.squashlambdas.cal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.api.services.calendar.Calendar;
 import com.parmet.squashlambdas.email.EmailData;
 import com.parmet.squashlambdas.match.Match;
 import com.parmet.squashlambdas.util.Utils;
@@ -24,9 +23,8 @@ public class ChangeSummary {
     return new ChangeSummaryRetriever(email).getChangeSummary();
   }
 
-  public void process(Calendar calendar) {
-    EventManager manager = new EventManager(calendar);
-    Utils.run(() -> action.handle(match, manager));
+  public void process(EventManager eventManager) {
+    Utils.run(() -> action.handle(match, eventManager));
   }
 
   public Match getMatch() {
