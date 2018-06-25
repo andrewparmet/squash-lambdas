@@ -1,5 +1,7 @@
 package com.parmet.squashlambdas.match;
 
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.parmet.squashlambdas.match.Sport.HARDBALL;
@@ -23,6 +25,8 @@ public enum Court {
   private static final Pattern PATTERN = Pattern.compile(".*Court: Court #(\\d) [/\\-].*");
 
   private final Sport sport;
+  private final String pretty =
+      UPPER_UNDERSCORE.to(UPPER_CAMEL, super.toString().replaceAll("_", " "));
 
   private Court(Sport sport) {
     this.sport = checkNotNull(sport, "sport");
@@ -37,5 +41,10 @@ public enum Court {
 
   public Sport getSport() {
     return sport;
+  }
+
+  @Override
+  public String toString() {
+    return pretty;
   }
 }

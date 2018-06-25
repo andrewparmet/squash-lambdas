@@ -5,12 +5,10 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.s3.AmazonS3;
 import com.google.api.services.calendar.Calendar;
 import com.parmet.squashlambdas.cal.ChangeSummary;
-import com.parmet.squashlambdas.cal.GoogleUtils;
 import com.parmet.squashlambdas.email.EmailData;
 import com.parmet.squashlambdas.email.EmailRetriever;
 import com.parmet.squashlambdas.s3.S3CreateObjectInfo;
 import com.parmet.squashlambdas.s3.S3EmailNotification;
-import java.util.Optional;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,22 +31,12 @@ public class EmailNotificationHandler implements RequestHandler<Object, Object> 
       S3CreateObjectInfo info = S3EmailNotification.fromInputObject(input).getS3ObjectInfo();
       EmailData email =
           new EmailRetriever(s3, info.getBucketName(), info.getObjectKey()).retrieveEmail();
-      Optional<ChangeSummary> changeSummary = ChangeSummary.fromEmail(email);
-
-      GoogleUtils.printAcl(calendar);
-      // TODO: Google API calls
-      // 1. If created, create
-      // 2. If deleted, delete
-      // 3. If player added, delete and create new
-
-      // Catch exception and email myself failure
-
-      log.info(changeSummary);
+      ChangeSummary.fromEmail(email).ifPresent(summary -> summary.process(calendar));
     } catch (Throwable t) {
       String msg = String.format("Caught error while processing input %s", input);
       log.error(msg, t);
     }
 
-    return "Hello world; received: " + input;
+    return input;
   }
 }

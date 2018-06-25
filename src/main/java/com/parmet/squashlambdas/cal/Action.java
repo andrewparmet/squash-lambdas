@@ -1,9 +1,33 @@
 package com.parmet.squashlambdas.cal;
 
+import com.parmet.squashlambdas.match.Match;
+import java.io.IOException;
 import java.util.stream.Stream;
 
 public enum Action {
-  CREATE, UPDATE, DELETE, NONE;
+  CREATE {
+    @Override
+    public void handle(Match match, EventManager manager) throws IOException {
+      manager.create(match);
+    }
+  },
+  UPDATE {
+    @Override
+    public void handle(Match match, EventManager manager) throws IOException {
+      manager.update(match);
+    }
+  },
+  DELETE {
+    @Override
+    public void handle(Match match, EventManager manager) throws IOException {
+      manager.delete(match);
+    }
+  },
+  NONE {
+    @Override
+    public void handle(Match match, EventManager manager) {
+    }
+  };
 
   public static Action parseFromSubject(String body) {
     if (Stream.of(
@@ -28,4 +52,6 @@ public enum Action {
 
     throw new IllegalArgumentException("Unable to parse action from " + body);
   }
+
+  public abstract void handle(Match match, EventManager manager) throws IOException;
 }
