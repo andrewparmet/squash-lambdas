@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 class TimeParser {
   /** "Date: Thursday, June 28th 2018 Time: 08:15 PM to 09:00 PM". */
   private static final Pattern PATTERN =
-      Pattern.compile(".* Date: .*, (.*) (\\d{2}).* (.*) Time: (.*) to (.*) (AM|PM).*");
+      Pattern.compile(".* Date: .*, (.*) (\\d\\d?).* (.*) Time: (.*) to (.*) (AM|PM).*");
 
   private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("hh:mm a");
   private static final ZoneId BOSTON = ZoneId.of("America/New_York");

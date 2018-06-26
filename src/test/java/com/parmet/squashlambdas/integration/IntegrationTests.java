@@ -56,6 +56,19 @@ public class IntegrationTests {
   }
 
   @Test
+  public void testReservationCreated4() throws Exception {
+    assertThat(getSummary("reservationCreated4"))
+        .hasValue(
+            summary(
+                Action.CREATE,
+                new Match(
+                    Court.COURT_1,
+                    ImmutableSet.of(),
+                    Instant.parse("2018-07-03T22:45:00Z"),
+                    Instant.parse("2018-07-03T23:30:00Z"))));
+  }
+
+  @Test
   public void testReservationJoined() throws Exception {
     assertThat(getSummary("someoneJoinsMyReservation"))
         .hasValue(
