@@ -1,7 +1,5 @@
 package com.parmet.squashlambdas.email;
 
-import com.google.common.collect.ImmutableList;
-
 interface Appendable2<T> extends Iterable<T> {
   Appendable2<T> append(T toAppend);
 
@@ -11,6 +9,4 @@ interface Appendable2<T> extends Iterable<T> {
     }
     return this;
   }
-
-  ImmutableList<T> toList();
 }

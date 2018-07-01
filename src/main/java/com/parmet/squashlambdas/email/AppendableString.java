@@ -1,7 +1,7 @@
 package com.parmet.squashlambdas.email;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Iterator;
+import com.google.common.collect.UnmodifiableIterator;
 
 class AppendableString implements Appendable2<StringBuilder> {
   private final StringBuilder delegate = new StringBuilder();
@@ -14,7 +14,7 @@ class AppendableString implements Appendable2<StringBuilder> {
 
   @Override
   public Appendable2<StringBuilder> append(StringBuilder toAppend) {
-    delegate.append(toAppend.toString());
+    delegate.append(toAppend);
     return this;
   }
 
@@ -24,12 +24,7 @@ class AppendableString implements Appendable2<StringBuilder> {
   }
 
   @Override
-  public Iterator<StringBuilder> iterator() {
+  public UnmodifiableIterator<StringBuilder> iterator() {
     return ImmutableList.of(delegate).iterator();
-  }
-
-  @Override
-  public ImmutableList<StringBuilder> toList() {
-    return ImmutableList.of(delegate);
   }
 }
