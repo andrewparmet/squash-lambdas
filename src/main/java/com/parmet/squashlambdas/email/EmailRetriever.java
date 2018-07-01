@@ -5,6 +5,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import biweekly.ICalendar;
 import com.amazonaws.services.s3.AmazonS3;
+import com.google.common.collect.Streams;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
@@ -29,10 +30,7 @@ public class EmailRetriever {
         return new EmailData(
             message.getSubject(),
             new BodyExtractor().extract(message).toString(),
-            new CalendarExtractor()
-                .extract(message)
-                .toList()
-                .stream()
+            Streams.stream(new CalendarExtractor().extract(message))
                 .map(ICalendar::getEvents)
                 .flatMap(List::stream)
                 .findFirst());

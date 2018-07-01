@@ -3,9 +3,7 @@ package com.parmet.squashlambdas.email;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.function.Supplier;
-import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.Part;
 import javax.mail.internet.ContentType;
@@ -22,8 +20,7 @@ abstract class AbstractMimeMessageExtractor<T> {
   public Appendable2<T> extract(MimeMessage message) {
     return EmailUtils.get(() -> {
       if (message.isMimeType("multipart/*")) {
-        MimeMultipart mimeMultipart = (MimeMultipart) message.getContent();
-        return getFromMimeMultipart(mimeMultipart);
+        return getFromMimeMultipart((MimeMultipart) message.getContent());
       } else {
         return getFromPart(message);
       }
@@ -36,33 +33,26 @@ abstract class AbstractMimeMessageExtractor<T> {
     if (count == 0) {
       throw new MessagingException("Multipart with no body parts not supported.");
     }
-    boolean multipartAlt =
-        new ContentType(mimeMultipart.getContentType()).match("multipart/alternative");
-    if (multipartAlt) {
-      // Alternatives appear in an order of increasing faithfulness to the original content.
-      return newInstance.get().appendAll(getFromPart(mimeMultipart.getBodyPart(count - 1)));
+    if (new ContentType(mimeMultipart.getContentType()).match("multipart/alternative")) {
+      // Alternatives appear in order of increasing faithfulness to the original content.
+      return getFromPart(mimeMultipart.getBodyPart(count - 1));
     }
     Appendable2<T> t = newInstance.get();
     for (int i = 0; i < count; i++) {
-      BodyPart bodyPart = mimeMultipart.getBodyPart(i);
-      t.appendAll(getFromPart(bodyPart));
+      t.appendAll(getFromPart(mimeMultipart.getBodyPart(i)));
     }
     return t;
   }
 
   private Appendable2<T> getFromPart(Part part) throws IOException, MessagingException {
-    if (part.getContent() instanceof MimeMultipart) {
-      return getFromMimeMultipart((MimeMultipart) part.getContent());
-    }
-
     for (MimeParser<T> typeAndParser : parsers()) {
       if (typeAndParser.isFor(part)) {
-        return newInstance.get().appendAll(typeAndParser.parse(part));
+        return typeAndParser.parse(part);
       }
     }
-
     return newInstance.get();
   }
 
-  protected abstract List<MimeParser<T>> parsers();
+  /** Parsers specified in descending preferred parse order (most preferred first). */
+  protected abstract Iterable<MimeParser<T>> parsers();
 }
