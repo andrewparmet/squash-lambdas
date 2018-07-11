@@ -79,7 +79,7 @@ public class EmailNotificationHandler implements RequestHandler<Object, Object> 
   private EmailData getEmail(S3CreateObjectInfo info) {
     EmailData email =
         new EmailRetriever(s3, info.getBucketName(), info.getObjectKey()).retrieveEmail();
-    addToContext("emaiData", email);
+    addToContext("emailData", email);
     return email;
   }
 
