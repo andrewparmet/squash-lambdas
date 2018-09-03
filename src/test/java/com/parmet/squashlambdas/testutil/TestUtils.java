@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas.testutils;
+package com.parmet.squashlambdas.testutil;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 

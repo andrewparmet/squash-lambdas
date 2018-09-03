@@ -15,6 +15,8 @@
     <exclude name="JUnitTestsShouldIncludeAssert"/>
     <exclude name="JUnitTestContainsTooManyAsserts"/>
     <exclude name="JUnitTestsShouldIncludeAssert"/>
+    <exclude name="AvoidStringBufferField"/>
+    <exclude name="AbstractClassWithoutAbstractMethod"/>
   </rule>
 
   <rule ref="category/java/errorprone.xml">

@@ -65,11 +65,11 @@ public class ConfigUtils {
   private static GoogleCredential loadCredential(Configuration config, AmazonS3 s3)
       throws IOException {
     String credsLocation = config.getString("google.credsLocation");
-    if (credsLocation.equals("local")) {
+    if ("local".equals(credsLocation)) {
       return GoogleCredential.fromStream(
           Files.newInputStream(Paths.get(config.getString("google.credsFileName"))));
     }
-    checkState(credsLocation.equals("s3"));
+    checkState("s3".equals(credsLocation));
     return GoogleCredential.fromStream(
         new ByteArrayInputStream(
             s3.getObjectAsString(
