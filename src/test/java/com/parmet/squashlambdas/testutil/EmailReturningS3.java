@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas.testutils;
+package com.parmet.squashlambdas.testutil;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

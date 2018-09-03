@@ -6,9 +6,7 @@ import com.google.common.collect.ImmutableSet;
 import com.parmet.squashlambdas.email.EmailData;
 import com.parmet.squashlambdas.email.EmailRetrieverTest;
 import com.parmet.squashlambdas.integration.IntegrationTests;
-import com.parmet.squashlambdas.match.Match;
-import com.parmet.squashlambdas.match.MatchRetriever;
-import com.parmet.squashlambdas.testutils.TestUtils;
+import com.parmet.squashlambdas.testutil.TestUtils;
 import java.time.Instant;
 import org.junit.Test;
 

@@ -13,7 +13,7 @@ class AppendableString implements Appendable2<StringBuilder> {
   }
 
   @Override
-  public Appendable2<StringBuilder> append(StringBuilder toAppend) {
+  public final Appendable2<StringBuilder> append(StringBuilder toAppend) {
     delegate.append(toAppend);
     return this;
   }

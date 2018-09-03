@@ -4,7 +4,7 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.parmet.squashlambdas.testutils.TestUtils;
+import com.parmet.squashlambdas.testutil.TestUtils;
 import java.time.Instant;
 import java.util.Map;
 import org.junit.Test;

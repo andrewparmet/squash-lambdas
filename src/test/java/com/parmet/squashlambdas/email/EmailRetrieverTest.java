@@ -6,11 +6,9 @@ import biweekly.component.VEvent;
 import biweekly.property.Attendee;
 import biweekly.property.Organizer;
 import com.amazonaws.services.s3.AmazonS3;
-import com.parmet.squashlambdas.email.EmailData;
-import com.parmet.squashlambdas.email.EmailRetriever;
 import com.parmet.squashlambdas.integration.IntegrationTests;
-import com.parmet.squashlambdas.testutils.EmailReturningS3;
-import com.parmet.squashlambdas.testutils.TestUtils;
+import com.parmet.squashlambdas.testutil.EmailReturningS3;
+import com.parmet.squashlambdas.testutil.TestUtils;
 import java.sql.Date;
 import java.time.Instant;
 import java.util.Optional;
@@ -58,8 +56,9 @@ public class EmailRetrieverTest {
 
   public static EmailData fromBody(String body) {
     return new EmailRetriever(
-        new EmailReturningS3(body),
-        "parmet-squash-emails",
-        "emails/some-file-name").retrieveEmail();
+            new EmailReturningS3(body),
+            "parmet-squash-emails",
+            "emails/some-file-name")
+        .retrieveEmail();
   }
 }

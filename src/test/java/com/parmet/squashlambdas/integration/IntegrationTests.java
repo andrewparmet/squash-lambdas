@@ -10,7 +10,7 @@ import com.parmet.squashlambdas.cal.ChangeSummaryTest;
 import com.parmet.squashlambdas.email.EmailRetrieverTest;
 import com.parmet.squashlambdas.match.Court;
 import com.parmet.squashlambdas.match.Match;
-import com.parmet.squashlambdas.testutils.TestUtils;
+import com.parmet.squashlambdas.testutil.TestUtils;
 import java.time.Instant;
 import java.util.Optional;
 import org.junit.Test;
