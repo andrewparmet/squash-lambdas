@@ -41,6 +41,10 @@ public class Match {
     return end;
   }
 
+  public Court getCourt() {
+    return court;
+  }
+
   public Event toEvent() {
     return new Event()
         .setStart(new EventDateTime().setDateTime(new DateTime(start.toEpochMilli())))

@@ -47,7 +47,8 @@ public enum Action {
 
   private static final ImmutableList<String> NO_ACTION =
       ImmutableList.of(
-          "This is a reminder");
+          "This is a reminder",
+          "Here are your scores recorded");
 
   public static Action parseFromSubject(String body) {
     if (containsMatch(body, CREATION)) {
