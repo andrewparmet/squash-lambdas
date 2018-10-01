@@ -52,7 +52,12 @@ repositories {
   maven { url "https://jitpack.io" }
 }
 
+configurations {
+  javac
+}
+
 dependencies {
+  javac 'com.google.errorprone:javac:9+181-r4173-1'
   compile 'com.amazonaws:aws-java-sdk-s3:1.11.354'
   compile 'com.amazonaws:aws-java-sdk-sns:1.11.354'
   compile 'com.amazonaws:aws-lambda-java-core:1.2.0'  
@@ -95,6 +100,8 @@ tasks.withType(JavaCompile) {
     '-Xlint:-processing',
     '-Werror'
   ]
+  options.fork = true
+  options.forkOptions.jvmArgs.add("-Xbootclasspath/p:${configurations.javac.asPath}")
 }
 
 tasks.withType(com.github.spotbugs.SpotBugsTask) {

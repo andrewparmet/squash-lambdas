@@ -55,7 +55,7 @@ public class EventManager {
 
   private List<Event> findEvents(Match match) throws IOException {
     return calendar.events().list(calendarId)
-        .setQ(match.getStart() + " " + match.getEnd())
+        .setQ(match.getStart() + " " + match.getEnd() + " " + match.getCourt())
         .execute()
         .getItems();
   }

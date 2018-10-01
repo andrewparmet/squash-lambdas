@@ -178,6 +178,16 @@ public class IntegrationTests {
   }
 
   @Test
+  public void testScoreRecordedWin() throws Exception {
+    assertThat(getSummary("scoreRecordedWin")).isEmpty();
+  }
+
+  @Test
+  public void testScoreRecordedLoss() throws Exception {
+    assertThat(getSummary("scoreRecordedLoss")).isEmpty();
+  }
+
+  @Test
   public void testReservationReleased() throws Exception {
     assertThat(getSummary("reservationReleased"))
         .hasValue(
