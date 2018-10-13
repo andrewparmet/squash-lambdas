@@ -43,12 +43,14 @@ public enum Action {
   private static final ImmutableList<String> DELETION =
       ImmutableList.of(
           "You've been removed from a reservation",
-          "You have successfully cancelled a reservation");
+          "You have successfully cancelled a reservation",
+          "A reservation including you has been cancelled");
 
   private static final ImmutableList<String> NO_ACTION =
       ImmutableList.of(
           "This is a reminder",
-          "Here are your scores recorded");
+          "Here are your scores recorded",
+          "has cancelled your reservation");
 
   public static Action parseFromSubject(String body) {
     if (containsMatch(body, CREATION)) {
