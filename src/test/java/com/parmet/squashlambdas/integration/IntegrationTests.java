@@ -17,7 +17,7 @@ import org.junit.Test;
 
 public class IntegrationTests {
   @Test
-  public void testReservationCreated() throws Exception {
+  public void testReservationCreated() {
     assertThat(getSummary("reservationCreated"))
         .hasValue(
             summary(
@@ -30,7 +30,7 @@ public class IntegrationTests {
   }
 
   @Test
-  public void testReservationCreated2() throws Exception {
+  public void testReservationCreated2() {
     assertThat(getSummary("reservationCreated2"))
         .hasValue(
             summary(
@@ -43,7 +43,7 @@ public class IntegrationTests {
   }
 
   @Test
-  public void testReservationCreated3() throws Exception {
+  public void testReservationCreated3() {
     assertThat(getSummary("reservationCreated3"))
         .hasValue(
             summary(
@@ -56,7 +56,7 @@ public class IntegrationTests {
   }
 
   @Test
-  public void testReservationCreated4() throws Exception {
+  public void testReservationCreated4() {
     assertThat(getSummary("reservationCreated4"))
         .hasValue(
             summary(
@@ -69,7 +69,7 @@ public class IntegrationTests {
   }
 
   @Test
-  public void testReservationJoined() throws Exception {
+  public void testReservationJoined() {
     assertThat(getSummary("someoneJoinsMyReservation"))
         .hasValue(
             summary(
@@ -82,7 +82,7 @@ public class IntegrationTests {
   }
 
   @Test
-  public void testReservationJoined2() throws Exception {
+  public void testReservationJoined2() {
     assertThat(getSummary("someoneJoinsMyReservation2"))
         .hasValue(
             summary(
@@ -95,7 +95,7 @@ public class IntegrationTests {
   }
 
   @Test
-  public void testReservationJoined3() throws Exception {
+  public void testReservationJoined3() {
     assertThat(getSummary("someoneJoinsMyReservation3"))
         .hasValue(
             summary(
@@ -108,7 +108,7 @@ public class IntegrationTests {
   }
 
   @Test
-  public void testReservationJoined4() throws Exception {
+  public void testReservationJoined4() {
     assertThat(getSummary("someoneJoinsMyReservation4"))
         .hasValue(
             summary(
@@ -121,7 +121,7 @@ public class IntegrationTests {
   }
 
   @Test
-  public void testRemovedFromReservation() throws Exception {
+  public void testRemovedFromReservation() {
     assertThat(getSummary("removedFromReservation"))
         .hasValue(
             summary(
@@ -134,7 +134,7 @@ public class IntegrationTests {
   }
 
   @Test
-  public void testJoinReservationWithPlayer() throws Exception {
+  public void testJoinReservationWithPlayer() {
     assertThat(getSummary("joinReservationWithPlayer"))
         .hasValue(
             summary(
@@ -147,7 +147,7 @@ public class IntegrationTests {
   }
 
   @Test
-  public void testJoinReservationWithPlayer2() throws Exception {
+  public void testJoinReservationWithPlayer2() {
     assertThat(getSummary("joinReservationWithPlayer2"))
         .hasValue(
             summary(
@@ -160,7 +160,7 @@ public class IntegrationTests {
   }
 
   @Test
-  public void testPlayerHasBeenRemoved() throws Exception {
+  public void testPlayerHasBeenRemoved() {
     assertThat(getSummary("playerHasBeenRemoved"))
         .hasValue(
             summary(
@@ -173,22 +173,22 @@ public class IntegrationTests {
   }
 
   @Test
-  public void testReminder() throws Exception {
+  public void testReminder() {
     assertThat(getSummary("reminder")).isEmpty();
   }
 
   @Test
-  public void testScoreRecordedWin() throws Exception {
+  public void testScoreRecordedWin() {
     assertThat(getSummary("scoreRecordedWin")).isEmpty();
   }
 
   @Test
-  public void testScoreRecordedLoss() throws Exception {
+  public void testScoreRecordedLoss() {
     assertThat(getSummary("scoreRecordedLoss")).isEmpty();
   }
 
   @Test
-  public void testReservationReleased() throws Exception {
+  public void testReservationReleased() {
     assertThat(getSummary("reservationReleased"))
         .hasValue(
             summary(
@@ -198,6 +198,24 @@ public class IntegrationTests {
                     ImmutableSet.of(),
                     Instant.parse("2018-06-29T00:15:00Z"),
                     Instant.parse("2018-06-29T01:00:00Z"))));
+  }
+
+  @Test
+  public void testYourReservationHasBeenCancelled() {
+    assertThat(getSummary("yourReservationHasBeenCancelled")).isEmpty();
+  }
+
+  @Test
+  public void testReservationIncludingYouHasBeenCancelled() {
+    assertThat(getSummary("reservationIncludingYouHasBeenCancelled"))
+        .hasValue(
+            summary(
+                Action.DELETE,
+                new Match(
+                    Court.COURT_1,
+                    ImmutableSet.of("Elisabeth Hill"),
+                    Instant.parse("2018-10-11T23:30:00Z"),
+                    Instant.parse("2018-10-12T00:15:00Z"))));
   }
 
   private static Optional<ChangeSummary> getSummary(String fileName) {
