@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class EmailData {
+public final class EmailData {
   private final String subject;
   private final String body;
   private final Optional<VEvent> event;
