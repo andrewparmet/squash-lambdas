@@ -50,7 +50,8 @@ public enum Action {
       ImmutableList.of(
           "This is a reminder",
           "Here are your scores recorded",
-          "has cancelled your reservation");
+          "has cancelled your reservation",
+          "has re-confirmed a reservation made");
 
   public static Action parseFromSubject(String body) {
     if (containsMatch(body, CREATION)) {
