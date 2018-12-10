@@ -1,39 +1,40 @@
 package com.parmet.squashlambdas.cal;
 
 import com.google.common.collect.ImmutableList;
-import com.parmet.squashlambdas.match.Match;
+import com.parmet.squashlambdas.activity.Activity;
 import java.io.IOException;
 import java.util.Collection;
 
 public enum Action {
   CREATE {
     @Override
-    public void handle(Match match, EventManager manager) throws IOException {
-      manager.create(match);
+    public void handle(Activity activity, EventManager manager) throws IOException {
+      manager.create(activity);
     }
   },
   UPDATE {
     @Override
-    public void handle(Match match, EventManager manager) throws IOException {
-      manager.update(match);
+    public void handle(Activity activity, EventManager manager) throws IOException {
+      manager.update(activity);
     }
   },
   DELETE {
     @Override
-    public void handle(Match match, EventManager manager) throws IOException {
-      manager.delete(match);
+    public void handle(Activity activity, EventManager manager) throws IOException {
+      manager.delete(activity);
     }
   },
   NONE {
     @Override
-    public void handle(Match match, EventManager manager) {
+    public void handle(Activity activity, EventManager manager) {
     }
   };
 
   private static final ImmutableList<String> CREATION =
       ImmutableList.of(
           "A reservation including you has been made",
-          "You've joined a reservation");
+          "You've joined a reservation",
+          "You have been added to the activity");
 
   private static final ImmutableList<String> UPDATING =
       ImmutableList.of(
@@ -74,5 +75,5 @@ public enum Action {
     return matches.stream().anyMatch(body::contains);
   }
 
-  public abstract void handle(Match match, EventManager manager) throws IOException;
+  public abstract void handle(Activity activity, EventManager manager) throws IOException;
 }

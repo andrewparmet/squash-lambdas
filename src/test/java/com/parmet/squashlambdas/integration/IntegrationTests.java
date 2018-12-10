@@ -4,12 +4,14 @@ import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth8.assertThat;
 
 import com.google.common.collect.ImmutableSet;
+import com.parmet.squashlambdas.activity.Activity;
+import com.parmet.squashlambdas.activity.Clinic;
+import com.parmet.squashlambdas.activity.Court;
+import com.parmet.squashlambdas.activity.Match;
 import com.parmet.squashlambdas.cal.Action;
 import com.parmet.squashlambdas.cal.ChangeSummary;
 import com.parmet.squashlambdas.cal.ChangeSummaryTest;
 import com.parmet.squashlambdas.email.EmailRetrieverTest;
-import com.parmet.squashlambdas.match.Court;
-import com.parmet.squashlambdas.match.Match;
 import com.parmet.squashlambdas.testutil.TestUtils;
 import java.time.Instant;
 import java.util.Optional;
@@ -24,9 +26,9 @@ public class IntegrationTests {
                 Action.CREATE,
                 new Match(
                     Court.COURT_2,
-                    ImmutableSet.of(),
                     Instant.parse("2018-04-17T22:45:00Z"),
-                    Instant.parse("2018-04-17T23:30:00Z"))));
+                    Instant.parse("2018-04-17T23:30:00Z"),
+                    ImmutableSet.of())));
   }
 
   @Test
@@ -37,9 +39,9 @@ public class IntegrationTests {
                 Action.CREATE,
                 new Match(
                     Court.COURT_7,
-                    ImmutableSet.of(),
                     Instant.parse("2018-03-29T01:00:00Z"),
-                    Instant.parse("2018-03-29T01:45:00Z"))));
+                    Instant.parse("2018-03-29T01:45:00Z"),
+                    ImmutableSet.of())));
   }
 
   @Test
@@ -50,9 +52,9 @@ public class IntegrationTests {
                 Action.CREATE,
                 new Match(
                     Court.COURT_2,
-                    ImmutableSet.of("Philipp Rimmler"),
                     Instant.parse("2018-03-26T22:45:00Z"),
-                    Instant.parse("2018-03-26T23:30:00Z"))));
+                    Instant.parse("2018-03-26T23:30:00Z"),
+                    ImmutableSet.of("Philipp Rimmler"))));
   }
 
   @Test
@@ -63,9 +65,9 @@ public class IntegrationTests {
                 Action.CREATE,
                 new Match(
                     Court.COURT_1,
-                    ImmutableSet.of(),
                     Instant.parse("2018-07-03T22:45:00Z"),
-                    Instant.parse("2018-07-03T23:30:00Z"))));
+                    Instant.parse("2018-07-03T23:30:00Z"),
+                    ImmutableSet.of())));
   }
 
   @Test
@@ -76,9 +78,9 @@ public class IntegrationTests {
                 Action.UPDATE,
                 new Match(
                     Court.COURT_2,
-                    ImmutableSet.of("Stephen Santulli"),
                     Instant.parse("2018-05-31T23:30:00Z"),
-                    Instant.parse("2018-06-01T00:15:00Z"))));
+                    Instant.parse("2018-06-01T00:15:00Z"),
+                    ImmutableSet.of("Stephen Santulli"))));
   }
 
   @Test
@@ -89,9 +91,9 @@ public class IntegrationTests {
                 Action.UPDATE,
                 new Match(
                     Court.COURT_3,
-                    ImmutableSet.of("Aaron bhole (Guest)"),
                     Instant.parse("2018-06-29T00:15:00Z"),
-                    Instant.parse("2018-06-29T01:00:00Z"))));
+                    Instant.parse("2018-06-29T01:00:00Z"),
+                    ImmutableSet.of("Aaron bhole (Guest)"))));
   }
 
   @Test
@@ -102,9 +104,9 @@ public class IntegrationTests {
                 Action.UPDATE,
                 new Match(
                     Court.COURT_1,
-                    ImmutableSet.of("James Wall"),
                     Instant.parse("2018-06-12T22:45:00Z"),
-                    Instant.parse("2018-06-12T23:30:00Z"))));
+                    Instant.parse("2018-06-12T23:30:00Z"),
+                    ImmutableSet.of("James Wall"))));
   }
 
   @Test
@@ -115,9 +117,9 @@ public class IntegrationTests {
                 Action.UPDATE,
                 new Match(
                     Court.COURT_1,
-                    ImmutableSet.of("Bruce Chafee"),
                     Instant.parse("2018-03-28T22:45:00Z"),
-                    Instant.parse("2018-03-28T23:30:00Z"))));
+                    Instant.parse("2018-03-28T23:30:00Z"),
+                    ImmutableSet.of("Bruce Chafee"))));
   }
 
   @Test
@@ -128,9 +130,9 @@ public class IntegrationTests {
                 Action.DELETE,
                 new Match(
                     Court.COURT_1,
-                    ImmutableSet.of(),
                     Instant.parse("2018-04-26T22:45:00Z"),
-                    Instant.parse("2018-04-26T23:30:00Z"))));
+                    Instant.parse("2018-04-26T23:30:00Z"),
+                    ImmutableSet.of())));
   }
 
   @Test
@@ -141,9 +143,9 @@ public class IntegrationTests {
                 Action.CREATE,
                 new Match(
                     Court.COURT_3,
-                    ImmutableSet.of("Paul Cathcart"),
                     Instant.parse("2018-06-28T23:30:00Z"),
-                    Instant.parse("2018-06-29T00:15:00Z"))));
+                    Instant.parse("2018-06-29T00:15:00Z"),
+                    ImmutableSet.of("Paul Cathcart"))));
   }
 
   @Test
@@ -154,9 +156,9 @@ public class IntegrationTests {
                 Action.CREATE,
                 new Match(
                     Court.COURT_3,
-                    ImmutableSet.of("Bruce Chafee"),
                     Instant.parse("2018-04-25T22:00:00Z"),
-                    Instant.parse("2018-04-25T22:45:00Z"))));
+                    Instant.parse("2018-04-25T22:45:00Z"),
+                    ImmutableSet.of("Bruce Chafee"))));
   }
 
   @Test
@@ -167,9 +169,9 @@ public class IntegrationTests {
                 Action.UPDATE,
                 new Match(
                     Court.COURT_3,
-                    ImmutableSet.of(),
                     Instant.parse("2018-03-20T23:30:00Z"),
-                    Instant.parse("2018-03-21T00:15:00Z"))));
+                    Instant.parse("2018-03-21T00:15:00Z"),
+                    ImmutableSet.of())));
   }
 
   @Test
@@ -200,9 +202,9 @@ public class IntegrationTests {
                 Action.DELETE,
                 new Match(
                     Court.COURT_3,
-                    ImmutableSet.of(),
                     Instant.parse("2018-06-29T00:15:00Z"),
-                    Instant.parse("2018-06-29T01:00:00Z"))));
+                    Instant.parse("2018-06-29T01:00:00Z"),
+                    ImmutableSet.of())));
   }
 
   @Test
@@ -218,9 +220,21 @@ public class IntegrationTests {
                 Action.DELETE,
                 new Match(
                     Court.COURT_1,
-                    ImmutableSet.of("Elisabeth Hill"),
                     Instant.parse("2018-10-11T23:30:00Z"),
-                    Instant.parse("2018-10-12T00:15:00Z"))));
+                    Instant.parse("2018-10-12T00:15:00Z"),
+                    ImmutableSet.of("Elisabeth Hill"))));
+  }
+  
+  @Test
+  public void testActivityJoined() {
+    assertThat(getSummary("activityJoined"))
+        .hasValue(
+            summary(
+                Action.CREATE,
+                new Clinic(
+                    Court.COURT_3,
+                    Instant.parse("2018-12-03T23:45:00Z"),
+                    Instant.parse("2018-12-04T00:30:00Z"))));
   }
 
   private static Optional<ChangeSummary> getSummary(String fileName) {
@@ -228,7 +242,7 @@ public class IntegrationTests {
         EmailRetrieverTest.fromBody(TestUtils.getResourceAsString(fileName)));
   }
 
-  private static ChangeSummary summary(Action action, Match match) {
-    return ChangeSummaryTest.newChangeSummary(action, match);
+  private static ChangeSummary summary(Action action, Activity activity) {
+    return ChangeSummaryTest.newChangeSummary(action, activity);
   }
 }

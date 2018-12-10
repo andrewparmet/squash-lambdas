@@ -1,8 +1,8 @@
 package com.parmet.squashlambdas.cal;
 
 import com.google.common.collect.ImmutableSet;
-import com.parmet.squashlambdas.match.Court;
-import com.parmet.squashlambdas.match.Match;
+import com.parmet.squashlambdas.activity.Court;
+import com.parmet.squashlambdas.activity.Match;
 import com.parmet.squashlambdas.testutil.ConfiguredTest;
 import java.time.Instant;
 import org.junit.Ignore;
@@ -15,9 +15,9 @@ public class EventManagerTest extends ConfiguredTest {
     manager().create(
         new Match(
             Court.COURT_3,
-            ImmutableSet.of(),
             Instant.parse("2018-06-25T23:30:00Z"),
-            Instant.parse("2018-06-26T00:15:00Z")));
+            Instant.parse("2018-06-26T00:15:00Z"),
+            ImmutableSet.of()));
   }
 
   @Test
@@ -25,9 +25,9 @@ public class EventManagerTest extends ConfiguredTest {
     manager().update(
         new Match(
             Court.COURT_3,
-            ImmutableSet.of("Logan Ramseyer"),
             Instant.parse("2018-06-25T23:30:00Z"),
-            Instant.parse("2018-06-26T00:15:00Z")));
+            Instant.parse("2018-06-26T00:15:00Z"),
+            ImmutableSet.of("Logan Ramseyer")));
   }
 
   @Test
@@ -35,9 +35,9 @@ public class EventManagerTest extends ConfiguredTest {
     manager().delete(
         new Match(
             Court.COURT_3,
-            ImmutableSet.of("Logan Ramseyer"),
             Instant.parse("2018-06-25T23:30:00Z"),
-            Instant.parse("2018-06-26T00:15:00Z")));
+            Instant.parse("2018-06-26T00:15:00Z"),
+            ImmutableSet.of("Logan Ramseyer")));
   }
 
   private EventManager manager() {
