@@ -1,13 +1,13 @@
-package com.parmet.squashlambdas.match;
+package com.parmet.squashlambdas.activity;
 
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.parmet.squashlambdas.match.Sport.HARDBALL;
-import static com.parmet.squashlambdas.match.Sport.RACQUETS;
-import static com.parmet.squashlambdas.match.Sport.SQUASH;
-import static com.parmet.squashlambdas.match.Sport.TENNIS;
+import static com.parmet.squashlambdas.activity.Sport.HARDBALL;
+import static com.parmet.squashlambdas.activity.Sport.RACQUETS;
+import static com.parmet.squashlambdas.activity.Sport.SQUASH;
+import static com.parmet.squashlambdas.activity.Sport.TENNIS;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,7 +22,9 @@ public enum Court {
   TENNIS_COURT(TENNIS),
   RACQUETS_COURT(RACQUETS);
 
-  private static final Pattern COURT = Pattern.compile(".*Court: Court #(\\d) [/\\-].*");
+  // "Court: Court #x" (match creation)
+  // "Courts: Court #x" (activity creation)
+  private static final Pattern COURT = Pattern.compile(".*Courts?: Court #(\\d) [/\\-].*");
 
   private final Sport sport;
   private final String pretty =

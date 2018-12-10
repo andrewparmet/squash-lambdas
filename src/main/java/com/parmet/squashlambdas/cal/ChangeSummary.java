@@ -2,8 +2,8 @@ package com.parmet.squashlambdas.cal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.parmet.squashlambdas.activity.Activity;
 import com.parmet.squashlambdas.email.EmailData;
-import com.parmet.squashlambdas.match.Match;
 import com.parmet.squashlambdas.util.Utils;
 import java.util.Optional;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -12,11 +12,11 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public final class ChangeSummary {
   private final Action action;
-  private final Match match;
+  private final Activity activity;
 
-  ChangeSummary(Action action, Match match) {
+  ChangeSummary(Action action, Activity activity) {
     this.action = checkNotNull(action, "action");
-    this.match = checkNotNull(match, "match");
+    this.activity = checkNotNull(activity, "activity");
   }
 
   public static Optional<ChangeSummary> fromEmail(EmailData email) {
@@ -24,11 +24,11 @@ public final class ChangeSummary {
   }
 
   public void process(EventManager eventManager) {
-    Utils.run(() -> action.handle(match, eventManager));
+    Utils.run(() -> action.handle(activity, eventManager));
   }
 
-  public Match getMatch() {
-    return match;
+  public Activity getSchedulable() {
+    return activity;
   }
 
   @Override
@@ -46,7 +46,7 @@ public final class ChangeSummary {
     ChangeSummary rhs = (ChangeSummary) obj;
     return new EqualsBuilder()
         .append(action, rhs.action)
-        .append(match, rhs.match)
+        .append(activity, rhs.activity)
         .build();
   }
 
@@ -54,7 +54,7 @@ public final class ChangeSummary {
   public int hashCode() {
     return new HashCodeBuilder()
         .append(action)
-        .append(match)
+        .append(activity)
         .build();
   }
 
@@ -62,7 +62,7 @@ public final class ChangeSummary {
   public String toString() {
     return new ToStringBuilder(this)
         .append("action", action)
-        .append("match", match)
+        .append("activity", activity)
         .build();
   }
 }

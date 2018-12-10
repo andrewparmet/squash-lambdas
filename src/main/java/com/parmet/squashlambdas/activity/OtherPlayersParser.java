@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas.match;
+package com.parmet.squashlambdas.activity;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.regex.Matcher;

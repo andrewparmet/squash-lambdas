@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
 import com.google.common.collect.Iterables;
-import com.parmet.squashlambdas.match.Match;
+import com.parmet.squashlambdas.activity.Activity;
 import java.io.IOException;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
@@ -22,40 +22,40 @@ public class EventManager {
     this.calendarId = checkNotNull(calendarId, "calendarId");
   }
 
-  public void create(Match match) throws IOException {
-    log.info("Creating match {}", match);
-    calendar.events().insert(calendarId, match.toEvent()).execute();
+  public void create(Activity activity) throws IOException {
+    log.info("Creating schdulable {}", activity);
+    calendar.events().insert(calendarId, activity.toEvent()).execute();
   }
 
-  public void update(Match match) throws IOException {
-    log.info("Updating match {}", match);
+  public void update(Activity activity) throws IOException {
+    log.info("Updating activity {}", activity);
 
-    List<Event> events = findEvents(match);
+    List<Event> events = findEvents(activity);
 
     if (events.size() > 1) {
       log.info("Found too many events to update; deleting them all. {}", events);
       for (Event event : events) {
         calendar.events().delete(calendarId, event.getId()).execute();
       }
-      create(match);
+      create(activity);
     } else {
       Event event = Iterables.getOnlyElement(events);
       log.info("Found one event to update: {}", event);
-      calendar.events().patch(calendarId, event.getId(), match.toEvent()).execute();
+      calendar.events().patch(calendarId, event.getId(), activity.toEvent()).execute();
     }
   }
 
-  public void delete(Match match) throws IOException {
-    log.info("Deleting match {}", match);
-    for (Event event : findEvents(match)) {
+  public void delete(Activity activity) throws IOException {
+    log.info("Deleting activity {}", activity);
+    for (Event event : findEvents(activity)) {
       log.info("Deleting event {}", event);
       calendar.events().delete(calendarId, event.getId()).execute();
     }
   }
 
-  private List<Event> findEvents(Match match) throws IOException {
+  private List<Event> findEvents(Activity activity) throws IOException {
     return calendar.events().list(calendarId)
-        .setQ(match.getStart() + " " + match.getEnd() + " " + match.getCourt())
+        .setQ(activity.searchString())
         .execute()
         .getItems();
   }

@@ -1,62 +1,56 @@
-package com.parmet.squashlambdas.match;
+package com.parmet.squashlambdas.activity;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableSet;
-import com.parmet.squashlambdas.email.EmailData;
 import java.time.Instant;
-import java.util.Set;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public final class Match {
+abstract class AbstractActivity implements Activity {
   private final Instant createTime = Instant.now();
 
-  private final ImmutableSet<String> otherPlayers;
   private final Instant start;
   private final Instant end;
   private final Court court;
 
-  public Match(Court court, Set<String> otherPlayers, Instant start, Instant end) {
+  public AbstractActivity(Court court, Instant start, Instant end) {
     this.court = checkNotNull(court, "court");
-    this.otherPlayers = ImmutableSet.copyOf(otherPlayers);
     this.start = checkNotNull(start, "start");
     this.end = checkNotNull(end, "end");
   }
 
-  public static Match getFromEmailData(EmailData email) {
-    return new MatchRetriever(email).getMatch();
-  }
-
-  public Instant getStart() {
+  public final Instant getStart() {
     return start;
   }
 
-  public Instant getEnd() {
+  public final Instant getEnd() {
     return end;
   }
 
-  public Court getCourt() {
+  public final Court getCourt() {
     return court;
   }
+  
+  @Override
+  public String searchString() {
+    return start + " " + end + " " + court;
+  }
 
-  public Event toEvent() {
+  @Override
+  public final Event toEvent() {
     return new Event()
         .setStart(new EventDateTime().setDateTime(new DateTime(start.toEpochMilli())))
         .setEnd(new EventDateTime().setDateTime(new DateTime(end.toEpochMilli())))
         .setLocation(court + ", Tennis and Racquet Club")
-        .setSummary(court.getSport() + renderOtherPlayers())
+        .setSummary(summary())
         .setDescription(toString());
   }
-
-  private String renderOtherPlayers() {
-    return otherPlayers.isEmpty() ? " Match" : " v. " + Joiner.on(',').join(otherPlayers);
-  }
+  
+  protected abstract String summary();
 
   @Override
   public boolean equals(Object obj) {
@@ -66,14 +60,13 @@ public final class Match {
     if (obj == this) {
       return true;
     }
-    if (obj.getClass() != getClass()) {
+    if (!(obj instanceof AbstractActivity)) {
       return false;
     }
 
-    Match rhs = (Match) obj;
+    AbstractActivity rhs = (AbstractActivity) obj;
     return new EqualsBuilder()
         .append(court, rhs.court)
-        .append(otherPlayers, rhs.otherPlayers)
         .append(start, rhs.start)
         .append(end, rhs.end)
         .build();
@@ -83,7 +76,6 @@ public final class Match {
   public int hashCode() {
     return new HashCodeBuilder()
         .append(court)
-        .append(otherPlayers)
         .append(start)
         .append(end)
         .build();
@@ -94,7 +86,6 @@ public final class Match {
     return new ToStringBuilder(this)
         .append("createTime", createTime)
         .append("court", court)
-        .append("otherPlayers", otherPlayers)
         .append("start", start)
         .append("end", end)
         .build();

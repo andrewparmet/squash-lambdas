@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas.match;
+package com.parmet.squashlambdas.activity;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
