@@ -3,7 +3,7 @@ package com.parmet.squashlambdas.cal
 import com.parmet.squashlambdas.activity.Activity
 
 sealed class Action(val handle: (Activity, EventManager) -> Unit) {
-    object Create : Action({ activity, manager ->  manager.create(activity) })
+    object Create : Action({ activity, manager -> manager.create(activity) })
 
     object Update : Action({ activity, manager -> manager.update(activity) })
 

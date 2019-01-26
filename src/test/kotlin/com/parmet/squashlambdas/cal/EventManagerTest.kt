@@ -1,6 +1,5 @@
 package com.parmet.squashlambdas.cal
 
-import com.google.common.collect.ImmutableSet
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.testutil.ConfiguredTest

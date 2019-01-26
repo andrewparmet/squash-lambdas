@@ -6,9 +6,12 @@ import com.google.api.services.calendar.model.EventDateTime
 import java.time.Instant
 
 abstract class AbstractActivity(
-    open val start: Instant,
-    open val end: Instant,
-    open val court: Court
+    @Transient
+    private val start: Instant,
+    @Transient
+    private val end: Instant,
+    @Transient
+    private val court: Court
 ) : Activity {
     private val createTime = Instant.now()
 
