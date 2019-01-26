@@ -4,12 +4,9 @@ import com.parmet.squashlambdas.email.EmailData
 import java.time.Instant
 
 data class Clinic(
-    @Transient
-    override val court: Court,
-    @Transient
-    override val start: Instant,
-    @Transient
-    override val end: Instant
+    private val court: Court,
+    private val start: Instant,
+    private val end: Instant
 ) : AbstractActivity(start, end, court) {
 
     override fun summary() = "${court.sport} Clinic"

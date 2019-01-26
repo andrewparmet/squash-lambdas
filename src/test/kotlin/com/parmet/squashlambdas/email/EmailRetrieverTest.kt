@@ -17,7 +17,7 @@ class EmailRetrieverTest {
         val s3 =
             EmailReturningS3(
                 getResourceAsString(IntegrationTests::class.java, "reservationCreated2"))
-        val data = EmailRetriever(s3, "", "").retrieveEmail()
+        val data = EmailRetriever(s3).retrieveEmail("", "")
         assertThat(data).isEqualTo(emailData())
     }
 
@@ -52,10 +52,7 @@ class EmailRetrieverTest {
                 event())
 
         fun fromBody(body: String) =
-            EmailRetriever(
-                EmailReturningS3(body),
-                "example-application-bucket",
-                "emails/some-file-name")
-                .retrieveEmail()
+            EmailRetriever(EmailReturningS3(body))
+                .retrieveEmail("example-application-bucket", "emails/some-file-name")
     }
 }
