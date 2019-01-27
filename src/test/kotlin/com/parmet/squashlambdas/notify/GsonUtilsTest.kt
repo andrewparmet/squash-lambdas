@@ -1,11 +1,8 @@
 package com.parmet.squashlambdas.notify
 
-import com.fatboyindustrial.gsonjavatime.InstantConverter
 import com.google.common.truth.Truth.assertThat
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.TypeAdapter
-import com.google.gson.reflect.TypeToken
+import com.google.gson.TypeAdapterFactory
 import com.parmet.squashlambdas.activity.Activity
 import com.parmet.squashlambdas.activity.Clinic
 import com.parmet.squashlambdas.activity.Court
@@ -44,22 +41,22 @@ class GsonUtilsTest {
 
         assertHasAnExampleOfEachConcreteSubclass(Activity::class, instances)
 
-        assertSerializedFormContainsTypeTag(instances, Activity::class, ACTIVITY_ADAPTER)
+        assertSerializedFormContainsTypeTag(instances, Activity::class, ACTIVITY_ADAPTER_FACTORY)
     }
 
     @Test
-    fun `sport adapter works for all subclasses`() {
+    fun `sport serializer works for all subclasses`() {
         val instances: Map<KClass<*>, *> =
             listOf(Sport.Squash, Sport.Hardball, Sport.Racquets, Sport.Tennis)
                 .associate { it::class to it }
 
         assertHasAnExampleOfEachConcreteSubclass(Sport::class, instances)
 
-        assertSerializedFormContainsTypeTag(instances, Sport::class, SPORT_ADAPTER)
+        assertSerializedFormContainsTypeString(instances, Sport::class, SportSerializer)
     }
 
     @Test
-    fun `court adapter works for all subclasses`() {
+    fun `court serializer works for all subclasses`() {
         val instances: Map<KClass<*>, *> =
             listOf(
                 Court.Court1, Court.Court2, Court.Court3, Court.Court5, Court.Court6,
@@ -68,24 +65,24 @@ class GsonUtilsTest {
 
         assertHasAnExampleOfEachConcreteSubclass(Court::class, instances)
 
-        assertSerializedFormContainsTypeTag(instances, Court::class, COURT_ADAPTER)
+        assertSerializedFormContainsTypeString(instances, Court::class, CourtSerializer)
     }
 
     @Test
-    fun `action adapter works for all subclasses`() {
+    fun `action serializer works for all subclasses`() {
         val instances: Map<KClass<*>, *> =
             listOf(Action.Create, Action.Update, Action.Delete, Action.None)
                 .associate { it::class to it }
 
         assertHasAnExampleOfEachConcreteSubclass(Action::class, instances)
 
-        assertSerializedFormContainsTypeTag(instances, Action::class, ACTION_ADAPTER)
+        assertSerializedFormContainsTypeString(instances, Action::class, ActionSerializer)
     }
 
-    private fun assertHasAnExampleOfEachConcreteSubclass(klass: KClass<*>, instances: Map<KClass<*>, *>) {
+    private fun assertHasAnExampleOfEachConcreteSubclass(kclass: KClass<*>, instances: Map<KClass<*>, *>) {
         val jClassInstances = instances.mapKeys { it.key.java }
 
-        Reflections("com.parmet").getSubTypesOf(klass.java)
+        Reflections("com.parmet").getSubTypesOf(kclass.java)
             .filter { it.isConcrete() }
             .forEach {
                 logger.info { "Looking for an instance of $it" }
@@ -93,22 +90,39 @@ class GsonUtilsTest {
             }
     }
 
+    private fun Class<*>.isConcrete() = !Modifier.isAbstract(modifiers)
+
     private fun assertSerializedFormContainsTypeTag(
         instances: Map<KClass<*>, *>,
         klass: KClass<*>,
-        adapter: TypeAdapter<*>
+        adapter: TypeAdapterFactory
     ) {
-        instances.forEach { name, instance ->
+        instances.forEach { kclass, instance ->
+            val serialized =
+                GsonBuilder()
+                    .registerTypeAdapterFactory(adapter)
+                    .create()
+                    .toJson(instance, klass.java)
+            logger.info { "Checking serialized form for $instance of type ${kclass.simpleName}: $serialized" }
+
+            assertThat(serialized).contains("\"type\":\"${kclass.simpleName}\"")
+        }
+    }
+
+    private fun assertSerializedFormContainsTypeString(
+        instances: Map<KClass<*>, *>,
+        klass: KClass<*>,
+        adapter: Any
+    ) {
+        instances.forEach { kclass, instance ->
             val serialized =
                 GsonBuilder()
                     .registerTypeHierarchyAdapter(klass.java, adapter)
                     .create()
                     .toJson(instance)
-            logger.info { "Checking serialized form for $instance of type ${name.simpleName}: $serialized" }
+            logger.info { "Checking serialized form for $instance of type ${kclass.simpleName}: $serialized" }
 
-            assertThat(serialized).contains("\"type\":\"${name.simpleName}\"")
+            assertThat(serialized).contains(instance.toString())
         }
     }
-
-    private fun Class<*>.isConcrete() = !Modifier.isAbstract(modifiers)
 }

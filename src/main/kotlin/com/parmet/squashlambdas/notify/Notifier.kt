@@ -5,7 +5,6 @@ import com.amazonaws.services.sns.model.PublishRequest
 import com.fatboyindustrial.gsonjavatime.InstantConverter
 import com.google.common.base.Throwables
 import com.google.gson.GsonBuilder
-import com.parmet.squashlambdas.activity.Activity
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Sport
 import com.parmet.squashlambdas.cal.Action
@@ -19,10 +18,10 @@ internal class Notifier(
     private val printer =
         GsonBuilder()
             .registerTypeAdapter(Instant::class.java, InstantConverter())
-            .registerTypeAdapter(Activity::class.java, ACTIVITY_ADAPTER)
-            .registerTypeAdapter(Sport::class.java, SPORT_ADAPTER)
-            .registerTypeAdapter(Court::class.java, COURT_ADAPTER)
-            .registerTypeAdapter(Action::class.java, ACTION_ADAPTER)
+            .registerTypeAdapterFactory(ACTIVITY_ADAPTER_FACTORY)
+            .registerTypeHierarchyAdapter(Sport::class.java, SportSerializer)
+            .registerTypeHierarchyAdapter(Court::class.java, CourtSerializer)
+            .registerTypeHierarchyAdapter(Action::class.java, ActionSerializer)
             .serializeNulls()
             .setPrettyPrinting()
             .create()

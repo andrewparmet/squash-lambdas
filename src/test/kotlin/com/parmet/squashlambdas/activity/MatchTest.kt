@@ -41,6 +41,5 @@ class MatchTest {
             .isEqualTo(
                 "Match(court=Court 2, start=2018-03-26T22:45:00Z, " +
                     "end=2018-03-26T23:30:00Z, otherPlayers=[Philipp Rimmler])")
-
     }
 }
