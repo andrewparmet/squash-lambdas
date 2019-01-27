@@ -13,10 +13,9 @@ data class Clinic(
 
     companion object {
         fun fromEmailData(email: EmailData): Clinic {
-            val retriever = ActivityParser(email)
-            val startAndEnd = retriever.parseStartAndEnd()
+            val startAndEnd = TimeParser.parse(email.body)
             return Clinic(
-                retriever.parseCourt(),
+                Court.fromLocationString(email.body),
                 startAndEnd.start,
                 startAndEnd.end)
         }

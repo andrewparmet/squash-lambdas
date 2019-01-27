@@ -21,13 +21,12 @@ data class Match(
 
     companion object {
         fun fromEmailData(email: EmailData): Match {
-            val retriever = ActivityParser(email)
-            val startAndEnd = retriever.parseStartAndEnd()
+            val startAndEnd = TimeParser.parse(email.body)
             return Match(
-                retriever.parseCourt(),
+                Court.fromLocationString(email.body),
                 startAndEnd.start,
                 startAndEnd.end,
-                retriever.parseOtherPlayers())
+                OtherPlayersParser.parse(email.body))
         }
     }
 }
