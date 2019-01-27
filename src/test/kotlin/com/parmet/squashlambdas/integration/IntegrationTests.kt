@@ -7,7 +7,8 @@ import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.cal.Action
 import com.parmet.squashlambdas.cal.ChangeSummary
-import com.parmet.squashlambdas.email.EmailRetrieverTest
+import com.parmet.squashlambdas.email.EmailRetriever
+import com.parmet.squashlambdas.testutil.EmailReturningS3
 import com.parmet.squashlambdas.testutil.getResourceAsString
 import org.junit.Test
 import java.time.Instant
@@ -233,7 +234,11 @@ class IntegrationTests {
     }
 
     private fun getSummary(fileName: String) =
-        ChangeSummary.fromEmail(EmailRetrieverTest.fromBody(getResourceAsString(fileName)))
+        ChangeSummary.fromEmail(emailFromBody(fileName))
 
     private fun summary(action: Action, activity: Activity) = ChangeSummary(action, activity)
 }
+
+fun emailFromBody(fileName: String) =
+    EmailRetriever(EmailReturningS3(getResourceAsString(IntegrationTests::class.java, fileName)))
+        .retrieveEmail("parmet-squash-emails", "emails/some-file-name")
