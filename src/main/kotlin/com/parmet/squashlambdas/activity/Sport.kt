@@ -1,6 +1,6 @@
 package com.parmet.squashlambdas.activity
 
-sealed class Sport {
+internal sealed class Sport {
     override fun toString() = this::class.java.name
 
     object Squash : Sport()

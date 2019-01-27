@@ -6,7 +6,7 @@ import javax.mail.internet.ContentType
 import javax.mail.internet.MimeMessage
 import javax.mail.internet.MimeMultipart
 
-abstract class AbstractMimeMessageExtractor<T>(
+internal abstract class AbstractMimeMessageExtractor<T>(
     private val newInstance: () -> Appendable<T>
 ) {
     fun extract(message: MimeMessage): Appendable<T> {

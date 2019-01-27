@@ -6,8 +6,7 @@ import org.jsoup.Jsoup
 import java.nio.charset.StandardCharsets.UTF_8
 import javax.mail.Part
 
-class MimeParser<T>
-private constructor(
+internal class MimeParser<T> private constructor(
     private val mimeType: String,
     private val parser: (Part) -> Appendable<T>
 ) {

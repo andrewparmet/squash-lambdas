@@ -4,7 +4,7 @@ import com.google.api.services.calendar.model.Event
 import com.google.common.base.Preconditions.checkArgument
 import com.parmet.squashlambdas.email.EmailData
 
-interface Activity {
+internal interface Activity {
     fun toEvent(): Event
 
     fun searchString(): String
