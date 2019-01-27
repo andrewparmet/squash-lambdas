@@ -5,15 +5,12 @@ import com.google.api.services.calendar.model.Event
 import com.google.api.services.calendar.model.EventDateTime
 import java.time.Instant
 
-abstract class AbstractActivity(
-    @Transient
-    private val start: Instant,
-    @Transient
-    private val end: Instant,
-    @Transient
-    private val court: Court
-) : Activity {
+internal abstract class AbstractActivity : Activity {
     private val createTime = Instant.now()
+
+    abstract val start: Instant
+    abstract val end: Instant
+    abstract val court: Court
 
     override fun searchString() = "$start $end $court"
 

@@ -3,7 +3,7 @@ package com.parmet.squashlambdas.activity
 import mu.KotlinLogging
 import java.util.regex.Pattern
 
-object OtherPlayersParser {
+internal object OtherPlayersParser {
     private val logger = KotlinLogging.logger { }
 
     private val HAS_JOINED =
@@ -29,7 +29,7 @@ object OtherPlayersParser {
                 if (with.matches()) {
                     setOf(with.group(1))
                 } else {
-                    logger.info { "Did not find other players in body $body" }
+                    logger.debug { "Did not find other players in body $body" }
                     setOf()
                 }
             }

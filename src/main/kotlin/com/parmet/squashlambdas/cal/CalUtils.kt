@@ -6,7 +6,7 @@ import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger { }
 
-fun giveUserOwnership(calendar: Calendar, calendarId: String, userEmail: String) {
+internal fun giveUserOwnership(calendar: Calendar, calendarId: String, userEmail: String) {
     calendar
         .acl()
         .insert(
@@ -17,7 +17,7 @@ fun giveUserOwnership(calendar: Calendar, calendarId: String, userEmail: String)
         .execute()
 }
 
-fun printAcl(calendar: Calendar, calendarId: String) {
+internal fun printAcl(calendar: Calendar, calendarId: String) {
     calendar.acl()
         .list(calendarId)
         .execute()

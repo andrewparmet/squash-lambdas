@@ -9,7 +9,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
 
-object TimeParser {
+internal object TimeParser {
     /** "Date: Thursday, June 28th 2018 Time: 08:15 PM to 09:00 PM". */
     private val PATTERN =
         Pattern.compile(".* Date: .*, (.*) (\\d\\d?).* (.*) Time: (.*) to (.*) (AM|PM).*")
@@ -18,7 +18,7 @@ object TimeParser {
 
     private val BOSTON = ZoneId.of("America/New_York")
 
-    fun parse(body: String): StartAndEnd {
+    fun parse(body: String): TimeSlot {
         val matcher = PATTERN.matcher(body)
         checkArgument(matcher.matches(), "Unable to find start and end from body %s", body)
         val month = Month.valueOf(matcher.group(1).toUpperCase())
@@ -29,7 +29,7 @@ object TimeParser {
 
         val date = LocalDate.of(year, month, dayOfMonth)
 
-        return StartAndEnd(inBoston(date, start), inBoston(date, end))
+        return TimeSlot(inBoston(date, start), inBoston(date, end))
     }
 
     private fun inBoston(date: LocalDate, time: LocalTime) =

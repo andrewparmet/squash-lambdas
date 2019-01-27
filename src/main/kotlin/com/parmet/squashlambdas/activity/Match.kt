@@ -3,12 +3,12 @@ package com.parmet.squashlambdas.activity
 import com.parmet.squashlambdas.email.EmailData
 import java.time.Instant
 
-data class Match(
-    private val court: Court,
-    private val start: Instant,
-    private val end: Instant,
+internal data class Match(
+    override val court: Court,
+    override val start: Instant,
+    override val end: Instant,
     private val otherPlayers: Set<String>
-) : AbstractActivity(start, end, court) {
+) : AbstractActivity() {
 
     override fun summary() = "${court.sport} ${renderOtherPlayers()}"
 

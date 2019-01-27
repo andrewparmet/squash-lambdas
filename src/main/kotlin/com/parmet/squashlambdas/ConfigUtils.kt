@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets.UTF_8
 import java.nio.file.Files
 import java.nio.file.Paths
 
-fun loadConfiguration(file: String) =
+internal fun loadConfiguration(file: String) =
     FileBasedConfigurationBuilder(XMLConfiguration::class.java)
         .configure(
             Parameters()
@@ -27,11 +27,11 @@ fun loadConfiguration(file: String) =
                 .setThrowExceptionOnMissing(true))
         .configuration
 
-fun configureS3() = AmazonS3ClientBuilder.defaultClient()
+internal fun configureS3() = AmazonS3ClientBuilder.defaultClient()
 
-fun configureSns() = AmazonSNSClientBuilder.defaultClient()
+internal fun configureSns() = AmazonSNSClientBuilder.defaultClient()
 
-fun configureCalendar(config: Configuration, s3: AmazonS3) =
+internal fun configureCalendar(config: Configuration, s3: AmazonS3) =
     Calendar.Builder(
         GoogleNetHttpTransport.newTrustedTransport(),
         JacksonFactory.getDefaultInstance(),

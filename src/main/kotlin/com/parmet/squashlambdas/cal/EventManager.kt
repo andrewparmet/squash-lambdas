@@ -5,7 +5,10 @@ import com.google.common.collect.Iterables
 import com.parmet.squashlambdas.activity.Activity
 import mu.KotlinLogging
 
-class EventManager(private val calendar: Calendar, private val calendarId: String) {
+internal class EventManager(
+    private val calendar: Calendar,
+    private val calendarId: String
+) {
     private val logger = KotlinLogging.logger { }
 
     fun create(activity: Activity) {

@@ -1,6 +1,6 @@
 package com.parmet.squashlambdas.email
 
-class AppendableList<T>() : Appendable<T>, Iterable<T> {
+internal class AppendableList<T>() : Appendable<T>, Iterable<T> {
     private val delegate: MutableList<T> = mutableListOf()
 
     constructor(src: List<T>): this() {

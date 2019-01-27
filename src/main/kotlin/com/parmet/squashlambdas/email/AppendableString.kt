@@ -1,6 +1,6 @@
 package com.parmet.squashlambdas.email
 
-class AppendableString() : Appendable<StringBuilder> {
+internal class AppendableString() : Appendable<StringBuilder> {
     private val delegate = StringBuilder()
 
     constructor(src: StringBuilder): this() {

@@ -8,7 +8,7 @@ import com.google.gson.GsonBuilder
 import com.parmet.squashlambdas.cal.ChangeSummary
 import java.time.Instant
 
-class Notifier(
+internal class Notifier(
     private val sns: AmazonSNS,
     private val topicArn: String
 ) {

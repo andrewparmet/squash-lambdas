@@ -7,7 +7,7 @@ import com.parmet.squashlambdas.activity.Sport.Squash
 import com.parmet.squashlambdas.activity.Sport.Tennis
 import java.util.regex.Pattern
 
-sealed class Court(val sport: Sport) {
+internal sealed class Court(val sport: Sport) {
     abstract val pretty: String
 
     override fun toString() = pretty
@@ -45,12 +45,12 @@ private fun valueOf(value: String) = requireNotNull(map[value]) {
     "No enum constant ${Court::class.java.name}.$value"
 }
 
-fun Court.Companion.fromLocationString(body: String): Court {
+internal fun Court.Companion.fromLocationString(body: String): Court {
     val matcher = NUMBERED_COURT.matcher(body)
     checkArgument(matcher.matches(), "Unable to parse court from %s", body)
     return valueOf("Court ${matcher.group(1)}")
 }
 
-open class CourtN(sport: Sport, n: Int) : Court(sport) {
+internal open class CourtN(sport: Sport, n: Int) : Court(sport) {
     override val pretty = "Court $n"
 }

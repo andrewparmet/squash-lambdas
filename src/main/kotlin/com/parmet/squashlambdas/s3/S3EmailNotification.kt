@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
 import java.time.Instant
 
-data class S3EmailNotification(
+internal data class S3EmailNotification(
     private val eventVersion: String,
     private val eventSource: String,
     private val awsRegion: String,
