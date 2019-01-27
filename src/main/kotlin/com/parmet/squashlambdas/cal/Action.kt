@@ -2,7 +2,10 @@ package com.parmet.squashlambdas.cal
 
 import com.parmet.squashlambdas.activity.Activity
 
-internal sealed class Action(internal val handle: (Activity, EventManager) -> Unit) {
+internal sealed class Action(
+    @Transient
+    internal val handle: (Activity, EventManager) -> Unit
+) {
     object Create : Action({ activity, manager -> manager.create(activity) })
 
     object Update : Action({ activity, manager -> manager.update(activity) })

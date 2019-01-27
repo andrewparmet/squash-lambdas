@@ -51,6 +51,6 @@ internal fun Court.Companion.fromLocationString(body: String): Court {
     return valueOf("Court ${matcher.group(1)}")
 }
 
-internal open class CourtN(sport: Sport, n: Int) : Court(sport) {
+internal abstract class CourtN(sport: Sport, n: Int) : Court(sport) {
     override val pretty = "Court $n"
 }
