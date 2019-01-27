@@ -14,6 +14,8 @@ internal sealed class Action(
 
     object None : Action({ _, _ -> })
 
+    override fun toString() = this::class.java.simpleName
+
     companion object {
         private val CREATION =
             listOf(
