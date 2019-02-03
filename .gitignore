@@ -1,9 +1,11 @@
 /build/
 /bin/
-**google-squash-project.json**
 .gradle
 .idea/
 out/
 .classpath
 .project
 /.settings/
+
+**google-squash-project.json**
+**clublocker-creds.json**

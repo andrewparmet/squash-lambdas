@@ -4,8 +4,18 @@
     <credsFileName>google-squash-project.json</credsFileName>
     <calendarId>primary</calendarId>
   </google>
-  
+
   <aws>
     <handledTopicArn>fake-arn</handledTopicArn>
   </aws>
+
+  <clubLocker>
+    <credsLocation>local</credsLocation>
+    <credsFileName>clublocker-creds.json</credsFileName>
+  </clubLocker>
+
+  <schedule>
+    <location>local</location>
+    <fileName>schedule.txt</fileName>
+  </schedule>
 </configuration>

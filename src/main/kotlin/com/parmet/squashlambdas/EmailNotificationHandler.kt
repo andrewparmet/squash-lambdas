@@ -35,12 +35,12 @@ class EmailNotificationHandler : RequestHandler<Any, Any> {
             ChangeSummary.fromEmail(email)?.also {
                 addToContext("changeSummary", it)
                 it.process(eventManager)
-                notifier.publishSuccess(it)
+                notifier.publishSuccessfulParse(it)
             }
             return input
         } catch (t: Throwable) {
             logger.error(t) { "Error in email processing" }
-            notifier.publishFailure(t, context)
+            notifier.publishFailedParse(t, context)
             throw t
         }
     }

@@ -7,6 +7,7 @@ import com.parmet.squashlambdas.activity.Activity
 import com.parmet.squashlambdas.activity.Clinic
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Match
+import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.activity.Sport
 import com.parmet.squashlambdas.cal.Action
 import mu.KotlinLogging
@@ -24,7 +25,7 @@ class GsonUtilsTest {
             Court.Court2,
             Instant.parse("2018-03-26T22:45:00Z"),
             Instant.parse("2018-03-26T23:30:00Z"),
-            setOf("Philipp Rimmler"))
+            setOf(Player.named("Philipp Rimmler")))
 
     private val clinic =
         Clinic(

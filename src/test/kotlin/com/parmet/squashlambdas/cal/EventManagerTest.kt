@@ -2,6 +2,7 @@ package com.parmet.squashlambdas.cal
 
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Match
+import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.testutil.ConfiguredTest
 import java.time.Instant
 import org.junit.Ignore
@@ -26,7 +27,7 @@ class EventManagerTest : ConfiguredTest() {
                 Court.Court3,
                 Instant.parse("2018-06-25T23:30:00Z"),
                 Instant.parse("2018-06-26T00:15:00Z"),
-                setOf("Logan Ramseyer")))
+                setOf(Player.named("Logan Ramseyer"))))
     }
 
     @Test
@@ -36,8 +37,8 @@ class EventManagerTest : ConfiguredTest() {
                 Court.Court3,
                 Instant.parse("2018-06-25T23:30:00Z"),
                 Instant.parse("2018-06-26T00:15:00Z"),
-                setOf("Logan Ramseyer")))
+                setOf(Player.named("Logan Ramseyer"))))
     }
 
-    private fun manager() = EventManager(calendar(), config().getString("google.calendarId"))
+    private fun manager() = EventManager(calendar, config.getString("google.calendarId"))
 }

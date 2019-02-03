@@ -1,0 +1,70 @@
+package com.parmet.squashlambdas.reserve
+
+import com.google.common.truth.Truth.assertThat
+import com.parmet.squashlambdas.activity.Court
+import com.parmet.squashlambdas.activity.Match
+import com.parmet.squashlambdas.activity.Player
+import com.parmet.squashlambdas.testutil.ConfiguredTest
+import org.junit.Before
+import org.junit.Ignore
+import org.junit.Test
+import java.time.Instant
+import java.time.LocalDate
+import java.util.concurrent.TimeUnit
+
+@Ignore
+class ClubLockerClientImplTest : ConfiguredTest() {
+    @Before
+    fun startClient() {
+        client.startAsync().awaitRunning(3, TimeUnit.SECONDS)
+    }
+
+    @Test
+    fun `test user info`() {
+        println(client.user())
+    }
+
+    @Test
+    fun `test courts info`() {
+        println(client.courts())
+    }
+
+    @Test
+    fun `test directory info`() {
+        println(client.directory())
+    }
+
+    @Test
+    fun `test taken slots info`() {
+        println(client.slotsTaken(LocalDate.now(), LocalDate.now()))
+    }
+
+    @Test
+    fun `test make reservation failure`() {
+        val match =
+            Match(
+                Court.Court7,
+                Instant.parse("2018-02-03T23:00:00Z"), // Some legal date
+                Instant.parse("2018-02-03T23:44:00Z"), // Not 45 minutes
+                setOf(Player.withEmail(email)))
+
+        val resp = client.makeReservation(match)
+
+        assertThat(resp).isEqualTo(
+            ReservationResp.Error(500, "Court doesn't have that slot", match))
+    }
+
+    @Test
+    fun `test make reservation success`() {
+        val resp =
+            client.makeReservation(
+                Match(
+                    Court.Court6,
+                    Instant.parse("2019-02-04T23:00:00Z"),
+                    Instant.parse("2019-02-04T23:45:00Z"),
+                    setOf(Player.withEmail(email))))
+
+        println(resp)
+        assertThat(resp).isInstanceOf(ReservationResp.Success::class.java)
+    }
+}
