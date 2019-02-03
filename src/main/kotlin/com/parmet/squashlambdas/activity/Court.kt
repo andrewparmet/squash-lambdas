@@ -12,13 +12,29 @@ internal sealed class Court(val sport: Sport) {
 
     override fun toString() = pretty
 
-    object Court1 : CourtN(Squash, 1)
-    object Court2 : CourtN(Squash, 2)
-    object Court3 : CourtN(Squash, 3)
+    object Court1 : Court(Squash) {
+        override val pretty = "Court 1"
+    }
 
-    object Court5 : CourtN(Hardball, 5)
-    object Court6 : CourtN(Hardball, 6)
-    object Court7 : CourtN(Hardball, 7)
+    object Court2 : Court(Squash) {
+        override val pretty = "Court 2"
+    }
+
+    object Court3 : Court(Squash) {
+        override val pretty = "Court 3"
+    }
+
+    object Court5 : Court(Hardball) {
+        override val pretty = "Court 5"
+    }
+
+    object Court6 : Court(Hardball) {
+        override val pretty = "Court 6"
+    }
+
+    object Court7 : Court(Hardball) {
+        override val pretty = "Court 7"
+    }
 
     object TennisCourt : Court(Tennis) {
         override val pretty = "Tennis Court"
@@ -49,8 +65,4 @@ internal fun Court.Companion.fromLocationString(body: String): Court {
     val matcher = NUMBERED_COURT.matcher(body)
     checkArgument(matcher.matches(), "Unable to parse court from %s", body)
     return valueOf("Court ${matcher.group(1)}")
-}
-
-internal abstract class CourtN(sport: Sport, n: Int) : Court(sport) {
-    override val pretty = "Court $n"
 }

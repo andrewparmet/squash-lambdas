@@ -1,11 +1,11 @@
 package com.parmet.squashlambdas.activity
 
 import com.google.common.base.Preconditions.checkArgument
+import com.parmet.squashlambdas.BOSTON
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.Month
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
 
@@ -15,8 +15,6 @@ internal object TimeParser {
         Pattern.compile(".* Date: .*, (.*) (\\d\\d?).* (.*) Time: (.*) to (.*) (AM|PM).*")
 
     private val TIME = DateTimeFormatter.ofPattern("hh:mm a")
-
-    private val BOSTON = ZoneId.of("America/New_York")
 
     fun parse(body: String): TimeSlot {
         val matcher = PATTERN.matcher(body)

@@ -6,12 +6,13 @@ import com.bizo.awsstubs.services.sns.AmazonSNSStub
 import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Match
+import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.cal.Action
 import com.parmet.squashlambdas.cal.ChangeSummary
 import mu.KotlinLogging
 import org.junit.Test
 import java.time.Instant
-import java.time.LocalDate
+import java.time.ZoneOffset
 
 class NotifierTest {
     private val logger = KotlinLogging.logger { }
@@ -29,10 +30,10 @@ class NotifierTest {
 
     @Test
     fun `notifier sends a reasonable message on success`() {
-        notifier.publishSuccess(
+        notifier.publishSuccessfulParse(
             ChangeSummary(
                 Action.Create,
-                Match(Court.Court1, Instant.now(), Instant.now(), setOf("Andrew Parmet"))))
+                Match(Court.Court1, Instant.now(), Instant.now(), setOf(Player.named("Andrew Parmet")))))
 
         logger.info { "Received ${received[0].message}" }
 
@@ -42,12 +43,12 @@ class NotifierTest {
         assertThat(received[0].message).contains("Andrew Parmet")
         assertThat(received[0].message).contains("Court 1")
         assertThat(received[0].message).contains("Squash")
-        assertThat(received[0].message).contains(LocalDate.now().toString())
+        assertThat(received[0].message).contains(Instant.now().atZone(ZoneOffset.UTC).toLocalDate().toString())
     }
 
     @Test
     fun `notifier sends a reasonable message on failure`() {
-        notifier.publishFailure(
+        notifier.publishFailedParse(
             ExceptionInInitializerError("something terrible has happened"),
             mapOf("key123" to "val456"))
 

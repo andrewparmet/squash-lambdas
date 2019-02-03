@@ -1,0 +1,31 @@
+{
+  "clubId": 1413,
+  "courtId": 1692,
+  "date": "2019-02-02",
+  "startTime": 1845,
+  "endTime": 1930,
+  "slot": "18:45-19:30",
+  "type": "match",
+  "numberOfPlayers": 2,
+  "players": [
+    {
+      "type": "member",
+      "id": 167759
+    },
+    {
+      "type": "member",
+      "id": "open"
+    }
+  ],
+  "isPrivate": false,
+  "restrictJoinByRating": false,
+  "minimumRating": -1,
+  "maximumRating": 1.1,
+  "notes": [
+  ],
+  "matchType": "singles",
+  "customMatchType": 144,
+  "applyUserRestrictionsForAdmin": false,
+  "paymentCard": null,
+  "payingForAll": false
+}

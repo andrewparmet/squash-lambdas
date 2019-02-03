@@ -2,14 +2,14 @@ package com.parmet.squashlambdas.notify
 
 import com.amazonaws.services.sns.AmazonSNS
 import com.amazonaws.services.sns.model.PublishRequest
-import com.fatboyindustrial.gsonjavatime.InstantConverter
+import com.fatboyindustrial.gsonjavatime.Converters
 import com.google.common.base.Throwables
 import com.google.gson.GsonBuilder
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Sport
 import com.parmet.squashlambdas.cal.Action
 import com.parmet.squashlambdas.cal.ChangeSummary
-import java.time.Instant
+import com.parmet.squashlambdas.reserve.ReservationMaker
 
 internal class Notifier(
     private val sns: AmazonSNS,
@@ -17,7 +17,7 @@ internal class Notifier(
 ) {
     private val printer =
         GsonBuilder()
-            .registerTypeAdapter(Instant::class.java, InstantConverter())
+            .registerAllJavaTimeAdapters()
             .registerTypeAdapterFactory(ACTIVITY_ADAPTER_FACTORY)
             .registerTypeHierarchyAdapter(Sport::class.java, SportSerializer)
             .registerTypeHierarchyAdapter(Court::class.java, CourtSerializer)
@@ -26,30 +26,33 @@ internal class Notifier(
             .setPrettyPrinting()
             .create()
 
-    fun publishSuccess(summary: ChangeSummary) {
+    private fun GsonBuilder.registerAllJavaTimeAdapters() =
+        Converters.registerAll(this)
+
+    fun publishSuccessfulParse(summary: ChangeSummary) {
         sns.publish(
             PublishRequest(
                 topicArn,
-                successMsg(summary),
+                successfulParseMsg(summary),
                 "Processed Club Locker Email"))
     }
 
-    private fun successMsg(summary: ChangeSummary): String {
+    private fun successfulParseMsg(summary: ChangeSummary): String {
         return """
 Successfully processed change:
 ${printer.toJson(summary)}
         """
     }
 
-    fun publishFailure(t: Throwable, context: Map<*, *>) {
+    fun publishFailedParse(t: Throwable, context: Map<*, *>) {
         sns.publish(
             PublishRequest(
                 topicArn,
-                failureMsg(t, context),
+                failedParseMsg(t, context),
                 "Failed to Process Club Locker Email"))
     }
 
-    private fun failureMsg(t: Throwable, context: Map<*, *>): String {
+    private fun failedParseMsg(t: Throwable, context: Map<*, *>): String {
         return """
 Encountered an error processing a Club Locker email:
 
@@ -58,6 +61,61 @@ ${printer.toJson(context)}
 
 Stack trace:
 ${Throwables.getStackTraceAsString(t)}
+        """
+    }
+
+    fun publishSuccessfulReservation(result: ReservationMaker.Result.Success) {
+        sns.publish(
+            PublishRequest(
+                topicArn,
+                successfulParseMsg(result),
+                "Made a Reservation on Club Locker"))
+    }
+
+    private fun successfulParseMsg(result: ReservationMaker.Result.Success): String {
+        return """
+Successfully made a reservation:
+${printer.toJson(result)}
+        """
+    }
+
+    fun publishFailedReservation(t: Throwable, context: Map<*, *>) {
+        sns.publish(
+            PublishRequest(
+                topicArn,
+                failedReservationMsg(t, context),
+                "Failed to Make Reservation on Club Locker"))
+    }
+
+    private fun failedReservationMsg(t: Throwable, context: Map<*, *>): String {
+        return """
+Encountered an error making a reservation:
+
+Context:
+${printer.toJson(context)}
+
+Stack trace:
+${Throwables.getStackTraceAsString(t)}
+        """
+    }
+
+    fun publishFailedReservation(result: ReservationMaker.Result.Failure, context: Map<*, *>) {
+        sns.publish(
+            PublishRequest(
+                topicArn,
+                failedReservationMsg(result, context),
+                "Failed to Make Reservation on Club Locker"))
+    }
+
+    private fun failedReservationMsg(result: ReservationMaker.Result.Failure, context: Map<*, *>): String {
+        return """
+Could not make a reservation:
+
+Context:
+${printer.toJson(context)}
+
+Failures:
+$result
         """
     }
 }

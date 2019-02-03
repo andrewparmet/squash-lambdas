@@ -5,6 +5,7 @@ import com.parmet.squashlambdas.activity.Activity
 import com.parmet.squashlambdas.activity.Clinic
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Match
+import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.cal.Action
 import com.parmet.squashlambdas.cal.ChangeSummary
 import com.parmet.squashlambdas.email.EmailRetriever
@@ -50,7 +51,7 @@ class IntegrationTests {
                         Court.Court2,
                         Instant.parse("2018-03-26T22:45:00Z"),
                         Instant.parse("2018-03-26T23:30:00Z"),
-                        setOf("Philipp Rimmler"))))
+                        playerSet("Philipp Rimmler"))))
     }
 
     @Test
@@ -76,7 +77,7 @@ class IntegrationTests {
                         Court.Court2,
                         Instant.parse("2018-05-31T23:30:00Z"),
                         Instant.parse("2018-06-01T00:15:00Z"),
-                        setOf("Stephen Santulli"))))
+                        playerSet("Stephen Santulli"))))
     }
 
     @Test
@@ -89,7 +90,7 @@ class IntegrationTests {
                         Court.Court3,
                         Instant.parse("2018-06-29T00:15:00Z"),
                         Instant.parse("2018-06-29T01:00:00Z"),
-                        setOf("Aaron bhole (Guest)"))))
+                        playerSet("Aaron bhole (Guest)"))))
     }
 
     @Test
@@ -102,7 +103,7 @@ class IntegrationTests {
                         Court.Court1,
                         Instant.parse("2018-06-12T22:45:00Z"),
                         Instant.parse("2018-06-12T23:30:00Z"),
-                        setOf("James Wall"))))
+                        playerSet("James Wall"))))
     }
 
     @Test
@@ -115,7 +116,7 @@ class IntegrationTests {
                         Court.Court1,
                         Instant.parse("2018-03-28T22:45:00Z"),
                         Instant.parse("2018-03-28T23:30:00Z"),
-                        setOf("Bruce Chafee"))))
+                        playerSet("Bruce Chafee"))))
     }
 
     @Test
@@ -141,7 +142,7 @@ class IntegrationTests {
                         Court.Court3,
                         Instant.parse("2018-06-28T23:30:00Z"),
                         Instant.parse("2018-06-29T00:15:00Z"),
-                        setOf("Paul Cathcart"))))
+                        playerSet("Paul Cathcart"))))
     }
 
     @Test
@@ -154,7 +155,7 @@ class IntegrationTests {
                         Court.Court3,
                         Instant.parse("2018-04-25T22:00:00Z"),
                         Instant.parse("2018-04-25T22:45:00Z"),
-                        setOf("Bruce Chafee"))))
+                        playerSet("Bruce Chafee"))))
     }
 
     @Test
@@ -218,7 +219,7 @@ class IntegrationTests {
                         Court.Court1,
                         Instant.parse("2018-10-11T23:30:00Z"),
                         Instant.parse("2018-10-12T00:15:00Z"),
-                        setOf("Elisabeth Hill"))))
+                        playerSet("Elisabeth Hill"))))
     }
 
     @Test
@@ -237,8 +238,10 @@ class IntegrationTests {
         ChangeSummary.fromEmail(emailFromBody(fileName))
 
     private fun summary(action: Action, activity: Activity) = ChangeSummary(action, activity)
+
+    private fun playerSet(name: String) = setOf(Player.named(name))
 }
 
 fun emailFromBody(fileName: String) =
-    EmailRetriever(EmailReturningS3(getResourceAsString(IntegrationTests::class.java, fileName)))
+    EmailRetriever(EmailReturningS3(getResourceAsString(fileName)))
         .retrieveEmail("parmet-squash-emails", "emails/some-file-name")

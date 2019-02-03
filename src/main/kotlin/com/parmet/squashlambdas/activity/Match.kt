@@ -7,16 +7,19 @@ internal data class Match(
     override val court: Court,
     override val start: Instant,
     override val end: Instant,
-    private val otherPlayers: Set<String>
+    val players: Set<Player>
 ) : AbstractActivity() {
 
     override fun summary() = "${court.sport} ${renderOtherPlayers()}"
 
+    private fun otherPlayers() =
+        players.filter { it.name != "Parmet, Andrew" && it.name != "Andrew Parmet" }
+
     private fun renderOtherPlayers() =
-        if (otherPlayers.isEmpty()) {
+        if (otherPlayers().isEmpty()) {
             "Match"
         } else {
-            "v. ${otherPlayers.joinToString(",")}"
+            "v. ${otherPlayers().joinToString(",") { it.name!! }}"
         }
 
     companion object {
@@ -26,7 +29,7 @@ internal data class Match(
                 Court.fromLocationString(email.body),
                 startAndEnd.start,
                 startAndEnd.end,
-                OtherPlayersParser.parse(email.body))
+                OtherPlayersParser.parse(email.body).map { Player.named(it) }.toSet())
         }
     }
 }

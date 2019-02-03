@@ -39,6 +39,7 @@ dependencies {
   compile "com.amazonaws:aws-java-sdk-s3:$awsSdkVersion"
   compile "com.amazonaws:aws-java-sdk-sns:$awsSdkVersion"
   compile 'com.amazonaws:aws-lambda-java-core:1.2.0'
+
   compile 'com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.1'
   compile "com.google.code.gson:gson:$gsonVersion"
   compile "com.google.code.gson:gson-extras:$gsonVersion"
@@ -47,13 +48,14 @@ dependencies {
   compile('com.google.apis:google-api-services-calendar:v3-rev20181125-1.28.0') {
     exclude group: 'com.google.guava'
   }
+
   compile 'net.sf.biweekly:biweekly:0.6.3'
   compile 'org.apache.commons:commons-email:1.5'
-  compile 'org.apache.commons:commons-lang3:3.8.1'
   compile 'org.jsoup:jsoup:1.11.3'
   compile 'org.apache.commons:commons-configuration2:2.4'
   // commons-configuration2 does not pull this in on its own and 1.9.3 disables logging of an annoying stacktrace
   compile 'commons-beanutils:commons-beanutils:1.9.3'
+  compile 'com.squareup.okhttp3:okhttp:3.12.1'
 
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
   compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"

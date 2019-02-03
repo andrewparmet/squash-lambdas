@@ -3,12 +3,31 @@
     <credsLocation>s3</credsLocation>
     <calendarId>primary</calendarId>
   </google>
-  
+
   <aws>
     <googleCalCreds>
-      <bucket>${env:CREDS_BUCKET}</bucket>
-      <key>${env:CREDS_KEY}</key>
+      <bucket>${env:GOOGLE_CAL_CREDS_BUCKET}</bucket>
+      <key>${env:GOOGLE_CAL_CREDS_KEY}</key>
     </googleCalCreds>
+
+    <clubLockerCreds>
+      <bucket>${env:CLUB_LOCKER_CREDS_BUCKET}</bucket>
+      <key>${env:CLUB_LOCKER_CREDS_KEY}</key>
+    </clubLockerCreds>
+
+    <reservationSchedule>
+      <bucket>${env:RESERVATION_SCHEDULE_BUCKET}</bucket>
+      <key>${env:RESERVATION_SCHEDULE_KEY}</key>
+    </reservationSchedule>
+
     <handledTopicArn>${env:HANDLED_TOPIC_ARN}</handledTopicArn>
   </aws>
+
+  <clubLocker>
+    <credsLocation>s3</credsLocation>
+  </clubLocker>
+
+  <schedule>
+    <location>s3</location>
+  </schedule>
 </configuration>
