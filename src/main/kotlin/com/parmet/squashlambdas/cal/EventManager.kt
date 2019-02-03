@@ -12,7 +12,7 @@ internal class EventManager(
     private val logger = KotlinLogging.logger { }
 
     fun create(activity: Activity) {
-        logger.info { "Creating schdulable $activity" }
+        logger.info { "Creating activity $activity" }
         calendar.events().insert(calendarId, activity.toEvent()).execute()
     }
 

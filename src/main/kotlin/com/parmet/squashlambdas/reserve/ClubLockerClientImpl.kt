@@ -11,7 +11,6 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
-import com.google.gson.reflect.TypeToken
 import com.parmet.squashlambdas.BOSTON
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Court.Court1
@@ -23,6 +22,7 @@ import com.parmet.squashlambdas.activity.Court.Court7
 import com.parmet.squashlambdas.activity.Court.RacquetsCourt
 import com.parmet.squashlambdas.activity.Court.TennisCourt
 import com.parmet.squashlambdas.activity.Match
+import com.parmet.squashlambdas.fromJson
 import mu.KotlinLogging
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
@@ -101,11 +101,8 @@ internal class ClubLockerClientImpl(
 
     private inline fun <reified T> execute(resource: String): T {
         checkRunning()
-        return fromJson(responseBody(Request.Builder().url(resource).authorized()))
+        return gson.fromJson(responseBody(Request.Builder().url(resource).authorized()))
     }
-
-    private inline fun <reified T> fromJson(obj: String): T =
-        gson.fromJson(obj, object : TypeToken<T>() {}.type)
 
     override fun makeReservation(match: Match): ReservationResp {
         checkRunning()
@@ -120,7 +117,7 @@ internal class ClubLockerClientImpl(
                             match.toReservationRequest().toJson())))
 
         val code = response.code()
-        val body: Map<String, Any> = fromJson(response.body()!!.string())
+        val body: Map<String, Any> = gson.fromJson(response.body()!!.string())
         return if (code == 200) {
             if (body.containsKey("createDenied")) {
                 ReservationResp.Error(code, body["reason"] as String, match)

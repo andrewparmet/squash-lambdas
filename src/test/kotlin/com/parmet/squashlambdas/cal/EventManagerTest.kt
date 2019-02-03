@@ -40,5 +40,5 @@ class EventManagerTest : ConfiguredTest() {
                 setOf(Player.named("Logan Ramseyer"))))
     }
 
-    private fun manager() = EventManager(calendar, config.getString("google.calendarId"))
+    private fun manager() = EventManager(calendar, config.getString("google.cal.calendarId"))
 }
