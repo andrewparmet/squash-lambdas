@@ -11,7 +11,6 @@ import com.google.api.services.calendar.CalendarScopes
 import com.google.common.base.Preconditions.checkState
 import com.google.common.io.Files
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.reserve.ClubLockerClient
 import com.parmet.squashlambdas.reserve.ClubLockerClientImpl
@@ -46,34 +45,11 @@ internal fun configureCalendar(config: Configuration, s3: AmazonS3) =
         .setApplicationName("PARMET_SQUASH_LAMBDAS")
         .build()
 
-private fun loadCredential(config: Configuration, s3: AmazonS3): GoogleCredential {
-    val credsLocation = config.getString("google.credsLocation")
-    if ("local" == credsLocation) {
-        return GoogleCredential.fromStream(
-            Files.asByteSource(File(config.getString("google.credsFileName"))).openStream())
-    }
-    checkState("s3" == credsLocation)
-    return GoogleCredential.fromStream(
-        s3.getObjectAsString(
-            config.getString("aws.googleCalCreds.bucket"),
-            config.getString("aws.googleCalCreds.key")
-        ).byteInputStream(UTF_8))
-}
+private fun loadCredential(config: Configuration, s3: AmazonS3): GoogleCredential =
+    GoogleCredential.fromStream(loadFile(config, "google.cal.creds", s3).byteInputStream(UTF_8))
 
 internal fun configureClubLockerClient(config: Configuration, s3: AmazonS3): Pair<ClubLockerClient, Player> {
-    val credsLocation = config.getString("clubLocker.credsLocation")
-
-    val creds: Map<String, String> =
-        Gson().fromJson(
-            if ("local" == credsLocation) {
-                Files.asCharSource(File(config.getString("clubLocker.credsFileName")), UTF_8).read()
-            } else {
-                checkState("s3" == credsLocation)
-
-                s3.getObjectAsString(
-                    config.getString("aws.clubLockerCreds.bucket"),
-                    config.getString("aws.clubLockerCreds.key"))
-        }, object : TypeToken<Map<String, String>>() {}.type)
+    val creds: Map<String, String> = Gson().fromJson(loadFile(config, "clubLocker.creds", s3))
 
     val hostPlayer = Player.withEmail(creds.getValue("username"))
 
@@ -85,19 +61,21 @@ internal fun configureClubLockerClient(config: Configuration, s3: AmazonS3): Pai
         hostPlayer)
 }
 
-internal fun getSchedule(config: Configuration, s3: AmazonS3): Schedule {
-    val scheduleLocation = config.getString("schedule.location")
+internal fun getSchedule(config: Configuration, s3: AmazonS3): Schedule =
+    Schedule.fromString(loadFile(config, "schedule", s3))
 
-    return if ("local" == scheduleLocation) {
-        Schedule.fromString(
-            Files.asCharSource(File(config.getString("schedule.fileName")), UTF_8).read()
-        )
-    } else {
-        checkState("s3" == scheduleLocation)
-
-        Schedule.fromS3(
-            s3,
-            config.getString("aws.reservationSchedule.bucket"),
-            config.getString("aws.reservationSchedule.key"))
+private fun loadFile(
+    config: Configuration,
+    configKey: String,
+    s3: AmazonS3
+): String =
+    config.getString("$configKey.location").let {
+        if (it == "local") {
+            Files.asCharSource(File(config.getString("$configKey.fileName")), UTF_8).read()
+        } else {
+            checkState("s3" == it)
+            s3.getObjectAsString(
+                config.getString("aws.$configKey.bucket"),
+                config.getString("aws.$configKey.key"))
+        }
     }
-}

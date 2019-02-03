@@ -1,30 +1,45 @@
 <configuration>
   <google>
-    <credsLocation>s3</credsLocation>
-    <calendarId>primary</calendarId>
+    <cal>
+      <creds>
+        <location>s3</location>
+      </creds>
+
+      <calendarId>primary</calendarId>
+    </cal>
   </google>
 
   <aws>
-    <googleCalCreds>
-      <bucket>${env:GOOGLE_CAL_CREDS_BUCKET}</bucket>
-      <key>${env:GOOGLE_CAL_CREDS_KEY}</key>
-    </googleCalCreds>
+    <google>
+      <cal>
+        <creds>
+          <bucket>${env:GOOGLE_CAL_CREDS_BUCKET}</bucket>
+          <key>${env:GOOGLE_CAL_CREDS_KEY}</key>
+        </creds>
+      </cal>
+    </google>
 
-    <clubLockerCreds>
-      <bucket>${env:CLUB_LOCKER_CREDS_BUCKET}</bucket>
-      <key>${env:CLUB_LOCKER_CREDS_KEY}</key>
-    </clubLockerCreds>
+    <clubLocker>
+      <creds>
+        <bucket>${env:CLUB_LOCKER_CREDS_BUCKET}</bucket>
+        <key>${env:CLUB_LOCKER_CREDS_KEY}</key>
+      </creds>
+    </clubLocker>
 
-    <reservationSchedule>
+    <schedule>
       <bucket>${env:RESERVATION_SCHEDULE_BUCKET}</bucket>
       <key>${env:RESERVATION_SCHEDULE_KEY}</key>
-    </reservationSchedule>
+    </schedule>
 
-    <handledTopicArn>${env:HANDLED_TOPIC_ARN}</handledTopicArn>
+    <sns>
+      <handledTopicArn>${env:HANDLED_TOPIC_ARN}</handledTopicArn>
+    </sns>
   </aws>
 
   <clubLocker>
-    <credsLocation>s3</credsLocation>
+    <creds>
+      <location>s3</location>
+    </creds>
   </clubLocker>
 
   <schedule>

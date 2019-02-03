@@ -1,16 +1,25 @@
 <configuration>
   <google>
-    <credsLocation>local</credsLocation>
-    <credsFileName>google-squash-project.json</credsFileName>
-    <calendarId>primary</calendarId>
+    <cal>
+      <creds>
+        <location>local</location>
+        <fileName>google-squash-project.json</fileName>
+      </creds>
+
+      <calendarId>primary</calendarId>
+    </cal>
   </google>
 
   <aws>
-    <handledTopicArn>fake-arn</handledTopicArn>
+    <sns>
+      <handledTopicArn>fake-arn</handledTopicArn>
+    </sns>
   </aws>
 
   <clubLocker>
-    <credsLocation>local</credsLocation>
-    <credsFileName>clublocker-creds.json</credsFileName>
+    <creds>
+      <location>local</location>
+      <fileName>clublocker-creds.json</fileName>
+    </creds>
   </clubLocker>
 </configuration>
