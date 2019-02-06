@@ -3,9 +3,9 @@ package com.parmet.squashlambdas.reserve
 import com.fatboyindustrial.gsonjavatime.InstantConverter
 import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
-import com.parmet.squashlambdas.BOSTON
 import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneOffset
 import java.util.UUID
 
 internal object InputParser {
@@ -15,9 +15,11 @@ internal object InputParser {
             .create()
 
     fun parseRequestDate(input: Any): LocalDate =
-        gson.fromJson(gson.toJsonTree(input), Input::class.java)
-            .time
-            .atZone(BOSTON)
+        parseRequestDate(gson.fromJson(gson.toJsonTree(input), Input::class.java))
+
+    internal fun parseRequestDate(input: Input): LocalDate =
+        input.time
+            .atZone(ZoneOffset.UTC)
             .toLocalDate()
             .plusDays(7)
 

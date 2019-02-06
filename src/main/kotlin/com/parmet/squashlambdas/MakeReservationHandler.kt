@@ -2,34 +2,36 @@ package com.parmet.squashlambdas
 
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
+import com.amazonaws.services.s3.AmazonS3
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.reserve.ClubLockerClient
+import com.parmet.squashlambdas.reserve.TimeFilter
 import com.parmet.squashlambdas.reserve.InputParser
 import com.parmet.squashlambdas.reserve.ReservationMaker
 import com.parmet.squashlambdas.reserve.ReservationMaker.Result
-import com.parmet.squashlambdas.reserve.Schedule
 import mu.KotlinLogging
+import org.apache.commons.configuration2.Configuration
 import java.time.LocalDate
 import java.util.concurrent.ConcurrentSkipListMap
 
 class MakeReservationHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }
 
+    private val config: Configuration
+    private val s3: AmazonS3
     private val notifier: Notifier
     private val client: ClubLockerClient
     private val hostPlayer: Player
-    private val schedule: Schedule
 
     init {
-        val config = loadConfiguration(System.getenv("CONFIG_NAME") + ".xml")
-        val s3 = configureS3()
+        config = loadConfiguration(System.getenv("CONFIG_NAME") + ".xml")
+        s3 = configureS3()
         notifier = Notifier(configureSns(), config.getString("aws.sns.handledTopicArn"))
         try {
             val clientAndPlayer = configureClubLockerClient(config, s3)
             client = clientAndPlayer.first.apply { startAsync().awaitRunning() }
             hostPlayer = clientAndPlayer.second
-            schedule = getSchedule(config, s3)
         } catch (t: Throwable) {
             notifier.publishFailedReservation(t, context)
             throw t
@@ -43,14 +45,26 @@ class MakeReservationHandler : RequestHandler<Any, Any> {
             val requestDate = InputParser.parseRequestDate(input)
             addToContext("requestDate", requestDate)
 
-            if (schedule.shouldMakeReservation(requestDate)) {
-                makeReservation(requestDate)
+            val timeFiltered = TimeFilter(requestDate).filterBasedOnBostonTime()
+            if (!timeFiltered.shouldMakeReservation()) {
+                logger.info { "Not making a reservation: ${timeFiltered.reason}" }
+                timeFiltered.reason!!
             } else {
-                "No reservation requested for $requestDate"
+                processSchedule(requestDate)
             }
         } catch (t: Throwable) {
             notifier.publishFailedReservation(t, context)
             throw t
+        }
+    }
+
+    private fun processSchedule(requestDate: LocalDate): Any {
+        val schedule = getSchedule(config, s3)
+        return if (schedule.shouldMakeReservation(requestDate)) {
+            makeReservation(requestDate)
+        } else {
+            logger.info { "No reservation requested for $requestDate ($schedule)" }
+            "No reservation requested for $requestDate"
         }
     }
 
