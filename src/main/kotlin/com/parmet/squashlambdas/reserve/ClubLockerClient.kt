@@ -44,14 +44,22 @@ internal data class TakenSlot(
 
 internal sealed class ReservationResp {
     internal data class Success(
-        val id: Int
+        val id: Int,
+        val match: Match
     ) : ReservationResp()
+
+    internal abstract class NonSuccess : ReservationResp()
 
     internal data class Error(
         val statusCode: Int,
         val message: String,
         val match: Match
-    ) : ReservationResp()
+    ) : NonSuccess()
+
+    internal data class Failure(
+        val t: Throwable,
+        val match: Match
+    ) : NonSuccess()
 }
 
 internal data class User(

@@ -2,7 +2,8 @@ package com.parmet.squashlambdas.reserve
 
 import com.google.common.base.Joiner
 import com.google.common.base.Preconditions.checkState
-import com.google.common.net.HttpHeaders
+import com.google.common.net.HttpHeaders.ACCEPT
+import com.google.common.net.HttpHeaders.AUTHORIZATION
 import com.google.common.net.MediaType.FORM_DATA
 import com.google.common.net.MediaType.JSON_UTF_8
 import com.google.common.net.UrlEscapers
@@ -40,16 +41,14 @@ internal class ClubLockerClientImpl(
     private val logger = KotlinLogging.logger { }
 
     private val httpClient = OkHttpClient.Builder().followRedirects(false).build()
-    private val baseUrl = "https://api.ussquash.com"
-
     private val gson = Gson()
 
+    private val baseUrl = "https://api.ussquash.com"
     private val tennisAndRacquetClubId = 1413
     private val resource = "$baseUrl/resources/res"
     private val clubResource = "$resource/clubs/$tennisAndRacquetClubId"
 
     private lateinit var accessToken: String
-
     private lateinit var directoryService: DirectoryService
 
     override fun startUp() {
@@ -75,16 +74,16 @@ internal class ClubLockerClientImpl(
             .substringAfter("access_token=")
 
     override fun user(): UserResp =
-        execute("$resource/user")
+        get("$resource/user")
 
     override fun courts(): List<CourtResp> =
-        execute("$clubResource/courts")
+        get("$clubResource/courts")
 
     override fun directory(): List<User> =
-        execute("$clubResource/players/directory")
+        get("$clubResource/players/directory")
 
     override fun slotsTaken(from: LocalDate, to: LocalDate): List<TakenSlot> =
-        execute("$clubResource/slots_taken/from/$from/to/$to")
+        get("$clubResource/slots_taken/from/$from/to/$to")
 
     private fun responseBody(builder: Request.Builder): String {
         val response = response(builder)
@@ -99,34 +98,38 @@ internal class ClubLockerClientImpl(
         return httpClient.newCall(request).execute()
     }
 
-    private inline fun <reified T> execute(resource: String): T {
+    private inline fun <reified T> get(resource: String): T {
         checkRunning()
         return gson.fromJson(responseBody(Request.Builder().url(resource).authorized()))
     }
 
     override fun makeReservation(match: Match): ReservationResp {
-        checkRunning()
-        val response =
-            response(
-                Request.Builder()
-                    .url("$clubResource/reservations")
-                    .authorized()
-                    .post(
-                        RequestBody.create(
-                            MediaType.get(JSON_UTF_8.toString()),
-                            match.toReservationRequest().toJson())))
+        try {
+            checkRunning()
+            val response =
+                response(
+                    Request.Builder()
+                        .url("$clubResource/reservations")
+                        .authorized()
+                        .post(
+                            RequestBody.create(
+                                MediaType.get(JSON_UTF_8.toString()),
+                                match.toReservationRequest().toJson())))
 
-        val code = response.code()
-        val body: Map<String, Any> = gson.fromJson(response.body()!!.string())
-        return if (code == 200) {
-            if (body.containsKey("createDenied")) {
-                ReservationResp.Error(code, body["reason"] as String, match)
+            val code = response.code()
+            val body: Map<String, Any> = gson.fromJson(response.body()!!.string())
+            return if (code == 200) {
+                if (body.containsKey("createDenied")) {
+                    ReservationResp.Error(code, body["reason"] as String, match)
+                } else {
+                    checkState(body.containsKey("id"), "Deduced success but body contained no id: %s", body)
+                    ReservationResp.Success((body["id"] as Number).toInt(), match)
+                }
             } else {
-                checkState(body.containsKey("id"), "Deduced success but body contained no id: %s", body)
-                ReservationResp.Success((body["id"] as Number).toInt())
+                ReservationResp.Error(code, body["error"] as String, match)
             }
-        } else {
-            ReservationResp.Error(code, body["error"] as String, match)
+        } catch (t: Throwable) {
+            return ReservationResp.Failure(t, match)
         }
     }
 
@@ -161,8 +164,8 @@ internal class ClubLockerClientImpl(
         }
 
     private fun Request.Builder.authorized() =
-        header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
-            .header(HttpHeaders.ACCEPT, JSON_UTF_8.toString())
+        header(AUTHORIZATION, "Bearer $accessToken")
+            .header(ACCEPT, JSON_UTF_8.toString())
 
     private fun checkRunning() = checkState(isRunning)
 
