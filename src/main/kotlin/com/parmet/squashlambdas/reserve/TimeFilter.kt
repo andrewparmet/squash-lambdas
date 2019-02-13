@@ -1,6 +1,6 @@
 package com.parmet.squashlambdas.reserve
 
-import com.parmet.squashlambdas.BOSTON
+import com.parmet.squashlambdas.inBoston
 import mu.KotlinLogging
 import java.time.Clock
 import java.time.Instant
@@ -16,7 +16,7 @@ internal class TimeFilter(
     constructor(requestDate: LocalDate): this(requestDate, Clock.systemUTC())
 
     fun filterBasedOnBostonTime(): Output {
-        val time = Instant.now(clock).atZone(BOSTON)
+        val time = Instant.now(clock).inBoston()
         logger.info { "Request date: $requestDate; Time in Boston: $time" }
 
         return Output(

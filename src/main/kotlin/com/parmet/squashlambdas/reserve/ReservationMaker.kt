@@ -1,12 +1,12 @@
 package com.parmet.squashlambdas.reserve
 
-import com.parmet.squashlambdas.BOSTON
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Court.Court1
 import com.parmet.squashlambdas.activity.Court.Court2
 import com.parmet.squashlambdas.activity.Court.Court3
 import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.activity.Player
+import com.parmet.squashlambdas.inBoston
 import mu.KotlinLogging
 import java.time.Duration
 import java.time.LocalDate
@@ -56,7 +56,7 @@ internal class ReservationMaker(
 
     private fun attemptReservation(date: LocalDate, court: Court, startTime: LocalTime, player: Player?): ReservationResp {
         val localDateTime = LocalDateTime.of(date, startTime)
-        val start = localDateTime.toInstant(BOSTON.rules.getOffset(localDateTime))
+        val start = localDateTime.inBoston().toInstant()
         return client.makeReservation(
             Match(
                 court,
