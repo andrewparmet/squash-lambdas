@@ -30,6 +30,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
+import okio.Buffer
 import java.lang.reflect.Type
 import java.time.LocalDate
 
@@ -94,7 +95,7 @@ internal class ClubLockerClientImpl(
 
     private fun response(builder: Request.Builder): Response {
         val request = builder.build()
-        logger.info { "Performing request: $request, body: ${request.body()}" }
+        logger.info { "Performing request: $request, body: ${Buffer().also { request.body()?.writeTo(it) }}" }
         return httpClient.newCall(request).execute()
     }
 
