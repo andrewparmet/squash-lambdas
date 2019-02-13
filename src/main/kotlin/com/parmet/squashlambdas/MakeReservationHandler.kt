@@ -38,7 +38,16 @@ class MakeReservationHandler : RequestHandler<Any, Any> {
         }
     }
 
-    override fun handleRequest(input: Any, ignore: Context): Any {
+    override fun handleRequest(input: Any, context: Context): Any {
+        return try {
+            doHandleRequest(input).also { logger.info { "Returning result: $it" } }
+        } catch (t: Throwable) {
+            logger.info(t) { "Throwing: $t" }
+            throw t
+        }
+    }
+
+    private fun doHandleRequest(input: Any): Any {
         return try {
             addToContext("input", input)
 
