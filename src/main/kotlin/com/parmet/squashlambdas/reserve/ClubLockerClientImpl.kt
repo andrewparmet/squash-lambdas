@@ -12,7 +12,6 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
-import com.parmet.squashlambdas.BOSTON
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Court.Court1
 import com.parmet.squashlambdas.activity.Court.Court2
@@ -24,6 +23,7 @@ import com.parmet.squashlambdas.activity.Court.RacquetsCourt
 import com.parmet.squashlambdas.activity.Court.TennisCourt
 import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.fromJson
+import com.parmet.squashlambdas.inBoston
 import mu.KotlinLogging
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
@@ -138,8 +138,8 @@ internal class ClubLockerClientImpl(
         return ReservationReq(
             tennisAndRacquetClubId,
             court.clubLockerId,
-            start.atZone(BOSTON).toLocalDate(),
-            Slot(start.atZone(BOSTON).toLocalTime(), end.atZone(BOSTON).toLocalTime()),
+            start.inBoston().toLocalDate(),
+            Slot(start.inBoston().toLocalTime(), end.inBoston().toLocalTime()),
             players.map {
                 val id = directoryService.idForPlayer(it)
                 if (id != null) {

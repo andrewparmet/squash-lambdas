@@ -1,7 +1,7 @@
 package com.parmet.squashlambdas.activity
 
 import com.google.common.base.Preconditions.checkArgument
-import com.parmet.squashlambdas.BOSTON
+import com.parmet.squashlambdas.inBoston
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -31,5 +31,5 @@ internal object TimeParser {
     }
 
     private fun inBoston(date: LocalDate, time: LocalTime) =
-        LocalDateTime.of(date, time).atZone(BOSTON).toInstant()
+        LocalDateTime.of(date, time).inBoston().toInstant()
 }
