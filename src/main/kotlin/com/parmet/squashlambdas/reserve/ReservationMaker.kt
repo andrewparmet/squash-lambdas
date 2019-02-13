@@ -75,7 +75,7 @@ internal class ReservationMaker(
 
     internal class Options(
         val hostPlayer: Player,
-        val courts: List<Court> = listOf(Court3, Court1, Court2),
+        val courts: List<Court> = listOf(Court1, Court2, Court3),
         val startTimes: List<LocalTime> = listOf(LocalTime.of(18, 0), LocalTime.of(18, 45), LocalTime.of(19, 30))
     )
 
