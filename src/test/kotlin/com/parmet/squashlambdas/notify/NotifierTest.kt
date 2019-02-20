@@ -1,8 +1,8 @@
 package com.parmet.squashlambdas.notify
 
+import com.amazonaws.services.sns.AbstractAmazonSNS
 import com.amazonaws.services.sns.model.PublishRequest
 import com.amazonaws.services.sns.model.PublishResult
-import com.bizo.awsstubs.services.sns.AmazonSNSStub
 import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Match
@@ -19,7 +19,7 @@ class NotifierTest {
 
     private val received = mutableListOf<PublishRequest>()
 
-    private val sns = object : AmazonSNSStub() {
+    private val sns = object : AbstractAmazonSNS() {
         override fun publish(req: PublishRequest): PublishResult {
             received.add(req)
             return PublishResult()
