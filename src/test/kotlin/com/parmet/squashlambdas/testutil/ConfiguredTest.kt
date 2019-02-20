@@ -1,6 +1,6 @@
 package com.parmet.squashlambdas.testutil
 
-import com.bizo.awsstubs.services.s3.AmazonS3Stub
+import com.amazonaws.services.s3.AbstractAmazonS3
 import com.google.api.services.calendar.Calendar
 import com.parmet.squashlambdas.configureCalendar
 import com.parmet.squashlambdas.configureClubLockerClient
@@ -18,8 +18,8 @@ abstract class ConfiguredTest {
     @Before
     fun before() {
         config = loadConfiguration("test.xml")
-        calendar = configureCalendar(config, AmazonS3Stub())
-        val clientAndEmail = configureClubLockerClient(config, AmazonS3Stub())
+        calendar = configureCalendar(config, object : AbstractAmazonS3() {})
+        val clientAndEmail = configureClubLockerClient(config, object : AbstractAmazonS3() {})
         client = clientAndEmail.first
         email = clientAndEmail.second.email!!
     }
