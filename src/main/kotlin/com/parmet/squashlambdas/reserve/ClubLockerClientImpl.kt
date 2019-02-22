@@ -170,7 +170,9 @@ internal class ClubLockerClientImpl(
 
     private fun checkRunning() = checkState(isRunning)
 
-    override fun shutDown() {}
+    override fun shutDown() {
+        // Nothing to do
+    }
 }
 
 @Suppress("UNUSED")
