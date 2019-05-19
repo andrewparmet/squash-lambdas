@@ -3,7 +3,7 @@ package com.parmet.squashlambdas.email
 internal class AppendableString() : Appendable<StringBuilder> {
     private val delegate = StringBuilder()
 
-    constructor(src: StringBuilder): this() {
+    constructor(src: StringBuilder) : this() {
         delegate.append(src)
     }
 
