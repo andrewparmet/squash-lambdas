@@ -9,11 +9,9 @@ import java.time.ZonedDateTime
 
 internal class TimeFilter(
     private val requestDate: LocalDate,
-    private val clock: Clock
+    private val clock: Clock = Clock.systemUTC()
 ) {
     private val logger = KotlinLogging.logger { }
-
-    constructor(requestDate: LocalDate): this(requestDate, Clock.systemUTC())
 
     fun filterBasedOnBostonTime(): Output {
         val time = Instant.now(clock).inBoston()
