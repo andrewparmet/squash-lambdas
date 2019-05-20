@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas.reserve
+package com.parmet.squashlambdas.clublocker
 
 import com.google.common.util.concurrent.Service
 import com.parmet.squashlambdas.activity.Match
@@ -9,7 +9,7 @@ internal interface ClubLockerClient : Service {
 
     fun courts(): List<CourtResp>
 
-    fun slotsTaken(from: LocalDate, to: LocalDate): List<TakenSlot>
+    fun slotsTaken(from: LocalDate, to: LocalDate): List<Slot>
 
     fun makeReservation(match: Match): ReservationResp
 
@@ -33,7 +33,7 @@ internal data class CourtResp(
     val slotLengthMinutes: Int
 )
 
-internal data class TakenSlot(
+internal data class Slot(
     val id: Int,
     val reservationId: Int,
     val court: Int,

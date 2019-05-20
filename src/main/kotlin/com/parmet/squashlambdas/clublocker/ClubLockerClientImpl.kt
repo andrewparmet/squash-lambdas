@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas.reserve
+package com.parmet.squashlambdas.clublocker
 
 import com.google.common.base.Joiner
 import com.google.common.base.Preconditions.checkState
@@ -24,6 +24,10 @@ import com.parmet.squashlambdas.activity.Court.TennisCourt
 import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.fromJson
 import com.parmet.squashlambdas.inBoston
+import com.parmet.squashlambdas.reserve.Slot
+import com.parmet.squashlambdas.reserve.endTime
+import com.parmet.squashlambdas.reserve.slot
+import com.parmet.squashlambdas.reserve.startTime
 import mu.KotlinLogging
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
@@ -50,11 +54,11 @@ internal class ClubLockerClientImpl(
     private val clubResource = "$resource/clubs/$tennisAndRacquetClubId"
 
     private lateinit var accessToken: String
-    private lateinit var directoryService: DirectoryService
+    private lateinit var directory: Directory
 
     override fun startUp() {
         accessToken = authenticate()
-        directoryService = DirectoryService(this)
+        directory = Directory(this)
     }
 
     private fun authenticate() =
@@ -83,7 +87,7 @@ internal class ClubLockerClientImpl(
     override fun directory(): List<User> =
         get("$clubResource/players/directory")
 
-    override fun slotsTaken(from: LocalDate, to: LocalDate): List<TakenSlot> =
+    override fun slotsTaken(from: LocalDate, to: LocalDate): List<com.parmet.squashlambdas.clublocker.Slot> =
         get("$clubResource/slots_taken/from/$from/to/$to")
 
     private fun responseBody(builder: Request.Builder): String {
@@ -136,19 +140,19 @@ internal class ClubLockerClientImpl(
 
     private fun Match.toReservationRequest(): ReservationReq {
         return ReservationReq(
-            tennisAndRacquetClubId,
-            court.clubLockerId,
-            start.inBoston().toLocalDate(),
-            Slot(start.inBoston().toLocalTime(), end.inBoston().toLocalTime()),
-            players.map {
-                val id = directoryService.idForPlayer(it)
-                if (id != null) {
-                    logger.info { "Found id $id for $it" }
-                    Player.member(id)
-                } else {
-                    Player.guest(it.name!!)
+                tennisAndRacquetClubId,
+                court.clubLockerId,
+                start.inBoston().toLocalDate(),
+                Slot(start.inBoston().toLocalTime(), end.inBoston().toLocalTime()),
+                players.map {
+                    val id = directory.idForPlayer(it)
+                    if (id != null) {
+                        logger.info { "Found id $id for $it" }
+                        Player.member(id)
+                    } else {
+                        Player.guest(it.name!!)
+                    }
                 }
-            }
         )
     }
 

@@ -5,7 +5,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.amazonaws.services.s3.AmazonS3
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.notify.Notifier
-import com.parmet.squashlambdas.reserve.ClubLockerClient
+import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.reserve.TimeFilter
 import com.parmet.squashlambdas.reserve.InputParser
 import com.parmet.squashlambdas.reserve.ReservationMaker

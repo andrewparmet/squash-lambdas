@@ -5,7 +5,7 @@ import com.google.api.services.calendar.Calendar
 import com.parmet.squashlambdas.configureCalendar
 import com.parmet.squashlambdas.configureClubLockerClient
 import com.parmet.squashlambdas.loadConfiguration
-import com.parmet.squashlambdas.reserve.ClubLockerClient
+import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import org.apache.commons.configuration2.Configuration
 import org.junit.Before
 
