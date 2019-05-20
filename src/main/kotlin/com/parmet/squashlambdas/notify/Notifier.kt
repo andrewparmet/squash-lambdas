@@ -9,7 +9,6 @@ import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Sport
 import com.parmet.squashlambdas.cal.Action
 import com.parmet.squashlambdas.cal.ChangeSummary
-import com.parmet.squashlambdas.clublocker.Slot
 import com.parmet.squashlambdas.reserve.ReservationMaker
 
 internal class Notifier(
@@ -117,21 +116,6 @@ ${printer.toJson(context)}
 
 Failures:
 $result
-        """
-    }
-
-    fun publishFoundOpenSlot(result: List<Slot>) {
-        sns.publish(
-            PublishRequest(
-                topicArn,
-                foundOpenSlotMsg(result),
-                "Found new open slots on Club Locker"))
-    }
-
-    private fun foundOpenSlotMsg(result: List<Slot>): String {
-        return """
-Found open slots:
-${printer.toJson(result)}
         """
     }
 
