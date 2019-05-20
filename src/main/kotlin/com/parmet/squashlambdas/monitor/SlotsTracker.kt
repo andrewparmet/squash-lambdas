@@ -6,14 +6,14 @@ import java.time.LocalDate
 
 internal class SlotsTracker(
     private val client: ClubLockerClient,
-    private val dynamoClient: DynamoClient
+    private val slotStorageManager: SlotStorageManager
 ) {
     fun findNewlyOpen(date: LocalDate): List<Slot> {
-        val lastSlotsTaken = dynamoClient.loadLatest(date)
+        val lastSlotsTaken = slotStorageManager.loadLatest(date)
 
         val slotsTaken = client.slotsTaken(date, date)
 
-        dynamoClient.save(date, slotsTaken)
+        slotStorageManager.save(date, slotsTaken)
 
         return lastSlotsTaken - slotsTaken
     }

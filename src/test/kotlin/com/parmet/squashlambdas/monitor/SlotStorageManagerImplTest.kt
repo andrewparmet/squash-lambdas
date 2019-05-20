@@ -5,13 +5,13 @@ import com.parmet.squashlambdas.testutil.ConfiguredTest
 import org.junit.Test
 import java.time.LocalDate
 
-class DynamoClientImplTest : ConfiguredTest() {
+class SlotStorageManagerImplTest : ConfiguredTest() {
     @Test
     fun `test writing slots`() {
         client.startAsync().awaitRunning()
         val slots = client.slotsTaken(LocalDate.now(), LocalDate.now())
 
-        DynamoClientImpl(
+        SlotStorageManagerImpl(
             configureDynamoDb(),
             config.getString("aws.dynamo.squashSlotsTableName")
         ).save(LocalDate.now(), slots)
