@@ -5,10 +5,12 @@ import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.amazonaws.services.s3.AmazonS3
 import com.parmet.squashlambdas.activity.Player
+import com.parmet.squashlambdas.activity.Sport
+import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.clublocker.Slot
-import com.parmet.squashlambdas.monitor.DynamoClientImpl
+import com.parmet.squashlambdas.monitor.SlotStorageManagerImpl
 import com.parmet.squashlambdas.monitor.SlotsTracker
 import mu.KotlinLogging
 import org.apache.commons.configuration2.Configuration
@@ -52,7 +54,7 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
     }
 
     private fun doHandleRequest(): Any {
-        val dynamoClient = DynamoClientImpl(
+        val dynamoClient = SlotStorageManagerImpl(
             dynamoDb,
             config.getString("aws.dynamo.squashSlotsTableName")
         )
@@ -74,11 +76,14 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
     }
 
     private fun publish(slots: List<Slot>) {
-        slots.filter { it.startTime in 501..799 }.let {
-            if (it.isNotEmpty()) {
-                notifier.publishFoundOpenSlot(it)
+        slots
+            .filter { it.startTime in 501..799 }
+            .filter { COURTS_BY_ID.getValue(it.court).sport == Sport.Squash }
+            .let {
+                if (it.isNotEmpty()) {
+                    notifier.publishFoundOpenSlot(it)
+                }
             }
-        }
     }
 
     companion object {

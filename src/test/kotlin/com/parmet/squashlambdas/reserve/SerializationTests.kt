@@ -25,27 +25,27 @@ class SerializationTests {
             gson.fromJson(getResourceAsString("courts.json"), object : TypeToken<List<CourtResp>>() {}.type)
 
         assertThat(courts).containsExactly(
-                CourtResp(1690, "Court Tennis", 60),
-                CourtResp(1691, "Racquets", 60),
-                CourtResp(1411, "Court #1", 45),
-                CourtResp(1688, "Court #2", 45),
-                CourtResp(1689, "Court #3", 45),
-                CourtResp(1692, "Court #5", 45),
-                CourtResp(1693, "Court #6", 45),
-                CourtResp(1694, "Court #7", 45)
+            CourtResp(1690, "Court Tennis", 60),
+            CourtResp(1691, "Racquets", 60),
+            CourtResp(1411, "Court #1", 45),
+            CourtResp(1688, "Court #2", 45),
+            CourtResp(1689, "Court #3", 45),
+            CourtResp(1692, "Court #5", 45),
+            CourtResp(1693, "Court #6", 45),
+            CourtResp(1694, "Court #7", 45)
         )
     }
 
     @Test
     fun `test reservation request serialization`() {
         val req =
-                ReservationReq(
-                        1413,
-                        1692,
-                        LocalDate.parse("2019-02-02"),
-                        Slot(LocalTime.parse("18:45"), LocalTime.parse("19:30")),
-                        listOf(Player.member(167759), Player.member("open"))
-                )
+            ReservationReq(
+                1413,
+                1692,
+                LocalDate.parse("2019-02-02"),
+                Slot(LocalTime.parse("18:45"), LocalTime.parse("19:30")),
+                listOf(Player.member(167759), Player.member("open"))
+            )
 
         assertThat(PARSER.parse(req.toJson()).asJsonObject.entrySet())
             .containsExactlyElementsIn(
@@ -81,10 +81,10 @@ class SerializationTests {
     fun `test user parsing`() {
         assertThat(gson.fromJson(getResourceAsString("user.json"), UserResp::class.java))
             .isEqualTo(
-                    UserResp(
-                            167759,
-                            listOf(Affiliation(1413, "Tennis & Racquet Club")),
-                            "joecool@peanuts.com")
+                UserResp(
+                    167759,
+                    listOf(Affiliation(1413, "Tennis & Racquet Club")),
+                    "joecool@peanuts.com")
             )
     }
 
@@ -94,7 +94,7 @@ class SerializationTests {
             gson.fromJson(getResourceAsString("directory.json"), object : TypeToken<List<User>>() {}.type)
 
         assertThat(directory).containsExactly(
-                User(167759, "Parmet, Andrew", "joecool@peanuts.com")
+            User(167759, "Parmet, Andrew", "joecool@peanuts.com")
         )
     }
 }

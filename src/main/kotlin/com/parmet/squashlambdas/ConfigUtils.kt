@@ -57,10 +57,10 @@ internal fun configureClubLockerClient(config: Configuration, s3: AmazonS3): Pai
     val hostPlayer = Player.withEmail(creds.getValue("username"))
 
     return Pair(
-            ClubLockerClientImpl(
-                    hostPlayer.email!!,
-                    creds.getValue("password")
-            ),
+        ClubLockerClientImpl(
+            hostPlayer.email!!,
+            creds.getValue("password")
+        ),
         hostPlayer)
 }
 
