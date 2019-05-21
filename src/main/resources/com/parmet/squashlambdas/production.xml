@@ -37,13 +37,7 @@
 
     <dynamo>
       <squashSlotsTableName>${env:SLOTS_MONITORING_TABLE}</squashSlotsTableName>
-      <squashSlotsUsersTableName>${env:SLOTS_MONITORING_USERS_TABLE}</squashSlotsUsersTableName>
-      <squashSlotsUsersDailyPrefsTableName>${env:SLOTS_MONITORING_USERS_DAILY_PREFS_TABLE}</squashSlotsUsersDailyPrefsTableName>
     </dynamo>
-
-    <pinpoint>
-      <applicationId>${env:SLOTS_MONITORING_PINPOINT_APPLICATION_ID}</applicationId>
-    </pinpoint>
   </aws>
 
   <clubLocker>

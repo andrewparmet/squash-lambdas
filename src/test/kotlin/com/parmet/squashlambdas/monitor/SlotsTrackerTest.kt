@@ -10,7 +10,7 @@ class SlotsTrackerTest : ConfiguredTest() {
     fun `test finding newly open slots`() {
         client.startAsync().awaitRunning()
 
-        val dynamoClient = SlotStorageManagerImpl(
+        val dynamoClient = DynamoClientImpl(
             configureDynamoDb(),
             config.getString("aws.dynamo.squashSlotsTableName")
         )

@@ -16,14 +16,8 @@
     </sns>
 
     <dynamo>
-      <squashSlotsTableName>squash-slots-test</squashSlotsTableName>
-      <squashSlotsUsersTableName>squash-slots-users-test</squashSlotsUsersTableName>
-      <squashSlotsUsersDailyPrefsTableName>squash-slots-users-daily-preferences-test</squashSlotsUsersDailyPrefsTableName>
+      <squashSlotsTableName>test-slots</squashSlotsTableName>
     </dynamo>
-
-    <pinpoint>
-      <applicationId>780a3f4cdb5949f98ed56822c3e63505</applicationId>
-    </pinpoint>
   </aws>
 
   <clubLocker>
