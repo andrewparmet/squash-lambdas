@@ -27,7 +27,7 @@ internal abstract class AbstractMimeMessageExtractor<T>(
             return getFromPart(mimeMultipart.getBodyPart(count - 1))
         }
         val t = newInstance()
-        for (i in 0..(count - 1)) {
+        for (i in 0 until count) {
             t.appendAll(getFromPart(mimeMultipart.getBodyPart(i)))
         }
         return t
