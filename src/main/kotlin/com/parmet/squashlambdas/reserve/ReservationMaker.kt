@@ -6,6 +6,8 @@ import com.parmet.squashlambdas.activity.Court.Court2
 import com.parmet.squashlambdas.activity.Court.Court3
 import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.activity.Player
+import com.parmet.squashlambdas.clublocker.ClubLockerClient
+import com.parmet.squashlambdas.clublocker.ReservationResp
 import com.parmet.squashlambdas.inBoston
 import mu.KotlinLogging
 import java.time.Duration
