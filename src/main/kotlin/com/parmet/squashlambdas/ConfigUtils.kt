@@ -1,7 +1,6 @@
 package com.parmet.squashlambdas
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder
-import com.amazonaws.services.pinpoint.AmazonPinpointClientBuilder
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
 import com.amazonaws.services.sns.AmazonSNSClientBuilder
@@ -40,8 +39,6 @@ internal fun configureSns() = AmazonSNSClientBuilder.defaultClient()
 
 internal fun configureDynamoDb() = AmazonDynamoDBClientBuilder.defaultClient()
 
-internal fun configurePinpoint() = AmazonPinpointClientBuilder.defaultClient()
-
 internal fun configureCalendar(config: Configuration, s3: AmazonS3) =
     Calendar.Builder(
         GoogleNetHttpTransport.newTrustedTransport(),
@@ -60,10 +57,10 @@ internal fun configureClubLockerClient(config: Configuration, s3: AmazonS3): Pai
     val hostPlayer = Player.withEmail(creds.getValue("username"))
 
     return Pair(
-        ClubLockerClientImpl(
-            hostPlayer.email!!,
-            creds.getValue("password")
-        ),
+            ClubLockerClientImpl(
+                    hostPlayer.email!!,
+                    creds.getValue("password")
+            ),
         hostPlayer)
 }
 

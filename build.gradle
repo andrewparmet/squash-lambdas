@@ -39,7 +39,6 @@ def gsonVersion = '2.8.5'
 
 dependencies {
   compile "com.amazonaws:aws-java-sdk-dynamodb:$awsSdkVersion"
-  compile "com.amazonaws:aws-java-sdk-pinpoint:$awsSdkVersion"
   compile "com.amazonaws:aws-java-sdk-s3:$awsSdkVersion"
   compile "com.amazonaws:aws-java-sdk-sns:$awsSdkVersion"
   compile 'com.amazonaws:aws-lambda-java-core:1.2.0'
