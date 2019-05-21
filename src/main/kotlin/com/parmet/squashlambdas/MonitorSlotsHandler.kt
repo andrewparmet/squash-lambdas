@@ -15,6 +15,7 @@ import com.parmet.squashlambdas.monitor.SlotsTracker
 import mu.KotlinLogging
 import org.apache.commons.configuration2.Configuration
 import java.time.Instant
+import java.time.LocalTime
 import java.util.concurrent.ConcurrentSkipListMap
 
 class MonitorSlotsHandler : RequestHandler<Any, Any> {
@@ -59,9 +60,15 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
             config.getString("aws.dynamo.squashSlotsTableName")
         )
 
-        val date = Instant.now().inBoston().toLocalDate()
+        val now = Instant.now().inBoston()
 
-        addToContext("date", date)
+        val date = if (now.toLocalTime().isAfter(LocalTime.of(18, 0))) {
+            now.toLocalDate().plusDays(1)
+        } else {
+            now.toLocalDate()
+        }
+
+        addToContext("checkDate", date)
 
         val newlyOpen = SlotsTracker(client, dynamoClient).findNewlyOpen(date)
 
@@ -76,10 +83,12 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
     }
 
     private fun publish(slots: List<Slot>) {
+        addToContext("foundSlots", slots)
         slots
             .filter { it.startTime in 501..799 }
             .filter { COURTS_BY_ID.getValue(it.court).sport == Sport.Squash }
             .let {
+                addToContext("filteredSlots", it)
                 if (it.isNotEmpty()) {
                     notifier.publishFoundOpenSlot(it)
                 }

@@ -35,6 +35,8 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
 import okio.Buffer
+import org.apache.http.client.HttpResponseException
+import org.jsoup.Jsoup
 import java.lang.reflect.Type
 import java.time.LocalDate
 
@@ -92,8 +94,17 @@ internal class ClubLockerClientImpl(
 
     private fun responseBody(builder: Request.Builder): String {
         val response = response(builder)
+        val code = response.code()
         val respBody = response.body()!!.string()
-        logger.info { "Received response: ${response.code()}, $respBody" }
+        logger.info { "Received response: $code, $respBody" }
+        if (code >= 400) {
+            try {
+                throw HttpResponseException(code, Jsoup.parse(respBody).wholeText().replace("\n", ";"))
+            } catch (ex: Exception) {
+                logger.info(ex) { "Error while parsing response error body" }
+                throw HttpResponseException(code, respBody.replace("\n", ";"))
+            }
+        }
         return respBody
     }
 
