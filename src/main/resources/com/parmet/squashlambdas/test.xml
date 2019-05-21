@@ -16,7 +16,7 @@
     </sns>
 
     <dynamo>
-      <squashSlotsTableName>test-slots</squashSlotsTableName>
+      <squashSlotsTableName>squash-slots-test</squashSlotsTableName>
     </dynamo>
   </aws>
 

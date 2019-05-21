@@ -9,7 +9,9 @@ import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Sport
 import com.parmet.squashlambdas.cal.Action
 import com.parmet.squashlambdas.cal.ChangeSummary
+import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
 import com.parmet.squashlambdas.clublocker.Slot
+import com.parmet.squashlambdas.monitor.TimeFormatter
 import com.parmet.squashlambdas.reserve.ReservationMaker
 
 internal class Notifier(
@@ -131,9 +133,13 @@ $result
     private fun foundOpenSlotMsg(result: List<Slot>): String {
         return """
 Found open slots:
-${printer.toJson(result)}
+${result.joinToString("\n") { prettyPrint(it) }}
         """
     }
+
+    private fun prettyPrint(slot: Slot) =
+        "Court: ${COURTS_BY_ID.getValue(slot.court).pretty}, Time: " +
+            "${TimeFormatter.formatTime(slot.startTime)}-${TimeFormatter.formatTime(slot.endTime)}"
 
     fun publishFailedSlotMonitoring(failure: Throwable, context: Map<*, *>) {
         sns.publish(
