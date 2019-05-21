@@ -1,5 +1,6 @@
 package com.parmet.squashlambdas
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
 import com.amazonaws.services.sns.AmazonSNSClientBuilder
@@ -12,8 +13,8 @@ import com.google.common.base.Preconditions.checkState
 import com.google.common.io.Files
 import com.google.gson.Gson
 import com.parmet.squashlambdas.activity.Player
-import com.parmet.squashlambdas.reserve.ClubLockerClient
-import com.parmet.squashlambdas.reserve.ClubLockerClientImpl
+import com.parmet.squashlambdas.clublocker.ClubLockerClient
+import com.parmet.squashlambdas.clublocker.ClubLockerClientImpl
 import com.parmet.squashlambdas.reserve.Schedule
 import org.apache.commons.configuration2.Configuration
 import org.apache.commons.configuration2.XMLConfiguration
@@ -35,6 +36,8 @@ internal fun loadConfiguration(file: String) =
 internal fun configureS3() = AmazonS3ClientBuilder.defaultClient()
 
 internal fun configureSns() = AmazonSNSClientBuilder.defaultClient()
+
+internal fun configureDynamoDb() = AmazonDynamoDBClientBuilder.defaultClient()
 
 internal fun configureCalendar(config: Configuration, s3: AmazonS3) =
     Calendar.Builder(

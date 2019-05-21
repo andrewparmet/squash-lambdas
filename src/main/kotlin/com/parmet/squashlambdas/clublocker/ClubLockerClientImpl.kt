@@ -1,7 +1,8 @@
-package com.parmet.squashlambdas.reserve
+package com.parmet.squashlambdas.clublocker
 
 import com.google.common.base.Joiner
 import com.google.common.base.Preconditions.checkState
+import com.google.common.collect.ImmutableBiMap
 import com.google.common.net.HttpHeaders.ACCEPT
 import com.google.common.net.HttpHeaders.AUTHORIZATION
 import com.google.common.net.MediaType.FORM_DATA
@@ -24,6 +25,9 @@ import com.parmet.squashlambdas.activity.Court.TennisCourt
 import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.fromJson
 import com.parmet.squashlambdas.inBoston
+import com.parmet.squashlambdas.reserve.endTime
+import com.parmet.squashlambdas.reserve.slot
+import com.parmet.squashlambdas.reserve.startTime
 import mu.KotlinLogging
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
@@ -50,11 +54,11 @@ internal class ClubLockerClientImpl(
     private val clubResource = "$resource/clubs/$tennisAndRacquetClubId"
 
     private lateinit var accessToken: String
-    private lateinit var directoryService: DirectoryService
+    private lateinit var directory: Directory
 
     override fun startUp() {
         accessToken = authenticate()
-        directoryService = DirectoryService(this)
+        directory = Directory(this)
     }
 
     private fun authenticate() =
@@ -83,7 +87,7 @@ internal class ClubLockerClientImpl(
     override fun directory(): List<User> =
         get("$clubResource/players/directory")
 
-    override fun slotsTaken(from: LocalDate, to: LocalDate): List<TakenSlot> =
+    override fun slotsTaken(from: LocalDate, to: LocalDate): List<com.parmet.squashlambdas.clublocker.Slot> =
         get("$clubResource/slots_taken/from/$from/to/$to")
 
     private fun responseBody(builder: Request.Builder): String {
@@ -139,9 +143,9 @@ internal class ClubLockerClientImpl(
             tennisAndRacquetClubId,
             court.clubLockerId,
             start.inBoston().toLocalDate(),
-            Slot(start.inBoston().toLocalTime(), end.inBoston().toLocalTime()),
+            com.parmet.squashlambdas.reserve.Slot(start.inBoston().toLocalTime(), end.inBoston().toLocalTime()),
             players.map {
-                val id = directoryService.idForPlayer(it)
+                val id = directory.idForPlayer(it)
                 if (id != null) {
                     logger.info { "Found id $id for $it" }
                     Player.member(id)
@@ -153,16 +157,7 @@ internal class ClubLockerClientImpl(
     }
 
     private val Court.clubLockerId: Int
-        get() = when (this) {
-            Court1 -> 1411
-            Court2 -> 1688
-            Court3 -> 1689
-            Court5 -> 1692
-            Court6 -> 1693
-            Court7 -> 1694
-            TennisCourt -> 1690
-            RacquetsCourt -> 1691
-        }
+        get() = COURTS_BY_ID.inverse().getValue(this)
 
     private fun Request.Builder.authorized() =
         header(AUTHORIZATION, "Bearer $accessToken")
@@ -170,10 +165,20 @@ internal class ClubLockerClientImpl(
 
     private fun checkRunning() = checkState(isRunning)
 
-    override fun shutDown() {
-        // Nothing to do
-    }
+    override fun shutDown() = Unit
 }
+
+internal val COURTS_BY_ID =
+    ImmutableBiMap.builder<Int, Court>()
+        .put(1411, Court1)
+        .put(1688, Court2)
+        .put(1689, Court3)
+        .put(1692, Court5)
+        .put(1693, Court6)
+        .put(1694, Court7)
+        .put(1690, TennisCourt)
+        .put(1691, RacquetsCourt)
+        .build()
 
 @Suppress("UNUSED")
 internal data class ReservationReq(
@@ -182,7 +187,7 @@ internal data class ReservationReq(
     @Transient
     val localDate: LocalDate,
     @Transient
-    val timeSlot: Slot,
+    val timeSlot: com.parmet.squashlambdas.reserve.Slot,
     val players: List<Player>
 ) {
     private val date = localDate.toString()

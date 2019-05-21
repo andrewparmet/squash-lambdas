@@ -1,11 +1,10 @@
-package com.parmet.squashlambdas.reserve
+package com.parmet.squashlambdas.clublocker
 
-import com.google.common.util.concurrent.Service
 import com.parmet.squashlambdas.activity.Player
 
-internal class DirectoryService(
+internal class Directory(
     private val client: ClubLockerClient
-) : Service by client {
+) {
     private val directory by lazy { client.directory() }
 
     fun idForPlayer(player: Player): Int? =

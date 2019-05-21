@@ -3,6 +3,13 @@ package com.parmet.squashlambdas.reserve
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.parmet.squashlambdas.clublocker.Affiliation
+import com.parmet.squashlambdas.clublocker.CourtResp
+import com.parmet.squashlambdas.clublocker.Player
+import com.parmet.squashlambdas.clublocker.ReservationReq
+import com.parmet.squashlambdas.clublocker.Slot
+import com.parmet.squashlambdas.clublocker.User
+import com.parmet.squashlambdas.clublocker.UserResp
 import com.parmet.squashlambdas.testutil.PARSER
 import com.parmet.squashlambdas.testutil.getResourceAsString
 import org.junit.Test
@@ -47,11 +54,11 @@ class SerializationTests {
 
     @Test
     fun `test slots taken parsing`() {
-        val taken: List<TakenSlot> =
-            gson.fromJson(getResourceAsString("slots-taken.json"), object : TypeToken<List<TakenSlot>>() {}.type)
+        val taken: List<com.parmet.squashlambdas.clublocker.Slot> =
+            gson.fromJson(getResourceAsString("slots-taken.json"), object : TypeToken<List<com.parmet.squashlambdas.clublocker.Slot>>() {}.type)
 
         assertThat(taken.subList(0, 2)).containsExactly(
-            TakenSlot(
+            Slot(
                 535787,
                 412844,
                 1411,
@@ -59,7 +66,7 @@ class SerializationTests {
                 2015,
                 1495323000
             ),
-            TakenSlot(
+            Slot(
                 535800,
                 412844,
                 1411,
@@ -77,7 +84,8 @@ class SerializationTests {
                 UserResp(
                     167759,
                     listOf(Affiliation(1413, "Tennis & Racquet Club")),
-                    "joecool@peanuts.com"))
+                    "joecool@peanuts.com")
+            )
     }
 
     @Test
@@ -86,6 +94,7 @@ class SerializationTests {
             gson.fromJson(getResourceAsString("directory.json"), object : TypeToken<List<User>>() {}.type)
 
         assertThat(directory).containsExactly(
-            User(167759, "Parmet, Andrew", "joecool@peanuts.com"))
+            User(167759, "Parmet, Andrew", "joecool@peanuts.com")
+        )
     }
 }

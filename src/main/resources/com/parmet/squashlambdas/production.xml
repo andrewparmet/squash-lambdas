@@ -34,6 +34,10 @@
     <sns>
       <handledTopicArn>${env:HANDLED_TOPIC_ARN}</handledTopicArn>
     </sns>
+
+    <dynamo>
+      <squashSlotsTableName>${env:SLOTS_MONITORING_TABLE}</squashSlotsTableName>
+    </dynamo>
   </aws>
 
   <clubLocker>

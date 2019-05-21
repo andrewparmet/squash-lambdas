@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas.reserve
+package com.parmet.squashlambdas.clublocker
 
 import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.activity.Court
