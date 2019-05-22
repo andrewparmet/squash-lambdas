@@ -51,6 +51,8 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
             doHandleRequest()
         } catch (ex: Exception) {
             notifier.publishFailedSlotMonitoring(ex, MonitorSlotsHandler.context)
+        } finally {
+            MonitorSlotsHandler.context.clear()
         }
     }
 
@@ -85,7 +87,7 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
     private fun publish(slots: List<Slot>) {
         addToContext("foundSlots", slots)
         slots
-            .filter { it.startTime in 501..799 }
+            .filter { it.startTime in 1701..2099 }
             .filter { COURTS_BY_ID.getValue(it.court).sport == Sport.Squash }
             .let {
                 addToContext("filteredSlots", it)
@@ -96,7 +98,7 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
     }
 
     companion object {
-        private val context = ConcurrentSkipListMap<String, Any>()
+        val context = ConcurrentSkipListMap<String, Any>()
 
         fun addToContext(key: String, value: Any?) {
             context[key] = value ?: "Value for key $key was null!"
