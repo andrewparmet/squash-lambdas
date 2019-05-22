@@ -14,6 +14,8 @@ import com.parmet.squashlambdas.monitor.SlotStorageManagerImpl
 import com.parmet.squashlambdas.monitor.SlotsTracker
 import mu.KotlinLogging
 import org.apache.commons.configuration2.Configuration
+import java.time.DayOfWeek.FRIDAY
+import java.time.DayOfWeek.MONDAY
 import java.time.Instant
 import java.time.LocalTime
 import java.util.concurrent.ConcurrentSkipListMap
@@ -68,6 +70,10 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
             now.toLocalDate().plusDays(1)
         } else {
             now.toLocalDate()
+        }
+
+        if (date.dayOfWeek !in MONDAY..FRIDAY) {
+            return "Not checking a weekend".also { logger.info(it) }
         }
 
         addToContext("checkDate", date)
