@@ -12,7 +12,8 @@
 
   <aws>
     <sns>
-      <handledTopicArn>fake-arn</handledTopicArn>
+      <myTopicArn>fake-arn</myTopicArn>
+      <publicTopicArn>fake-arn</publicTopicArn>
     </sns>
 
     <dynamo>

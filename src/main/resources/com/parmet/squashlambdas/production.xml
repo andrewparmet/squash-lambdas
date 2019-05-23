@@ -32,7 +32,8 @@
     </schedule>
 
     <sns>
-      <handledTopicArn>${env:HANDLED_TOPIC_ARN}</handledTopicArn>
+      <myTopicArn>${env:MY_TOPIC_ARN}</myTopicArn>
+      <publicTopicArn>${env:PUBLIC_TOPIC_ARN}</publicTopicArn>
     </sns>
 
     <dynamo>

@@ -17,6 +17,7 @@ import org.apache.commons.configuration2.Configuration
 import java.time.DayOfWeek.FRIDAY
 import java.time.DayOfWeek.MONDAY
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalTime
 import java.util.concurrent.ConcurrentSkipListMap
 
@@ -34,7 +35,7 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
         config = loadConfiguration(System.getenv("CONFIG_NAME") + ".xml")
         s3 = configureS3()
         dynamoDb = configureDynamoDb()
-        notifier = Notifier(configureSns(), config.getString("aws.sns.handledTopicArn"))
+        notifier = configureNotifier(config)
         try {
             val clientAndPlayer = configureClubLockerClient(config, s3)
             client = clientAndPlayer.first.apply { startAsync().awaitRunning() }
@@ -84,13 +85,13 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
             logger.info { "Did not find any newly open slots" }
         } else {
             logger.info { "Found newly open slots: $newlyOpen" }
-            publish(newlyOpen)
+            publish(date, newlyOpen)
         }
 
         return newlyOpen
     }
 
-    private fun publish(slots: List<Slot>) {
+    private fun publish(date: LocalDate, slots: List<Slot>) {
         addToContext("foundSlots", slots)
         slots
             .filter { it.startTime in 1701..2099 }
@@ -98,7 +99,7 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
             .let {
                 addToContext("filteredSlots", it)
                 if (it.isNotEmpty()) {
-                    notifier.publishFoundOpenSlot(it)
+                    notifier.publishFoundOpenSlot(date, it)
                 }
             }
     }

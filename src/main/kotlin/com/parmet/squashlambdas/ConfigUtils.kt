@@ -15,6 +15,7 @@ import com.google.gson.Gson
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.clublocker.ClubLockerClientImpl
+import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.reserve.Schedule
 import org.apache.commons.configuration2.Configuration
 import org.apache.commons.configuration2.XMLConfiguration
@@ -35,7 +36,12 @@ internal fun loadConfiguration(file: String) =
 
 internal fun configureS3() = AmazonS3ClientBuilder.defaultClient()
 
-internal fun configureSns() = AmazonSNSClientBuilder.defaultClient()
+internal fun configureNotifier(config: Configuration) =
+    Notifier(
+        AmazonSNSClientBuilder.defaultClient(),
+        config.getString("aws.sns.myTopicArn"),
+        config.getString("aws.sns.publicTopicArn")
+    )
 
 internal fun configureDynamoDb() = AmazonDynamoDBClientBuilder.defaultClient()
 

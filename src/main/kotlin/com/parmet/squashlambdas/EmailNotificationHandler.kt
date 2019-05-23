@@ -22,7 +22,7 @@ class EmailNotificationHandler : RequestHandler<Any, Any> {
         val config = loadConfiguration(System.getenv("CONFIG_NAME") + ".xml")
         val s3 = configureS3()
         retriever = EmailRetriever(s3)
-        notifier = Notifier(configureSns(), config.getString("aws.sns.handledTopicArn"))
+        notifier = configureNotifier(config)
         eventManager = EventManager(configureCalendar(config, s3), config.getString("google.cal.calendarId"))
     }
 
