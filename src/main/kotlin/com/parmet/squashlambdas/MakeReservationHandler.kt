@@ -27,7 +27,7 @@ class MakeReservationHandler : RequestHandler<Any, Any> {
     init {
         config = loadConfiguration(System.getenv("CONFIG_NAME") + ".xml")
         s3 = configureS3()
-        notifier = Notifier(configureSns(), config.getString("aws.sns.handledTopicArn"))
+        notifier = configureNotifier(config)
         try {
             val clientAndPlayer = configureClubLockerClient(config, s3)
             client = clientAndPlayer.first.apply { startAsync().awaitRunning() }

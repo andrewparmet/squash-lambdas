@@ -26,7 +26,7 @@ class NotifierTest {
         }
     }
 
-    private val notifier = Notifier(sns, "some-arn")
+    private val notifier = Notifier(sns, "some-arn", "another-arn")
 
     @Test
     fun `notifier sends a reasonable message on success`() {

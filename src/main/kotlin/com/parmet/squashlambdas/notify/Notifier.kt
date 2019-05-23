@@ -13,10 +13,12 @@ import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
 import com.parmet.squashlambdas.clublocker.Slot
 import com.parmet.squashlambdas.monitor.TimeFormatter
 import com.parmet.squashlambdas.reserve.ReservationMaker
+import java.time.LocalDate
 
 internal class Notifier(
     private val sns: AmazonSNS,
-    private val topicArn: String
+    private val myTopicArn: String,
+    private val publicTopicArn: String
 ) {
     private val printer =
         GsonBuilder()
@@ -35,9 +37,11 @@ internal class Notifier(
     fun publishSuccessfulParse(summary: ChangeSummary) {
         sns.publish(
             PublishRequest(
-                topicArn,
+                myTopicArn,
                 successfulParseMsg(summary),
-                "Processed Club Locker Email"))
+                "Processed Club Locker Email"
+            )
+        )
     }
 
     private fun successfulParseMsg(summary: ChangeSummary): String {
@@ -50,9 +54,11 @@ ${printer.toJson(summary)}
     fun publishFailedParse(t: Throwable, context: Map<*, *>) {
         sns.publish(
             PublishRequest(
-                topicArn,
+                myTopicArn,
                 failedParseMsg(t, context),
-                "Failed to Process Club Locker Email"))
+                "Failed to Process Club Locker Email"
+            )
+        )
     }
 
     private fun failedParseMsg(t: Throwable, context: Map<*, *>): String {
@@ -70,9 +76,11 @@ ${Throwables.getStackTraceAsString(t)}
     fun publishSuccessfulReservation(result: ReservationMaker.Result.Success) {
         sns.publish(
             PublishRequest(
-                topicArn,
+                myTopicArn,
                 successfulParseMsg(result),
-                "Made a Reservation on Club Locker"))
+                "Made a Reservation on Club Locker"
+            )
+        )
     }
 
     private fun successfulParseMsg(result: ReservationMaker.Result.Success): String {
@@ -85,9 +93,11 @@ ${printer.toJson(result)}
     fun publishFailedReservation(t: Throwable, context: Map<*, *>) {
         sns.publish(
             PublishRequest(
-                topicArn,
+                myTopicArn,
                 failedReservationMsg(t, context),
-                "Failed to Make Reservation on Club Locker"))
+                "Failed to Make Reservation on Club Locker"
+            )
+        )
     }
 
     private fun failedReservationMsg(t: Throwable, context: Map<*, *>): String {
@@ -105,9 +115,11 @@ ${Throwables.getStackTraceAsString(t)}
     fun publishFailedReservation(result: ReservationMaker.Result.Failure, context: Map<*, *>) {
         sns.publish(
             PublishRequest(
-                topicArn,
+                myTopicArn,
                 failedReservationMsg(result, context),
-                "Failed to Make Reservation on Club Locker"))
+                "Failed to Make Reservation on Club Locker"
+            )
+        )
     }
 
     private fun failedReservationMsg(result: ReservationMaker.Result.Failure, context: Map<*, *>): String {
@@ -122,12 +134,14 @@ $result
         """
     }
 
-    fun publishFoundOpenSlot(result: List<Slot>) {
+    fun publishFoundOpenSlot(date: LocalDate, result: List<Slot>) {
         sns.publish(
             PublishRequest(
-                topicArn,
+                publicTopicArn,
                 foundOpenSlotMsg(result),
-                "Found new open slots on Club Locker"))
+                "Squash Monitoring ($date): Found new open slots on Club Locker"
+            )
+        )
     }
 
     private fun foundOpenSlotMsg(result: List<Slot>): String {
@@ -144,9 +158,11 @@ ${result.joinToString("\n") { prettyPrint(it) }}
     fun publishFailedSlotMonitoring(failure: Throwable, context: Map<*, *>) {
         sns.publish(
             PublishRequest(
-                topicArn,
+                myTopicArn,
                 failedSlotMonitoringMsg(failure, context),
-                "Could not track open slots on Club Locker"))
+                "Could not track open slots on Club Locker"
+            )
+        )
     }
 
     private fun failedSlotMonitoringMsg(failure: Throwable, context: Map<*, *>): String {
