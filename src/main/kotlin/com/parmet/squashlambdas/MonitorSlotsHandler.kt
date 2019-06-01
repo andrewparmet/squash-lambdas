@@ -1,16 +1,11 @@
 package com.parmet.squashlambdas
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
-import com.amazonaws.services.s3.AmazonS3
-import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.activity.Sport
 import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
 import com.parmet.squashlambdas.notify.Notifier
-import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.clublocker.Slot
-import com.parmet.squashlambdas.monitor.SlotStorageManager
 import com.parmet.squashlambdas.monitor.SlotStorageManagerImpl
 import com.parmet.squashlambdas.monitor.SlotsTracker
 import mu.KotlinLogging
@@ -26,27 +21,25 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }
 
     private val config: Configuration
-    private val s3: AmazonS3
-    private val dynamoDb: AmazonDynamoDB
     private val notifier: Notifier
-    private val client: ClubLockerClient
-    private val slotStorageManager: SlotStorageManager
-    private val hostPlayer: Player
+    private val slotsTracker: SlotsTracker
 
     init {
         config = loadConfiguration(System.getenv("CONFIG_NAME") + ".xml")
-        s3 = configureS3()
-        dynamoDb = configureDynamoDb()
+        val s3 = configureS3()
+        val dynamoDb = configureDynamoDb()
         notifier = configureNotifier(config)
-        slotStorageManager = SlotStorageManagerImpl(dynamoDb, config.getString("aws.dynamo.squashSlotsTableName"))
-        try {
+
+        val client = try {
             val clientAndPlayer = configureClubLockerClient(config, s3)
-            client = clientAndPlayer.first.apply { startAsync().awaitRunning() }
-            hostPlayer = clientAndPlayer.second
+            clientAndPlayer.first.apply { startAsync().awaitRunning() }
         } catch (t: Throwable) {
-            notifier.publishFailedReservation(t, context)
+            notifier.publishFailedSlotMonitoring(t, context)
             throw t
         }
+
+        slotsTracker =
+            SlotsTracker(client, SlotStorageManagerImpl(dynamoDb, config.getString("aws.dynamo.squashSlotsTableName")))
     }
 
     override fun handleRequest(input: Any, context: Context): Any {
@@ -86,7 +79,7 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
 
         addToContext("checkDate", date)
 
-        val newlyOpen = SlotsTracker(client, slotStorageManager).findNewlyOpen(date)
+        val newlyOpen = slotsTracker.findNewlyOpen(date)
 
         if (newlyOpen.isEmpty()) {
             logger.info { "Did not find any newly open slots" }
