@@ -10,6 +10,7 @@ import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.clublocker.Slot
+import com.parmet.squashlambdas.monitor.SlotStorageManager
 import com.parmet.squashlambdas.monitor.SlotStorageManagerImpl
 import com.parmet.squashlambdas.monitor.SlotsTracker
 import mu.KotlinLogging
@@ -29,6 +30,7 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
     private val dynamoDb: AmazonDynamoDB
     private val notifier: Notifier
     private val client: ClubLockerClient
+    private val slotStorageManager: SlotStorageManager
     private val hostPlayer: Player
 
     init {
@@ -36,6 +38,7 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
         s3 = configureS3()
         dynamoDb = configureDynamoDb()
         notifier = configureNotifier(config)
+        slotStorageManager = SlotStorageManagerImpl(dynamoDb, config.getString("aws.dynamo.squashSlotsTableName"))
         try {
             val clientAndPlayer = configureClubLockerClient(config, s3)
             client = clientAndPlayer.first.apply { startAsync().awaitRunning() }
@@ -60,38 +63,41 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
     }
 
     private fun doHandleRequest(): Any {
-        val dynamoClient = SlotStorageManagerImpl(
-            dynamoDb,
-            config.getString("aws.dynamo.squashSlotsTableName")
-        )
-
         val now = Instant.now().inBoston()
 
         val date = if (now.toLocalTime().isAfter(LocalTime.of(18, 0))) {
-            now.toLocalDate().plusDays(1)
+            now.plusDays(1)
         } else {
-            now.toLocalDate()
-        }
+            now
+        }.toLocalDate()
 
+        return (0L..1).flatMap {
+            checkForDate(date.plusDays(it))
+        }.also {
+            publish(it)
+        }
+    }
+
+    private fun checkForDate(date: LocalDate): List<Slot> {
         if (date.dayOfWeek !in MONDAY..FRIDAY) {
-            return "Not checking a weekend".also { logger.info(it) }
+            logger.info { "Not checking a weekend" }
+            return emptyList()
         }
 
         addToContext("checkDate", date)
 
-        val newlyOpen = SlotsTracker(client, dynamoClient).findNewlyOpen(date)
+        val newlyOpen = SlotsTracker(client, slotStorageManager).findNewlyOpen(date)
 
         if (newlyOpen.isEmpty()) {
             logger.info { "Did not find any newly open slots" }
         } else {
             logger.info { "Found newly open slots: $newlyOpen" }
-            publish(date, newlyOpen)
         }
 
         return newlyOpen
     }
 
-    private fun publish(date: LocalDate, slots: List<Slot>) {
+    private fun publish(slots: List<Slot>) {
         addToContext("foundSlots", slots)
         slots
             .filter { it.startTime in 1701..2099 }
@@ -99,7 +105,7 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
             .let {
                 addToContext("filteredSlots", it)
                 if (it.isNotEmpty()) {
-                    notifier.publishFoundOpenSlot(date, it)
+                    notifier.publishFoundOpenSlot(it)
                 }
             }
     }

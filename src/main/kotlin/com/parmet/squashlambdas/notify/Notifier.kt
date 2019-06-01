@@ -3,6 +3,7 @@ package com.parmet.squashlambdas.notify
 import com.amazonaws.services.sns.AmazonSNS
 import com.amazonaws.services.sns.model.PublishRequest
 import com.fatboyindustrial.gsonjavatime.Converters
+import com.google.common.base.CaseFormat
 import com.google.common.base.Throwables
 import com.google.gson.GsonBuilder
 import com.parmet.squashlambdas.activity.Court
@@ -11,9 +12,10 @@ import com.parmet.squashlambdas.cal.Action
 import com.parmet.squashlambdas.cal.ChangeSummary
 import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
 import com.parmet.squashlambdas.clublocker.Slot
+import com.parmet.squashlambdas.inBoston
 import com.parmet.squashlambdas.monitor.TimeFormatter
 import com.parmet.squashlambdas.reserve.ReservationMaker
-import java.time.LocalDate
+import java.time.Instant
 
 internal class Notifier(
     private val sns: AmazonSNS,
@@ -134,12 +136,12 @@ $result
         """
     }
 
-    fun publishFoundOpenSlot(date: LocalDate, result: List<Slot>) {
+    fun publishFoundOpenSlot(result: List<Slot>) {
         sns.publish(
             PublishRequest(
                 publicTopicArn,
                 foundOpenSlotMsg(result),
-                "Squash Monitoring ($date): Found new open slots on Club Locker"
+                "Squash Monitoring (${Instant.now().inBoston().toLocalDate()}): Found new open slots on Club Locker"
             )
         )
     }
@@ -151,9 +153,17 @@ ${result.joinToString("\n") { prettyPrint(it) }}
         """
     }
 
+    private fun properNoun(name: String) =
+        CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.UPPER_CAMEL).convert(name)
+
     private fun prettyPrint(slot: Slot) =
-        "Court: ${COURTS_BY_ID.getValue(slot.court).pretty}, Time: " +
+        "${formatDate(slot)}: ${COURTS_BY_ID.getValue(slot.court).pretty}, " +
             "${TimeFormatter.formatTime(slot.startTime)}-${TimeFormatter.formatTime(slot.endTime)}"
+
+    private fun formatDate(slot: Slot) =
+        Instant.ofEpochSecond(slot.startUtc).inBoston().let {
+            "${properNoun(it.dayOfWeek.name)}, ${properNoun(it.month.name)} ${it.dayOfMonth}"
+        }
 
     fun publishFailedSlotMonitoring(failure: Throwable, context: Map<*, *>) {
         sns.publish(
