@@ -39,7 +39,7 @@ internal data class Slot(
     val court: Int,
     val startTime: Int,
     val endTime: Int,
-    val startUtc: Int
+    val startUtc: Long
 )
 
 internal sealed class ReservationResp {

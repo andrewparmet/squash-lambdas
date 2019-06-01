@@ -9,6 +9,7 @@ import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.cal.Action
 import com.parmet.squashlambdas.cal.ChangeSummary
+import com.parmet.squashlambdas.clublocker.Slot
 import mu.KotlinLogging
 import org.junit.Test
 import java.time.Instant
@@ -60,5 +61,17 @@ class NotifierTest {
         assertThat(received[0].message).contains("ExceptionInInitializerError")
         assertThat(received[0].message).contains("key123")
         assertThat(received[0].message).contains("val456")
+    }
+
+    @Test
+    fun `notifier sends a reasonable message on success monitoring slots`() {
+        notifier.publishFoundOpenSlot(listOf(Slot(1, 1, 1411, 1, 1, Instant.parse("2019-06-01T00:31:31Z").epochSecond)))
+
+        logger.info { "Received ${received[0].message}" }
+
+        assertThat(received).hasSize(1)
+        assertThat(received[0].topicArn).isEqualTo("another-arn")
+        assertThat(received[0].subject).contains("Found new open slots on Club Locker")
+        assertThat(received[0].message).contains("Friday, May 31: Court 1, 0:01 am-0:01 am")
     }
 }
