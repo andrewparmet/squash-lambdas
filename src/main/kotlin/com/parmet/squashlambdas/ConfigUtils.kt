@@ -12,17 +12,21 @@ import com.google.api.services.calendar.CalendarScopes
 import com.google.common.base.Preconditions.checkState
 import com.google.common.io.Files
 import com.google.gson.Gson
+import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Player
+import com.parmet.squashlambdas.activity.valueOf
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.clublocker.ClubLockerClientImpl
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.reserve.Schedule
+import com.parmet.squashlambdas.reserve.mapNonEmptyLines
 import org.apache.commons.configuration2.Configuration
 import org.apache.commons.configuration2.XMLConfiguration
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder
 import org.apache.commons.configuration2.builder.fluent.Parameters
 import java.io.File
 import java.nio.charset.StandardCharsets.UTF_8
+import java.time.LocalTime
 
 internal fun loadConfiguration(file: String) =
     FileBasedConfigurationBuilder(XMLConfiguration::class.java)
@@ -70,8 +74,20 @@ internal fun configureClubLockerClient(config: Configuration, s3: AmazonS3): Pai
         hostPlayer)
 }
 
-internal fun getSchedule(config: Configuration, s3: AmazonS3): Schedule =
+internal fun getSchedule(config: Configuration, s3: AmazonS3) =
     Schedule.fromString(loadFile(config, "schedule", s3))
+
+internal fun getPreferredCourts(config: Configuration, s3: AmazonS3) =
+    getPreferredCourts(loadFile(config, "courts", s3))
+
+internal fun getPreferredCourts(s: String) =
+    s.mapNonEmptyLines { Court.valueOf(it) }
+
+internal fun getPreferredTimes(config: Configuration, s3: AmazonS3) =
+    getPreferredTimes(loadFile(config, "times", s3))
+
+internal fun getPreferredTimes(s: String) =
+    s.mapNonEmptyLines { LocalTime.parse(it) }
 
 private fun loadFile(
     config: Configuration,

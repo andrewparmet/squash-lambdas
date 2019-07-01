@@ -81,8 +81,14 @@ class MakeReservationHandler : RequestHandler<Any, Any> {
         logger.info { "Attempting to book a reservation for $requestDate" }
 
         val result =
-            ReservationMaker(client, ReservationMaker.Options(hostPlayer))
-                .makeReservation(requestDate)
+            ReservationMaker(
+                client,
+                ReservationMaker.Options(
+                    hostPlayer,
+                    getPreferredCourts(config, s3),
+                    getPreferredTimes(config, s3)
+                )
+            ).makeReservation(requestDate)
 
         addToContext("result", result)
 

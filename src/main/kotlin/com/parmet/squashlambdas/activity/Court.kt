@@ -57,7 +57,7 @@ private val map =
         .filterIsInstance<Court>()
         .associateBy { it.pretty }
 
-private fun valueOf(value: String) = requireNotNull(map[value]) {
+internal fun Court.Companion.valueOf(value: String) = requireNotNull(map[value]) {
     "No enum constant ${Court::class.java.name}.$value"
 }
 

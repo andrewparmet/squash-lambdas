@@ -27,9 +27,19 @@
     </clubLocker>
 
     <schedule>
-      <bucket>${env:RESERVATION_SCHEDULE_BUCKET}</bucket>
+      <bucket>${env:RESERVATION_BUCKET}</bucket>
       <key>${env:RESERVATION_SCHEDULE_KEY}</key>
     </schedule>
+
+    <courts>
+      <bucket>${env:RESERVATION_BUCKET}</bucket>
+      <key>${env:RESERVATION_COURTS_KEY}</key>
+    </courts>
+
+    <times>
+      <bucket>${env:RESERVATION_BUCKET}</bucket>
+      <key>${env:RESERVATION_TIMES_KEY}</key>
+    </times>
 
     <sns>
       <myTopicArn>${env:MY_TOPIC_ARN}</myTopicArn>
@@ -50,4 +60,12 @@
   <schedule>
     <location>s3</location>
   </schedule>
+
+  <courts>
+    <location>s3</location>
+  </courts>
+
+  <times>
+    <location>s3</location>
+  </times>
 </configuration>

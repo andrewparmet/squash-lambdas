@@ -13,9 +13,10 @@ internal class Schedule(
     companion object {
         fun fromString(schedule: String): Schedule {
             return Schedule(
-                schedule.lines()
-                    .filter { it.isNotBlank() }
-                    .map { DayOfWeek.valueOf(it.toUpperCase()) })
+                schedule.mapNonEmptyLines {
+                    DayOfWeek.valueOf(it.toUpperCase())
+                }
+            )
         }
     }
 }

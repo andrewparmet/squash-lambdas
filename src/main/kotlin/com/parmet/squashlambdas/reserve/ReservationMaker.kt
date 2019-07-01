@@ -26,8 +26,7 @@ internal class ReservationMaker(
 
         options.startTimes.forEach { time ->
             options.courts.forEach { court ->
-                val resp = attemptReservation(date, court, time, otherPlayer)
-                when (resp) {
+                when (val resp = attemptReservation(date, court, time, otherPlayer)) {
                     is ReservationResp.Success -> {
                         logger.info {
                             "Made reservation on $court at $time${if (otherPlayer != null) " with $otherPlayer" else ""}"
@@ -77,8 +76,10 @@ internal class ReservationMaker(
 
     internal class Options(
         val hostPlayer: Player,
-        val courts: List<Court> = listOf(Court1, Court2, Court3),
-        val startTimes: List<LocalTime> = listOf(LocalTime.of(18, 0), LocalTime.of(18, 45), LocalTime.of(19, 30))
+        val courts: List<Court> =
+            listOf(Court1, Court2, Court3),
+        val startTimes: List<LocalTime> =
+            listOf(LocalTime.of(18, 0), LocalTime.of(18, 45), LocalTime.of(19, 30))
     )
 
     internal sealed class Result {

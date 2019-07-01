@@ -27,4 +27,14 @@
     <location>local</location>
     <fileName>schedule.txt</fileName>
   </schedule>
+
+  <courts>
+    <location>local</location>
+    <fileName>courts.txt</fileName>
+  </courts>
+
+  <times>
+    <location>local</location>
+    <fileName>times.txt</fileName>
+  </times>
 </configuration>
