@@ -115,7 +115,7 @@ class GsonUtilsTest {
         klass: KClass<*>,
         adapter: Any
     ) {
-        instances.forEach { kclass, instance ->
+        instances.forEach { (kclass, instance) ->
             val serialized =
                 GsonBuilder()
                     .registerTypeHierarchyAdapter(klass.java, adapter)
