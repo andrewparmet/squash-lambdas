@@ -234,6 +234,32 @@ class IntegrationTests {
                         Instant.parse("2018-12-04T00:30:00Z"))))
     }
 
+    @Test
+    fun `creating a tennis reservation`() {
+        assertThat(getSummary("createTennisReservation"))
+            .isEqualTo(
+                summary(
+                    Action.Create,
+                    Match(
+                        Court.TennisCourt,
+                        Instant.parse("2019-07-09T23:30:00Z"),
+                        Instant.parse("2019-07-10T00:30:00Z"),
+                        setOf())))
+    }
+
+    @Test
+    fun `player joining a tennis reservation`() {
+        assertThat(getSummary("playerJoinsTennisReservation"))
+            .isEqualTo(
+                summary(
+                    Action.Update,
+                    Match(
+                        Court.TennisCourt,
+                        Instant.parse("2019-07-09T23:30:00Z"),
+                        Instant.parse("2019-07-10T00:30:00Z"),
+                        playerSet("Brayden Minahan"))))
+    }
+
     private fun getSummary(fileName: String) =
         ChangeSummary.fromEmail(emailFromBody(fileName))
 

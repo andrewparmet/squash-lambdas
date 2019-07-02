@@ -1,0 +1,166 @@
+Return-Path: <andrewparmet+caf_=squash=andrew.parmet.com@gmail.com>
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+ by inbound-smtp.us-east-1.amazonaws.com with SMTP id klu4852hghvlgcls361f7a7rtc55qojgb2hj23o1
+ for squash@andrew.parmet.com;
+ Tue, 02 Jul 2019 04:02:34 +0000 (UTC)
+X-SES-Spam-Verdict: PASS
+X-SES-Virus-Verdict: PASS
+Received-SPF: pass (spfCheck: domain of _spf.google.com designates 209.85.210.42 as permitted sender) client-ip=209.85.210.42; envelope-from=andrewparmet+caf_=squash=andrew.parmet.com@gmail.com; helo=mail-ot1-f42.google.com;
+Authentication-Results: amazonses.com;
+ spf=pass (spfCheck: domain of _spf.google.com designates 209.85.210.42 as permitted sender) client-ip=209.85.210.42; envelope-from=andrewparmet+caf_=squash=andrew.parmet.com@gmail.com; helo=mail-ot1-f42.google.com;
+ dkim=pass header.i=@amazonses.com;
+ dmarc=none header.from=clublocker.com;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFHNXdQSlhZYmpSdG1GVXlIcFE5MmR3KzJmVzVFWTVUTzJlb2VBS0RZN0IzNWJMOEZodE5sVjhiRzlTZWt6MmJHdmlBRmQxVjVTdkZWdUp6ckNuKy9XK01YaUd4WXNERkFjenljMVZ1SElWNllQR2I3K01CbTJMZ3NkYkw2WHYvRCt2eXUydWNWKytrd0pjVURsVStKQ1o1dFpzMnhMNlB1RmNpU0EwT2E1cjg1UEphbGdsOU40Z1ZTdnhuOXFEQVBHKzFTMmQ2Tkh1eHN0OTZIZHJaLzVZNVVncEFQbHVFbVdia0tTdll6VitlYUxlbUNWbVpDOWVBTHNZeGN1a0Fiakw3TzFZanFFaU5FUUhmWDNSVEJ1RWJtODlwakh3VTRSSmlOK3h1S3djck9vTlovbzFVWUNrLzBtano1dnFhZlY3T25zT3IvRXFRRXQvb2grTUVNODE=
+X-SES-DKIM-SIGNATURE: a=rsa-sha256; q=dns/txt; b=M987x2wmoZkl78pWEYqY6vN4EMjCA32O88dIsBGTdzJeyW9gjCRb/3SQZS5ZYbQfzagMyqLnqyHwQsd4/3xjku93IUMGWIGxBwtRd0dT89xqKG+ZKcEi5V/AZ4BAt2riCtHSgzZ1LeKPJ3mjWeXXdulmV+5sPiKE+Yzjbm4BQNw=; c=relaxed/simple; s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1562040154; v=1; bh=8u9PXG8ipmeav4E/ZVILS/5Vb56dkGSiebxKp/DnJYE=; h=From:To:Cc:Bcc:Subject:Date:Message-ID:MIME-Version:Content-Type:X-SES-RECEIPT;
+Received: by mail-ot1-f42.google.com with SMTP id l15so15773171otn.9
+        for <squash@andrew.parmet.com>; Mon, 01 Jul 2019 21:02:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:delivered-to:dkim-signature:dkim-signature:from
+         :to:reply-to:subject:message-id:date:mime-version:feedback-id;
+        bh=8u9PXG8ipmeav4E/ZVILS/5Vb56dkGSiebxKp/DnJYE=;
+        b=HkOKqIkP4VlrMg6YFGRmvhNUEjvuM0pXuFnzD7a6acz9z/wF/m1TSUfCwyfzukJnrs
+         gMYEAqNo4Rr21Uf11S07/ydewgK/4wRSB9fqUXSQ7d8uM43vVBQ6Sji3H/Hp/qgAXPkV
+         FbXlf8JlK0hD+TTMcf5Bp/4TyCM4sD1gmiMRvDdh9kNuph4C6xTp3hQgt33As+q4Q8TL
+         Rr3o/Ghwdd2uHYjaoBPAcSpEpZtuOTEEcGdQ+d7hQBgMaOlz0vo0ktNExoIK+VDDUqhE
+         NHYFPyVeReRi6hNXFGcK7QlD5uO0X27Gl7msB2er+WFI1aHgTu4ubw8/Jt9m/+lz3EFW
+         mFeQ==
+X-Gm-Message-State: APjAAAW+tZOBCPQZDP9FDbTHEIokuElgSi6Txa4H4pPbAspXZZ7Chnyu
+	v9T5Fj77yqd9lHYlwrgpuFpj44aO1Bs66wDyzN0W2jiswoViu/w=
+X-Received: by 2002:a9d:4b02:: with SMTP id q2mr23234712otf.312.1562040153612;
+        Mon, 01 Jul 2019 21:02:33 -0700 (PDT)
+X-Forwarded-To: squash@andrew.parmet.com, 0f4m5uqk@robot.zapier.com
+X-Forwarded-For: andrewparmet@gmail.com squash@andrew.parmet.com, 0f4m5uqk@robot.zapier.com
+Delivered-To: andrew.parmet@gmail.com
+Received: by 2002:a05:6830:12c8:0:0:0:0 with SMTP id a8csp3353957otq;
+        Mon, 1 Jul 2019 21:02:31 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqycY4DdrZ3oye4J6h0IW1JYefFjM1mkmhU5V60XZmCqm6OGr2t+xzR4GmJ23FEmW5YRsbLx
+X-Received: by 2002:ac8:234a:: with SMTP id b10mr23834041qtb.261.1562040151207;
+        Mon, 01 Jul 2019 21:02:31 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1562040151; cv=none;
+        d=google.com; s=arc-20160816;
+        b=SdliESdygBqYqO8tEoK7eFXAjcJh3Y281bbqpRsdSixAoZppf7I5Wn80pfJWTXm7ts
+         Khn+V7VsEVOV8XQj0zdtqhF/e4z7JCaa+3/tGTiSzQJAuRXmn7GnyCJ/QGv8VLFc8SDv
+         CMsuVsdd524hVSL0eF5zBJo7TRl7/NgMdESYzS2E6GnunTdMYyfNSRHPo42YQhfD8ZR5
+         n2Kp9WWdr13JyAJ9n4NBMGMl2ssF8VJ4Orw0bzt3jBEpHnpEFom8yOc+OlFJSGPQKGpO
+         vQkiJIoBNLJQ9gyUTOJJodx8ixbBfwe8LYJobeqKVgh7ieme1RNDQnCy8mQlhMK8Y4OJ
+         GLcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=feedback-id:mime-version:date:message-id:subject:reply-to:to:from
+         :dkim-signature:dkim-signature;
+        bh=8u9PXG8ipmeav4E/ZVILS/5Vb56dkGSiebxKp/DnJYE=;
+        b=LRAaJSZBu4e7F60t1w7dflCxeecahlfNTq0w5hZ9MKApwJ/mAc7BD3x9Chk2+X8+Lb
+         ecJvkFfsOGNB6UPILzsuFqav9uOd+BkfkC4L1k5EGWJYBf4R6teKYf7v3o4vvFsHRjr4
+         TZkp8O3WqfnSLd0UXj6cqtIFdXWvfrG3xGXpqFqyrN6cQpuO9B5mkn/PBgW8aoPIYWOq
+         fgLpCz4iLLUa+zVzqk7VK01nznOF8CrbTs8nPohwtuhN7/ewRLde6WFfw64PiB/8d7dk
+         AZPUSXJH5HpiWWAUcYoGfeyeYhgGsHXK88tOi3ZzJLfPelxWIWii5ZKbeTRkJNPQmQbp
+         JsFg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=temperror (no key for signature) header.i=@clublocker.com header.s=dkim header.b=StDCK6Tu;
+       dkim=pass header.i=@amazonses.com header.s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw header.b=TCtgW7xO;
+       spf=pass (google.com: domain of srs0=j+k5n0=u7=amazonses.com=0100016bb0d918b4-d12cc1d2-abeb-4adf-bc91-57af6ff51680-000000@parmet.com designates 66.96.184.5 as permitted sender) smtp.mailfrom="SRS0=j+K5n0=U7=amazonses.com=0100016bb0d918b4-d12cc1d2-abeb-4adf-bc91-57af6ff51680-000000@parmet.com"
+Return-Path: <SRS0=j+K5n0=U7=amazonses.com=0100016bb0d918b4-d12cc1d2-abeb-4adf-bc91-57af6ff51680-000000@parmet.com>
+Received: from bosmailout05.eigbox.net (bosmailout05.eigbox.net. [66.96.184.5])
+        by mx.google.com with ESMTPS id t64si9439486qke.110.2019.07.01.21.02.31
+        for <andrew.parmet@gmail.com>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Jul 2019 21:02:31 -0700 (PDT)
+Received-SPF: pass (google.com: domain of srs0=j+k5n0=u7=amazonses.com=0100016bb0d918b4-d12cc1d2-abeb-4adf-bc91-57af6ff51680-000000@parmet.com designates 66.96.184.5 as permitted sender) client-ip=66.96.184.5;
+Authentication-Results: mx.google.com;
+       dkim=temperror (no key for signature) header.i=@clublocker.com header.s=dkim header.b=StDCK6Tu;
+       dkim=pass header.i=@amazonses.com header.s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw header.b=TCtgW7xO;
+       spf=pass (google.com: domain of srs0=j+k5n0=u7=amazonses.com=0100016bb0d918b4-d12cc1d2-abeb-4adf-bc91-57af6ff51680-000000@parmet.com designates 66.96.184.5 as permitted sender) smtp.mailfrom="SRS0=j+K5n0=U7=amazonses.com=0100016bb0d918b4-d12cc1d2-abeb-4adf-bc91-57af6ff51680-000000@parmet.com"
+Received: from bosmailscan02.eigbox.net ([10.20.15.2])
+	by bosmailout05.eigbox.net with esmtp (Exim)
+	id 1hi9zy-0006K4-VG
+	for andrew.parmet@gmail.com; Tue, 02 Jul 2019 00:02:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=clublocker.com; s=dkim; h=MIME-Version:Date:Message-ID:Subject:Reply-To:To:
+	From:Content-Type:Sender:Cc:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=8u9PXG8ipmeav4E/ZVILS/5Vb56dkGSiebxKp/DnJYE=; b=StDCK6TuCLJCk8u5xzOZU6c1/0
+	2ySV8uxq+sBcCgj9a4WZSnVk072Z2XJ+wai/JZKeLSJco6/djSMqj/lgJklsm/0BYqaSiScQ5+oCh
+	Cm11fX7GkzT3yRvH6a50WvfB/ru1AwJ1GkJGTggxZEhJVY95jl0KE6rC/xRjirQRe1GNTmUvmYB8b
+	kdXv9HcREiH03vFOQ1bxXAqP34lNI2DvYuebYBmylxXQdx0fBrhwVsA+74r7xmh9uyu37NKSacgXI
+	NOmC1TliUgWwdwPC6j03iEJbTa2latgbYsfgBTjCVzPiKw8XzLXU5GdkgY6ikz2W8WwDhISsZBIDx
+	GJKfLaJg==;
+Received: from [10.115.3.11] (helo=smtp.maileig.com)
+	by bosmailscan02.eigbox.net with esmtp (Exim)
+	id 1hi9zy-0003qt-Sh
+	for andrew@parmet.com; Tue, 02 Jul 2019 00:02:30 -0400
+Received: from a8-62.smtp-out.amazonses.com ([54.240.8.62])
+	by bosimpinc11 with bizsmtp
+	id Xg2S2001f1LJPfa01g2TAW; Tue, 02 Jul 2019 00:02:28 -0400
+X-EN-OrigIP: 54.240.8.62
+X-EN-IMPSID: Xg2S2001f1LJPfa01g2TAW
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1562040146;
+	h=Content-Type:From:To:Reply-To:Subject:Message-ID:Date:MIME-Version:Feedback-ID;
+	bh=8u9PXG8ipmeav4E/ZVILS/5Vb56dkGSiebxKp/DnJYE=;
+	b=TCtgW7xOv3rcdzUiqXmS2ESrFs14P0LXVwQsx0grJCsdN8tSkjwuGWAUJPBsgJ9v
+	Tukr0eqPi4QN+ZfJ1+GK1e2bmcWKyoOcw5x4GBYAVE7pkS1Rei2BYD26XO+wh6I1OhQ
+	SufidyCwmpPYzSyzE8KVHWhcaWIc1q9wJh7pluqs=
+Content-Type: multipart/mixed; boundary="--_NmP-29339c3a7925ac98-Part_1"
+From: Club Locker <no-reply@clublocker.com>
+To: andrew@parmet.com
+Reply-To: tony.hollins@tandr.org
+Subject: Tennis & Racquet Club Reservation Confirmation
+Message-ID: <0100016bb0d918b4-d12cc1d2-abeb-4adf-bc91-57af6ff51680-000000@email.amazonses.com>
+Date: Tue, 2 Jul 2019 04:02:26 +0000
+MIME-Version: 1.0
+X-SES-Outgoing: 2019.07.02-54.240.8.62
+Feedback-ID: 1.us-east-1.nvEQFBLrnsYYlHOIclFpo0WN7dgvcT2b+eS5HXR6suE=:AmazonSES
+
+----_NmP-29339c3a7925ac98-Part_1
+Content-Type: text/html
+Content-Transfer-Encoding: quoted-printable
+
+<p>
+Hello Andrew Parmet,
+</p>
+<p>
+A reservation including you has been made=
+ via the Tennis & Racquet Club court reservation system.
+</p>
+<p>
+Reservation details:<br/>
+
+<strong> Court: </strong> Court Tennis - Court =
+Tennis <br/>
+<strong> Date: </strong> Tuesday, July 9th 2019 <br/>
+<strong> Time: </strong> 07:30 PM to 08:30 PM <br/>
+
+
+</p>
+
+
+<br/>
+<br/>
+To cancel your spot or the whole reservation please log into <a =
+href=3D"https://clublocker.com">Club Locker</a> and use the My Reservations=
+ area.
+
+
+----_NmP-29339c3a7925ac98-Part_1
+Content-Type: text/calendar; name=event.ics
+Content-Disposition: attachment; filename=event.ics
+Content-Transfer-Encoding: 7bit
+
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Tri Tech Computers//node-icalendar//EN
+BEGIN:VEVENT
+DTSTAMP:20190702T040226Z
+UID:06eca806-ac91-4be2-aec3-4f989f8d8543
+DTSTART:20190709T233000Z
+DTEND:20190710T003000Z
+SUMMARY:Reservation for Court Tennis
+ORGANIZER;CN=Tennis & Racquet Club:mailto:no-reply@clublocker.com
+LOCATION:Tennis & Racquet Club / Court: Court Tennis
+ATTENDEE;CN=Andrew Parmet;CUTYPE=INDIVIDUAL:mailto:andrew@parmet.com
+END:VEVENT
+END:VCALENDAR
+
+----_NmP-29339c3a7925ac98-Part_1--

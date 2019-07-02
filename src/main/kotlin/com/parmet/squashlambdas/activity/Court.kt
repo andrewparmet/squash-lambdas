@@ -51,6 +51,10 @@ internal sealed class Court(val sport: Sport) {
 // "Courts: Court #x" (activity creation)
 private val NUMBERED_COURT = Pattern.compile(".*Courts?: Court #(\\d) [/\\-].*")
 
+// "Court: Court Tennis - Court Tennis" (player joins)
+// "Court: Court Tennis / Court Tennis" (player joins)
+private val TENNIS_COURT = Pattern.compile(".*Court Tennis [-/] Court Tennis.*")
+
 private val map =
     Court::class.nestedClasses
         .map { it.objectInstance }
@@ -62,6 +66,10 @@ internal fun Court.Companion.valueOf(value: String) = requireNotNull(map[value])
 }
 
 internal fun Court.Companion.fromLocationString(body: String): Court {
+    if (TENNIS_COURT.matcher(body).matches()) {
+        return Court.TennisCourt
+    }
+
     val matcher = NUMBERED_COURT.matcher(body)
     checkArgument(matcher.matches(), "Unable to parse court from %s", body)
     return valueOf("Court ${matcher.group(1)}")
