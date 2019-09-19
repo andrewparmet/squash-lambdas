@@ -1,7 +1,6 @@
 package com.parmet.squashlambdas.email
 
 import biweekly.Biweekly
-import com.google.common.base.Preconditions.checkArgument
 import org.jsoup.Jsoup
 import java.nio.charset.StandardCharsets.UTF_8
 import javax.mail.Part
@@ -13,12 +12,9 @@ internal class MimeParser<T> private constructor(
     fun isFor(part: Part) = part.isMimeType(mimeType)
 
     fun parse(part: Part): Appendable<T> {
-        checkArgument(
-            isFor(part),
-            "Cannot parse part with type %s using parser for type %s",
-            part.contentType,
-            mimeType
-        )
+        require(isFor(part)) {
+            "Cannot parse part with type ${part.contentType} using parser for type $mimeType"
+        }
         return parser(part)
     }
 

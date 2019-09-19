@@ -1,6 +1,5 @@
 package com.parmet.squashlambdas.activity
 
-import com.google.common.base.Preconditions.checkArgument
 import com.parmet.squashlambdas.inBoston
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -18,7 +17,7 @@ internal object TimeParser {
 
     fun parse(body: String): TimeSlot {
         val matcher = PATTERN.matcher(body)
-        checkArgument(matcher.matches(), "Unable to find start and end from body %s", body)
+        require(matcher.matches()) { "Unable to find start and end from body $body" }
         val month = Month.valueOf(matcher.group(1).toUpperCase())
         val dayOfMonth = Integer.parseInt(matcher.group(2))
         val year = Integer.parseInt(matcher.group(3))

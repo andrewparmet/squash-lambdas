@@ -10,7 +10,6 @@ import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.CalendarScopes
 import com.google.auth.http.HttpCredentialsAdapter
 import com.google.auth.oauth2.GoogleCredentials
-import com.google.common.base.Preconditions.checkState
 import com.google.common.io.Files
 import com.google.gson.Gson
 import com.parmet.squashlambdas.activity.Court
@@ -110,7 +109,7 @@ private fun loadFile(
         if (it == "local") {
             Files.asCharSource(File(config.getString("$configKey.fileName")), UTF_8).read()
         } else {
-            checkState("s3" == it)
+            check("s3" == it)
             s3.getObjectAsString(
                 config.getString("aws.$configKey.bucket"),
                 config.getString("aws.$configKey.key"))

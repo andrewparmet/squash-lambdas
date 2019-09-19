@@ -1,7 +1,6 @@
 package com.parmet.squashlambdas.clublocker
 
 import com.google.common.base.Joiner
-import com.google.common.base.Preconditions.checkState
 import com.google.common.collect.ImmutableBiMap
 import com.google.common.net.HttpHeaders.ACCEPT
 import com.google.common.net.HttpHeaders.AUTHORIZATION
@@ -137,7 +136,7 @@ internal class ClubLockerClientImpl(
                 if (body.containsKey("createDenied")) {
                     ReservationResp.Error(code, body["reason"] as String, match)
                 } else {
-                    checkState(body.containsKey("id"), "Deduced success but body contained no id: %s", body)
+                    check(body.containsKey("id")) { "Deduced success but body contained no id: $body" }
                     ReservationResp.Success((body["id"] as Number).toInt(), match)
                 }
             } else {
@@ -176,7 +175,8 @@ internal class ClubLockerClientImpl(
         header(AUTHORIZATION, "Bearer $accessToken")
             .header(ACCEPT, JSON_UTF_8.toString())
 
-    private fun checkRunning() = checkState(isRunning)
+    private fun checkRunning() =
+        check(isRunning)
 
     override fun shutDown() = Unit
 }

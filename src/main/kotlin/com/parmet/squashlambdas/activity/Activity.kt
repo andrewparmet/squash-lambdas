@@ -1,7 +1,6 @@
 package com.parmet.squashlambdas.activity
 
 import com.google.api.services.calendar.model.Event
-import com.google.common.base.Preconditions.checkArgument
 import com.parmet.squashlambdas.email.EmailData
 
 interface Activity {
@@ -14,7 +13,7 @@ interface Activity {
             if (email.isMatch()) {
                 Match.fromEmailData(email)
             } else {
-                checkArgument(email.isClinic(), "unknown activity type: %s", email)
+                require(email.isClinic()) { "unknown activity type: $email" }
                 Clinic.fromEmailData(email)
             }
 
