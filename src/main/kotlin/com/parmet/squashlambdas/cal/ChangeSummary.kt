@@ -3,7 +3,7 @@ package com.parmet.squashlambdas.cal
 import com.parmet.squashlambdas.activity.Activity
 import com.parmet.squashlambdas.email.EmailData
 
-internal data class ChangeSummary(
+data class ChangeSummary(
     private val action: Action,
     private val activity: Activity
 ) {

@@ -25,13 +25,15 @@ class GsonUtilsTest {
             Court.Court2,
             Instant.parse("2018-03-26T22:45:00Z"),
             Instant.parse("2018-03-26T23:30:00Z"),
-            setOf(Player.named("Philipp Rimmler")))
+            setOf(Player(name = "Philipp Rimmler"))
+        )
 
     private val clinic =
         Clinic(
             Court.Court2,
             Instant.parse("2018-03-26T22:45:00Z"),
-            Instant.parse("2018-03-26T23:30:00Z"))
+            Instant.parse("2018-03-26T23:30:00Z")
+        )
 
     @Test
     fun `activity adapter works for all subclasses`() {
@@ -62,7 +64,7 @@ class GsonUtilsTest {
             listOf(
                 Court.Court1, Court.Court2, Court.Court3, Court.Court5, Court.Court6,
                 Court.Court7, Court.TennisCourt, Court.RacquetsCourt
-            ).associate { it::class to it }
+            ).associateBy { it::class }
 
         assertHasAnExampleOfEachConcreteSubclass(Court::class, instances)
 
@@ -73,7 +75,7 @@ class GsonUtilsTest {
     fun `action serializer works for all subclasses`() {
         val instances: Map<KClass<*>, *> =
             listOf(Action.Create, Action.Update, Action.Delete, Action.None)
-                .associate { it::class to it }
+                .associateBy { it::class }
 
         assertHasAnExampleOfEachConcreteSubclass(Action::class, instances)
 

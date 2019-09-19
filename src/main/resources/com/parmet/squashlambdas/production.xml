@@ -55,6 +55,7 @@
     <creds>
       <location>s3</location>
     </creds>
+    <memberId>${env:CLUB_LOCKER_MEMBER_ID}</memberId>
   </clubLocker>
 
   <schedule>

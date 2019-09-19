@@ -17,7 +17,7 @@ import com.parmet.squashlambdas.monitor.TimeFormatter
 import com.parmet.squashlambdas.reserve.ReservationMaker
 import java.time.Instant
 
-internal class Notifier(
+class Notifier(
     private val sns: AmazonSNS,
     private val myTopicArn: String,
     private val publicTopicArn: String

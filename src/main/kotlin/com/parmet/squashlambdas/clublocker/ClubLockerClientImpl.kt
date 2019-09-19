@@ -41,8 +41,7 @@ import java.lang.reflect.Type
 import java.time.LocalDate
 
 internal class ClubLockerClientImpl(
-    private val username: String,
-    private val password: String
+    private val user: ClubLockerUser
 ) : ClubLockerClient, AbstractIdleService() {
 
     private val logger = KotlinLogging.logger { }
@@ -70,8 +69,8 @@ internal class ClubLockerClientImpl(
                 .post(
                     Joiner.on("&").withKeyValueSeparator("=").join(
                         mapOf(
-                            "username" to username,
-                            "password" to password
+                            "username" to user.username,
+                            "password" to user.password
                         ).mapValues { (_, v) ->
                             UrlEscapers.urlFormParameterEscaper().escape(v)
                         }
@@ -154,7 +153,10 @@ internal class ClubLockerClientImpl(
             tennisAndRacquetClubId,
             court.clubLockerId,
             start.inBoston().toLocalDate(),
-            com.parmet.squashlambdas.reserve.Slot(start.inBoston().toLocalTime(), end.inBoston().toLocalTime()),
+            com.parmet.squashlambdas.reserve.Slot(
+                start.inBoston().toLocalTime(),
+                end.inBoston().toLocalTime()
+            ),
             players.map {
                 val id = directory.idForPlayer(it)
                 if (id != null) {
@@ -178,6 +180,12 @@ internal class ClubLockerClientImpl(
 
     override fun shutDown() = Unit
 }
+
+internal data class ClubLockerUser(
+    val username: String,
+    val password: String,
+    val memberId: Int
+)
 
 internal val COURTS_BY_ID =
     ImmutableBiMap.builder<Int, Court>()

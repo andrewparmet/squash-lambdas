@@ -12,7 +12,14 @@ class MatchTest {
 
     @Test
     fun `match can be serialized`() {
-        gson.toJson(Match(Court.Court2, Instant.now(), Instant.now(), setOf(Player.named("Me"))))
+        gson.toJson(
+            Match(
+                Court.Court2,
+                Instant.now(),
+                Instant.now(),
+                setOf(Player(name = "Me"))
+            )
+        )
     }
 
     @Test
@@ -22,7 +29,7 @@ class MatchTest {
                 Court.Court2,
                 Instant.parse("2018-03-26T22:45:00Z"),
                 Instant.parse("2018-03-26T23:30:00Z"),
-                setOf(Player.named("Philipp Rimmler"))
+                setOf(Player(name = "Philipp Rimmler"))
             ).toEvent()
 
         assertThat(event.start)
@@ -40,6 +47,6 @@ class MatchTest {
         assertThat(event.description)
             .isEqualTo(
                 "Match(court=Court 2, start=2018-03-26T22:45:00Z, end=2018-03-26T23:30:00Z, " +
-                    "players=[Player(name=Philipp Rimmler, email=null)])")
+                    "players=[Player(name=Philipp Rimmler, email=null, memberId=null)])")
     }
 }

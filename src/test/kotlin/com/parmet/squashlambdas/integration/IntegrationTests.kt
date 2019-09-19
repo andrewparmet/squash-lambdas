@@ -263,9 +263,10 @@ class IntegrationTests {
     private fun getSummary(fileName: String) =
         ChangeSummary.fromEmail(emailFromBody(fileName))
 
-    private fun summary(action: Action, activity: Activity) = ChangeSummary(action, activity)
+    private fun summary(action: Action, activity: Activity) =
+        ChangeSummary(action, activity)
 
-    private fun playerSet(name: String) = setOf(Player.named(name))
+    private fun playerSet(name: String) = setOf(Player(name = name))
 }
 
 fun emailFromBody(fileName: String) =

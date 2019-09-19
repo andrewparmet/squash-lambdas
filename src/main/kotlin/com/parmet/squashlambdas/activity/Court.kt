@@ -7,7 +7,7 @@ import com.parmet.squashlambdas.activity.Sport.Squash
 import com.parmet.squashlambdas.activity.Sport.Tennis
 import java.util.regex.Pattern
 
-internal sealed class Court(val sport: Sport) {
+sealed class Court(val sport: Sport) {
     abstract val pretty: String
 
     override fun toString() = pretty
