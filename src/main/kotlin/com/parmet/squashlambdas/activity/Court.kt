@@ -1,6 +1,5 @@
 package com.parmet.squashlambdas.activity
 
-import com.google.common.base.Preconditions.checkArgument
 import com.parmet.squashlambdas.activity.Sport.Hardball
 import com.parmet.squashlambdas.activity.Sport.Racquets
 import com.parmet.squashlambdas.activity.Sport.Squash
@@ -71,6 +70,6 @@ internal fun Court.Companion.fromLocationString(body: String): Court {
     }
 
     val matcher = NUMBERED_COURT.matcher(body)
-    checkArgument(matcher.matches(), "Unable to parse court from %s", body)
+    require(matcher.matches()) { "Unable to parse court from $body" }
     return valueOf("Court ${matcher.group(1)}")
 }
