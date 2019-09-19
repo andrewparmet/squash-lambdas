@@ -1,8 +1,8 @@
 plugins {
-  id 'com.github.ben-manes.versions' version '0.21.0'
-  id 'com.github.johnrengelman.shadow' version '5.0.0'
-  id 'org.jetbrains.kotlin.jvm' version '1.3.31'
-  id 'org.jlleitschuh.gradle.ktlint' version '8.0.0'
+  id 'com.github.ben-manes.versions' version '0.25.0'
+  id 'com.github.johnrengelman.shadow' version '5.1.0'
+  id 'org.jetbrains.kotlin.jvm' version '1.3.50'
+  id 'org.jlleitschuh.gradle.ktlint' version '8.2.0'
   id 'org.sonarqube' version '2.7.1'
   id 'jacoco'
 }
@@ -32,48 +32,47 @@ repositories {
   maven { url "https://artifactory.cronapp.io/public-release/" }
 }
 
-def awsSdkVersion = '1.11.555'
-def log4jVersion = '2.11.2'
-def kotlinVersion = '1.3.40'
+def awsSdkVersion = '1.11.634'
+def log4jVersion = '2.12.1'
+def kotlinVersion = '1.3.50'
 def gsonVersion = '2.8.5'
 
 dependencies {
-  compile "com.amazonaws:aws-java-sdk-dynamodb:$awsSdkVersion"
-  compile "com.amazonaws:aws-java-sdk-s3:$awsSdkVersion"
-  compile "com.amazonaws:aws-java-sdk-sns:$awsSdkVersion"
-  compile 'com.amazonaws:aws-lambda-java-core:1.2.0'
+  implementation "com.amazonaws:aws-java-sdk-dynamodb:$awsSdkVersion"
+  implementation "com.amazonaws:aws-java-sdk-s3:$awsSdkVersion"
+  implementation "com.amazonaws:aws-java-sdk-sns:$awsSdkVersion"
+  implementation 'com.amazonaws:aws-lambda-java-core:1.2.0'
 
-  compile 'com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.1'
-  compile "com.google.code.gson:gson:$gsonVersion"
-  compile "com.google.code.gson:gson-extras:$gsonVersion"
-  compile 'com.google.guava:guava:27.1-jre'
-  compile 'com.google.oauth-client:google-oauth-client-jetty:1.29.0'
-  compile('com.google.apis:google-api-services-calendar:v3-rev20190430-1.28.0') {
+  implementation 'com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.1'
+  implementation "com.google.code.gson:gson:$gsonVersion"
+  implementation "com.google.code.gson:gson-extras:$gsonVersion"
+  implementation 'com.google.guava:guava:28.1-jre'
+  implementation 'com.google.auth:google-auth-library-oauth2-http:0.17.1'
+  implementation('com.google.apis:google-api-services-calendar:v3-rev20190910-1.30.1') {
     exclude group: 'com.google.guava'
   }
 
-  compile 'net.sf.biweekly:biweekly:0.6.3'
-  compile 'org.apache.commons:commons-email:1.5'
-  compile 'org.jsoup:jsoup:1.12.1'
-  compile 'org.apache.commons:commons-configuration2:2.4'
-  // commons-configuration2 does not pull this in on its own and 1.9.3 disables logging of an annoying stacktrace
-  compile 'commons-beanutils:commons-beanutils:1.9.3'
-  compile 'com.squareup.okhttp3:okhttp:3.14.2'
+  implementation 'net.sf.biweekly:biweekly:0.6.3'
+  implementation 'org.apache.commons:commons-email:1.5'
+  implementation 'org.jsoup:jsoup:1.12.1'
+  implementation 'org.apache.commons:commons-configuration2:2.6'
+  implementation 'commons-beanutils:commons-beanutils:1.9.4'
+  implementation 'com.squareup.okhttp3:okhttp:4.2.0'
 
-  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-  compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-  compile 'io.github.microutils:kotlin-logging:1.6.26'
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+  implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+  implementation 'io.github.microutils:kotlin-logging:1.7.6'
 
-  compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
-  compile "org.apache.logging.log4j:log4j-api:$log4jVersion"
-  compile "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
-  runtime "org.apache.logging.log4j:log4j-jcl:$log4jVersion"
-  runtime 'commons-logging:commons-logging:1.2'
+  implementation "org.apache.logging.log4j:log4j-core:$log4jVersion"
+  implementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
+  implementation "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
+  implementation "org.apache.logging.log4j:log4j-jcl:$log4jVersion"
+  implementation 'commons-logging:commons-logging:1.2'
 
-  testCompile 'junit:junit:4.12'
-  testCompile 'org.assertj:assertj-core:3.12.2'
-  testCompile 'com.google.truth:truth:0.44'
-  testCompile 'org.reflections:reflections:0.9.11'
+  testImplementation 'junit:junit:4.12'
+  testImplementation 'org.assertj:assertj-core:3.13.2'
+  testImplementation 'com.google.truth:truth:1.0'
+  testImplementation 'org.reflections:reflections:0.9.11'
 }
 
 tasks.withType(JavaCompile) {

@@ -29,11 +29,11 @@ import com.parmet.squashlambdas.reserve.endTime
 import com.parmet.squashlambdas.reserve.slot
 import com.parmet.squashlambdas.reserve.startTime
 import mu.KotlinLogging
-import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
+import okhttp3.MediaType.Companion.toMediaType
 import okio.Buffer
 import org.apache.http.client.HttpResponseException
 import org.jsoup.Jsoup
@@ -68,17 +68,16 @@ internal class ClubLockerClientImpl(
             Request.Builder()
                 .url("$baseUrl/clublocker_login")
                 .post(
-                    RequestBody.create(
-                        MediaType.get(FORM_DATA.toString()),
-                        Joiner.on("&").withKeyValueSeparator("=").join(
-                            mapOf(
-                                "username" to username,
-                                "password" to password
-                            ).mapValues { (_, v) ->
-                                UrlEscapers.urlFormParameterEscaper().escape(v)
-                            }
-                        ))))
-            .substringAfter("access_token=")
+                    Joiner.on("&").withKeyValueSeparator("=").join(
+                        mapOf(
+                            "username" to username,
+                            "password" to password
+                        ).mapValues { (_, v) ->
+                            UrlEscapers.urlFormParameterEscaper().escape(v)
+                        }
+                    ).toRequestBody(FORM_DATA.toString().toMediaType())
+                )
+        ).substringAfter("access_token=")
 
     override fun user(): UserResp =
         get("$resource/user")
@@ -89,13 +88,13 @@ internal class ClubLockerClientImpl(
     override fun directory(): List<User> =
         get("$clubResource/players/directory")
 
-    override fun slotsTaken(from: LocalDate, to: LocalDate): List<com.parmet.squashlambdas.clublocker.Slot> =
+    override fun slotsTaken(from: LocalDate, to: LocalDate): List<Slot> =
         get("$clubResource/slots_taken/from/$from/to/$to")
 
     private fun responseBody(builder: Request.Builder): String {
         val response = response(builder)
-        val code = response.code()
-        val respBody = response.body()!!.string()
+        val code = response.code
+        val respBody = response.body!!.string()
         logger.info { "Received response: $code, $respBody" }
         if (code >= 400) {
             try {
@@ -110,7 +109,7 @@ internal class ClubLockerClientImpl(
 
     private fun response(builder: Request.Builder): Response {
         val request = builder.build()
-        logger.info { "Performing request: $request, body: ${Buffer().also { request.body()?.writeTo(it) }}" }
+        logger.info { "Performing request: $request, body: ${Buffer().also { request.body?.writeTo(it) }}" }
         return httpClient.newCall(request).execute()
     }
 
@@ -128,12 +127,13 @@ internal class ClubLockerClientImpl(
                         .url("$clubResource/reservations")
                         .authorized()
                         .post(
-                            RequestBody.create(
-                                MediaType.get(JSON_UTF_8.toString()),
-                                match.toReservationRequest().toJson())))
+                            match.toReservationRequest().toJson()
+                                .toRequestBody(JSON_UTF_8.toString().toMediaType())
+                        )
+                )
 
-            val code = response.code()
-            val body: Map<String, Any> = gson.fromJson(response.body()!!.string())
+            val code = response.code
+            val body: Map<String, Any> = gson.fromJson(response.body!!.string())
             return if (code == 200) {
                 if (body.containsKey("createDenied")) {
                     ReservationResp.Error(code, body["reason"] as String, match)

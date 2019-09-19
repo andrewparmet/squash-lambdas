@@ -4,11 +4,12 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
 import com.amazonaws.services.sns.AmazonSNSClientBuilder
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.CalendarScopes
+import com.google.auth.http.HttpCredentialsAdapter
+import com.google.auth.oauth2.GoogleCredentials
 import com.google.common.base.Preconditions.checkState
 import com.google.common.io.Files
 import com.google.gson.Gson
@@ -53,13 +54,15 @@ internal fun configureCalendar(config: Configuration, s3: AmazonS3) =
     Calendar.Builder(
         GoogleNetHttpTransport.newTrustedTransport(),
         JacksonFactory.getDefaultInstance(),
-        loadCredential(config, s3).createScoped(listOf(CalendarScopes.CALENDAR))
+        HttpCredentialsAdapter(
+            loadCredentials(config, s3).createScoped(listOf(CalendarScopes.CALENDAR))
+        )
     )
         .setApplicationName("PARMET_SQUASH_LAMBDAS")
         .build()
 
-private fun loadCredential(config: Configuration, s3: AmazonS3): GoogleCredential =
-    GoogleCredential.fromStream(loadFile(config, "google.cal.creds", s3).byteInputStream(UTF_8))
+private fun loadCredentials(config: Configuration, s3: AmazonS3) =
+    GoogleCredentials.fromStream(loadFile(config, "google.cal.creds", s3).byteInputStream(UTF_8))
 
 internal fun configureClubLockerClient(config: Configuration, s3: AmazonS3): Pair<ClubLockerClient, Player> {
     val creds: Map<String, String> = Gson().fromJson(loadFile(config, "clubLocker.creds", s3))
