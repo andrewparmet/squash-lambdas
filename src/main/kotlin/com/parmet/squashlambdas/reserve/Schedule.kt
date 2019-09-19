@@ -3,7 +3,7 @@ package com.parmet.squashlambdas.reserve
 import java.time.DayOfWeek
 import java.time.LocalDate
 
-internal class Schedule(
+class Schedule(
     private val days: Collection<DayOfWeek>
 ) {
     fun shouldMakeReservation(date: LocalDate): Boolean {

@@ -34,7 +34,14 @@ class NotifierTest {
         notifier.publishSuccessfulParse(
             ChangeSummary(
                 Action.Create,
-                Match(Court.Court1, Instant.now(), Instant.now(), setOf(Player.named("Repository Author")))))
+                Match(
+                    Court.Court1,
+                    Instant.now(),
+                    Instant.now(),
+                    setOf(Player(name = "Repository Author"))
+                )
+            )
+        )
 
         logger.info { "Received ${received[0].message}" }
 

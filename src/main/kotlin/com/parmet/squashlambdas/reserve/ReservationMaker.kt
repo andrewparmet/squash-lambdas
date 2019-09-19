@@ -15,7 +15,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-internal class ReservationMaker(
+class ReservationMaker(
     private val client: ClubLockerClient,
     private val options: Options
 ) {
@@ -74,7 +74,7 @@ internal class ReservationMaker(
         return message.contains("Player has already booked their maximum number of prime time reservations")
     }
 
-    internal class Options(
+    class Options(
         val hostPlayer: Player,
         val courts: List<Court> =
             listOf(Court1, Court2, Court3),
@@ -82,7 +82,7 @@ internal class ReservationMaker(
             listOf(LocalTime.of(18, 0), LocalTime.of(18, 45), LocalTime.of(19, 30))
     )
 
-    internal sealed class Result {
+    sealed class Result {
         data class Success(
             val match: Match,
             val failures: List<ReservationResp.NonSuccess>

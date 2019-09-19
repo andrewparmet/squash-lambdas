@@ -3,7 +3,7 @@ package com.parmet.squashlambdas.activity
 import com.parmet.squashlambdas.email.EmailData
 import java.time.Instant
 
-internal data class Match(
+data class Match(
     override val court: Court,
     override val start: Instant,
     override val end: Instant,
@@ -29,7 +29,10 @@ internal data class Match(
                 Court.fromLocationString(email.body),
                 startAndEnd.start,
                 startAndEnd.end,
-                OtherPlayersParser.parse(email.body).map { Player.named(it) }.toSet())
+                OtherPlayersParser.parse(email.body)
+                    .map { Player(name = it) }
+                    .toSet()
+            )
         }
     }
 }

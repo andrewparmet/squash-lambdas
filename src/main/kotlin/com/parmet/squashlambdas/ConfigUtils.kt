@@ -18,6 +18,7 @@ import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.activity.valueOf
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.clublocker.ClubLockerClientImpl
+import com.parmet.squashlambdas.clublocker.ClubLockerUser
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.reserve.Schedule
 import com.parmet.squashlambdas.reserve.mapNonEmptyLines
@@ -29,7 +30,7 @@ import java.io.File
 import java.nio.charset.StandardCharsets.UTF_8
 import java.time.LocalTime
 
-internal fun loadConfiguration(file: String) =
+fun loadConfiguration(file: String) =
     FileBasedConfigurationBuilder(XMLConfiguration::class.java)
         .configure(
             Parameters()
@@ -39,18 +40,18 @@ internal fun loadConfiguration(file: String) =
                 .setThrowExceptionOnMissing(true))
         .configuration
 
-internal fun configureS3() = AmazonS3ClientBuilder.defaultClient()
+fun configureS3() = AmazonS3ClientBuilder.defaultClient()
 
-internal fun configureNotifier(config: Configuration) =
+fun configureNotifier(config: Configuration) =
     Notifier(
         AmazonSNSClientBuilder.defaultClient(),
         config.getString("aws.sns.myTopicArn"),
         config.getString("aws.sns.publicTopicArn")
     )
 
-internal fun configureDynamoDb() = AmazonDynamoDBClientBuilder.defaultClient()
+fun configureDynamoDb() = AmazonDynamoDBClientBuilder.defaultClient()
 
-internal fun configureCalendar(config: Configuration, s3: AmazonS3) =
+fun configureCalendar(config: Configuration, s3: AmazonS3) =
     Calendar.Builder(
         GoogleNetHttpTransport.newTrustedTransport(),
         JacksonFactory.getDefaultInstance(),
@@ -64,32 +65,40 @@ internal fun configureCalendar(config: Configuration, s3: AmazonS3) =
 private fun loadCredentials(config: Configuration, s3: AmazonS3) =
     GoogleCredentials.fromStream(loadFile(config, "google.cal.creds", s3).byteInputStream(UTF_8))
 
-internal fun configureClubLockerClient(config: Configuration, s3: AmazonS3): Pair<ClubLockerClient, Player> {
+fun configureClubLockerClient(config: Configuration, s3: AmazonS3): Pair<ClubLockerClient, Player> {
     val creds: Map<String, String> = Gson().fromJson(loadFile(config, "clubLocker.creds", s3))
 
-    val hostPlayer = Player.withEmail(creds.getValue("username"))
+    val hostPlayer =
+        Player(
+            email = creds.getValue("username"),
+            memberId = config.getInt("clubLocker.memberId")
+        )
 
     return Pair(
         ClubLockerClientImpl(
-            hostPlayer.email!!,
-            creds.getValue("password")
+            ClubLockerUser(
+                hostPlayer.email!!,
+                creds.getValue("password"),
+                hostPlayer.memberId!!
+            )
         ),
-        hostPlayer)
+        hostPlayer
+    )
 }
 
-internal fun getSchedule(config: Configuration, s3: AmazonS3) =
+fun getSchedule(config: Configuration, s3: AmazonS3) =
     Schedule.fromString(loadFile(config, "schedule", s3))
 
-internal fun getPreferredCourts(config: Configuration, s3: AmazonS3) =
+fun getPreferredCourts(config: Configuration, s3: AmazonS3) =
     getPreferredCourts(loadFile(config, "courts", s3))
 
-internal fun getPreferredCourts(s: String) =
+fun getPreferredCourts(s: String) =
     s.mapNonEmptyLines { Court.valueOf(it) }
 
-internal fun getPreferredTimes(config: Configuration, s3: AmazonS3) =
+fun getPreferredTimes(config: Configuration, s3: AmazonS3) =
     getPreferredTimes(loadFile(config, "times", s3))
 
-internal fun getPreferredTimes(s: String) =
+fun getPreferredTimes(s: String) =
     s.mapNonEmptyLines { LocalTime.parse(it) }
 
 private fun loadFile(

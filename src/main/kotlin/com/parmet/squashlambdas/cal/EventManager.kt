@@ -5,7 +5,7 @@ import com.google.common.collect.Iterables
 import com.parmet.squashlambdas.activity.Activity
 import mu.KotlinLogging
 
-internal class EventManager(
+class EventManager(
     private val calendar: Calendar,
     private val calendarId: String
 ) {

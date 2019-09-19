@@ -46,7 +46,8 @@ class ClubLockerClientImplTest : ConfiguredTest() {
                 Court.Court7,
                 Instant.parse("2018-02-03T23:00:00Z"), // Some legal date
                 Instant.parse("2018-02-03T23:44:00Z"), // Not 45 minutes
-                setOf(Player.withEmail(email)))
+                setOf(Player(email = email))
+            )
 
         val resp = client.makeReservation(match)
 
@@ -62,7 +63,9 @@ class ClubLockerClientImplTest : ConfiguredTest() {
                     Court.Court6,
                     Instant.parse("2019-02-04T23:00:00Z"),
                     Instant.parse("2019-02-04T23:45:00Z"),
-                    setOf(Player.withEmail(email))))
+                    setOf(Player(email = email))
+                )
+            )
 
         println(resp)
         assertThat(resp).isInstanceOf(ReservationResp.Success::class.java)
