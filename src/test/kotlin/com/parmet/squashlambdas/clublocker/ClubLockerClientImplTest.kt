@@ -35,6 +35,12 @@ class ClubLockerClientImplTest : ConfiguredTest() {
     }
 
     @Test
+    fun `test directory name reversal`() {
+        assertThat(User(0, "Parmet, Andrew").fullName)
+            .isEqualTo("Andrew Parmet")
+    }
+
+    @Test
     fun `test taken slots info`() {
         println(client.slotsTaken(LocalDate.now(), LocalDate.now()))
     }

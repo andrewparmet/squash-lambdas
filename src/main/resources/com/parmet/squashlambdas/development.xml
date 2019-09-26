@@ -21,7 +21,7 @@
       <location>local</location>
       <fileName>clublocker-creds.json</fileName>
     </creds>
-    <memberId>1</memberId>
+    <name>John Smith</name>
   </clubLocker>
 
   <schedule>

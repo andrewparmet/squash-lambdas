@@ -49,7 +49,8 @@ class SerializationTests {
 
         assertThat(PARSER.parse(req.toJson()).asJsonObject.entrySet())
             .containsExactlyElementsIn(
-                PARSER.parse(getResourceAsString("reservation-request.json")).asJsonObject.entrySet())
+                PARSER.parse(getResourceAsString("reservation-request.json")).asJsonObject.entrySet()
+            )
     }
 
     @Test
@@ -84,7 +85,8 @@ class SerializationTests {
                 UserResp(
                     167759,
                     listOf(Affiliation(1413, "Tennis & Racquet Club")),
-                    "joecool@peanuts.com")
+                    "joecool@peanuts.com"
+                )
             )
     }
 
@@ -94,7 +96,7 @@ class SerializationTests {
             gson.fromJson(getResourceAsString("directory.json"), object : TypeToken<List<User>>() {}.type)
 
         assertThat(directory).containsExactly(
-            User(167759, "Parmet, Andrew", "joecool@peanuts.com")
+            User(167759, "Parmet, Andrew")
         )
     }
 }

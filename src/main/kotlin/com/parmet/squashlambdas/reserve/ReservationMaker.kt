@@ -67,7 +67,9 @@ class ReservationMaker(
                     setOf(options.hostPlayer)
                 } else {
                     setOf(options.hostPlayer, player)
-                }))
+                }
+            )
+        )
     }
 
     private fun ReservationResp.Error.isFatal(): Boolean {
