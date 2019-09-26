@@ -9,7 +9,7 @@ internal class Directory(
 
     fun idForPlayer(player: Player): Int? =
         directory
-            .filter { it.email == player.email }
+            .filter { it.fullName == player.name }
             .map { it.id }
             .firstOrNull()
 }

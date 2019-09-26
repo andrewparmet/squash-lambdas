@@ -64,6 +64,8 @@ sealed class ReservationResp {
 
 data class User(
     val id: Int,
-    val name: String,
-    val email: String
-)
+    private val name: String
+) {
+    val fullName
+        get() = name.split(", ").reversed().joinToString(" ")
+}

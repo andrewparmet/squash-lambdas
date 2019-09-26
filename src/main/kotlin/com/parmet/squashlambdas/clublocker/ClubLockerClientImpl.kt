@@ -184,7 +184,7 @@ internal class ClubLockerClientImpl(
 internal data class ClubLockerUser(
     val username: String,
     val password: String,
-    val memberId: Int
+    val name: String
 )
 
 internal val COURTS_BY_ID =
