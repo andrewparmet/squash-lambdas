@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas
+package com.parmet.squashlambdas.util
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

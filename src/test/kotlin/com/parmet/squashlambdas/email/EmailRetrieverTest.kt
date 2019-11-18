@@ -4,7 +4,7 @@ import biweekly.component.VEvent
 import biweekly.property.Attendee
 import biweekly.property.Organizer
 import com.google.common.truth.Truth.assertThat
-import com.parmet.squashlambdas.integration.IntegrationTests
+import com.parmet.squashlambdas.integration.emailnotification.IntegrationTests
 import com.parmet.squashlambdas.testutil.EmailReturningS3
 import com.parmet.squashlambdas.testutil.getResourceAsString
 import java.sql.Date

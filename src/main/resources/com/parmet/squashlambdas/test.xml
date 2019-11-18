@@ -28,4 +28,8 @@
     </creds>
     <name>John Smith</name>
   </clubLocker>
+
+  <matchfind>
+    <recipient>redacted@example.com</recipient>
+  </matchfind>
 </configuration>

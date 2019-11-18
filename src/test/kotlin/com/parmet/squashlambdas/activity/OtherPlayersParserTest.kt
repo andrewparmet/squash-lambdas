@@ -1,7 +1,7 @@
 package com.parmet.squashlambdas.activity
 
 import com.google.common.truth.Truth.assertThat
-import com.parmet.squashlambdas.integration.emailFromBody
+import com.parmet.squashlambdas.integration.emailnotification.emailFromBody
 import org.junit.Test
 
 class OtherPlayersParserTest {

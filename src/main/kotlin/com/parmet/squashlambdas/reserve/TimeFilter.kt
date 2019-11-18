@@ -1,6 +1,6 @@
 package com.parmet.squashlambdas.reserve
 
-import com.parmet.squashlambdas.inBoston
+import com.parmet.squashlambdas.util.inBoston
 import mu.KotlinLogging
 import java.time.Clock
 import java.time.Instant

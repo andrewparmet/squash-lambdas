@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas.integration
+package com.parmet.squashlambdas.integration.emailnotification
 
 import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.activity.Activity

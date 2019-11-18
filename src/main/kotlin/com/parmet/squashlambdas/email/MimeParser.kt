@@ -1,6 +1,7 @@
 package com.parmet.squashlambdas.email
 
 import biweekly.Biweekly
+import com.sun.mail.util.BASE64DecoderStream
 import org.jsoup.Jsoup
 import java.nio.charset.StandardCharsets.UTF_8
 import javax.mail.Part
@@ -32,6 +33,11 @@ internal class MimeParser<T> private constructor(
         val TEXT_CALENDAR =
             MimeParser("text/calendar") { bodyPart ->
                 bodyPart.inputStream.use { AppendableList(Biweekly.parse(it.reader(UTF_8).readText()).all()) }
+            }
+
+        val TEXT_CSV =
+            MimeParser("text/csv") { bodyPart ->
+                AppendableString((bodyPart.content as BASE64DecoderStream).bufferedReader().readText())
             }
     }
 }

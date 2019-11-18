@@ -1,5 +1,6 @@
 package com.parmet.squashlambdas.testutil
 
+import com.google.common.io.Resources
 import com.google.gson.JsonParser
 import java.nio.charset.StandardCharsets.UTF_8
 
