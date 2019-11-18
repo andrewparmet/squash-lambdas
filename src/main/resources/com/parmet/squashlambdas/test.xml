@@ -28,4 +28,8 @@
     </creds>
     <name>John Smith</name>
   </clubLocker>
+
+  <matchfind>
+    <recipient>andrew@parmet.com</recipient>
+  </matchfind>
 </configuration>

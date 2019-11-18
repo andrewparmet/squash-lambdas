@@ -38,4 +38,8 @@
     <location>local</location>
     <fileName>times.txt</fileName>
   </times>
+
+  <matchfind>
+    <recipient>andrew@parmet.com</recipient>
+  </matchfind>
 </configuration>

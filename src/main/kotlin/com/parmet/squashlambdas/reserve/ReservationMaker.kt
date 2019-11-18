@@ -8,7 +8,7 @@ import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.clublocker.ReservationResp
-import com.parmet.squashlambdas.inBoston
+import com.parmet.squashlambdas.util.inBoston
 import mu.KotlinLogging
 import java.time.Duration
 import java.time.LocalDate

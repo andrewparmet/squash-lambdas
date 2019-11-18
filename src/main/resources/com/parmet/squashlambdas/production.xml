@@ -69,4 +69,8 @@
   <times>
     <location>s3</location>
   </times>
+
+  <matchfind>
+    <recipient>${env:MATCH_FIND_RECIPIENT}</recipient>
+  </matchfind>
 </configuration>

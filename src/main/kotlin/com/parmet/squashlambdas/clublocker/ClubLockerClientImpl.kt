@@ -22,8 +22,8 @@ import com.parmet.squashlambdas.activity.Court.Court7
 import com.parmet.squashlambdas.activity.Court.RacquetsCourt
 import com.parmet.squashlambdas.activity.Court.TennisCourt
 import com.parmet.squashlambdas.activity.Match
-import com.parmet.squashlambdas.fromJson
-import com.parmet.squashlambdas.inBoston
+import com.parmet.squashlambdas.util.fromJson
+import com.parmet.squashlambdas.util.inBoston
 import com.parmet.squashlambdas.reserve.endTime
 import com.parmet.squashlambdas.reserve.slot
 import com.parmet.squashlambdas.reserve.startTime

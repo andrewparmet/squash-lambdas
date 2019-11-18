@@ -3,6 +3,7 @@ package com.parmet.squashlambdas
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder
 import com.amazonaws.services.sns.AmazonSNSClientBuilder
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
@@ -21,6 +22,7 @@ import com.parmet.squashlambdas.clublocker.ClubLockerUser
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.reserve.Schedule
 import com.parmet.squashlambdas.reserve.mapNonEmptyLines
+import com.parmet.squashlambdas.util.fromJson
 import org.apache.commons.configuration2.Configuration
 import org.apache.commons.configuration2.XMLConfiguration
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder
@@ -60,6 +62,9 @@ fun configureCalendar(config: Configuration, s3: AmazonS3) =
     )
         .setApplicationName("PARMET_SQUASH_LAMBDAS")
         .build()
+
+fun configureSes() =
+    AmazonSimpleEmailServiceClientBuilder.defaultClient()
 
 private fun loadCredentials(config: Configuration, s3: AmazonS3) =
     GoogleCredentials.fromStream(loadFile(config, "google.cal.creds", s3).byteInputStream(UTF_8))

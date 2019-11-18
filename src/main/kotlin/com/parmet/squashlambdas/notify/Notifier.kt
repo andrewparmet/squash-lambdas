@@ -12,7 +12,7 @@ import com.parmet.squashlambdas.cal.Action
 import com.parmet.squashlambdas.cal.ChangeSummary
 import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
 import com.parmet.squashlambdas.clublocker.Slot
-import com.parmet.squashlambdas.inBoston
+import com.parmet.squashlambdas.util.inBoston
 import com.parmet.squashlambdas.monitor.TimeFormatter
 import com.parmet.squashlambdas.reserve.ReservationMaker
 import java.time.Instant
@@ -184,6 +184,28 @@ ${printer.toJson(context)}
 
 Stack trace:
 ${Throwables.getStackTraceAsString(failure)}
+        """
+    }
+
+    fun publishFailedMatchFind(t: Throwable, context: Map<*, *>) {
+        sns.publish(
+            PublishRequest(
+                myTopicArn,
+                failedMatchFindMsg(t, context),
+                "Failed to Process Club Locker Email"
+            )
+        )
+    }
+
+    private fun failedMatchFindMsg(t: Throwable, context: Map<*, *>): String {
+        return """
+Encountered an error processing a MatchFind request:
+
+Context:
+${printer.toJson(context)}
+
+Stack trace:
+${Throwables.getStackTraceAsString(t)}
         """
     }
 }

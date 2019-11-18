@@ -32,7 +32,7 @@ repositories {
   maven { url "https://artifactory.cronapp.io/public-release/" }
 }
 
-def awsSdkVersion = '1.11.634'
+def awsSdkVersion = '1.11.676'
 def log4jVersion = '2.12.1'
 def kotlinVersion = '1.3.50'
 def gsonVersion = '2.8.5'
@@ -40,6 +40,7 @@ def gsonVersion = '2.8.5'
 dependencies {
   implementation "com.amazonaws:aws-java-sdk-dynamodb:$awsSdkVersion"
   implementation "com.amazonaws:aws-java-sdk-s3:$awsSdkVersion"
+  implementation "com.amazonaws:aws-java-sdk-ses:$awsSdkVersion"
   implementation "com.amazonaws:aws-java-sdk-sns:$awsSdkVersion"
   implementation 'com.amazonaws:aws-lambda-java-core:1.2.0'
 
@@ -58,6 +59,7 @@ dependencies {
   implementation 'org.apache.commons:commons-configuration2:2.6'
   implementation 'commons-beanutils:commons-beanutils:1.9.4'
   implementation 'com.squareup.okhttp3:okhttp:4.2.0'
+  implementation 'com.opencsv:opencsv:5.0'
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
   implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"

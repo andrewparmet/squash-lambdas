@@ -1,6 +1,6 @@
 package com.parmet.squashlambdas.activity
 
-import com.parmet.squashlambdas.inBoston
+import com.parmet.squashlambdas.util.inBoston
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
