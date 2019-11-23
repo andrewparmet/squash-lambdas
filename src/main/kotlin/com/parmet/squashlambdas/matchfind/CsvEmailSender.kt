@@ -4,10 +4,13 @@ import com.amazonaws.services.simpleemail.AmazonSimpleEmailService
 import com.amazonaws.services.simpleemail.model.RawMessage
 import com.amazonaws.services.simpleemail.model.SendRawEmailRequest
 import com.google.common.net.MediaType
-import com.parmet.squashlambdas.util.inBoston
+import com.parmet.squashlambdas.util.BOSTON
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 import java.time.Instant
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 import java.util.Properties
 import javax.activation.DataHandler
 import javax.mail.Message
@@ -17,13 +20,18 @@ import javax.mail.internet.MimeMessage
 import javax.mail.internet.MimeMultipart
 import javax.mail.util.ByteArrayDataSource
 
+private val formatter =
+    DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+        .withLocale(Locale.US)
+        .withZone(BOSTON)
+
 class CsvEmailSender(
     private val sesClient: AmazonSimpleEmailService
 ) {
     fun send(squashCsv: String, tennisCsv: String, recipient: String): Any {
         val message =
             MimeMessage(Session.getDefaultInstance(Properties())).apply {
-                subject = "MatchFind: ${Instant.now().inBoston()}"
+                subject = "MatchFind: ${formatter.format(Instant.now())}"
                 setFrom("matchfind@andrew.parmet.com")
                 setRecipients(Message.RecipientType.TO, recipient)
                 setContent(

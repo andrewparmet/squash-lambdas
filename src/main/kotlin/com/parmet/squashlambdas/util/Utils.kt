@@ -6,7 +6,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.chrono.ChronoLocalDateTime
 
-private val BOSTON = ZoneId.of("America/New_York")
+internal val BOSTON = ZoneId.of("America/New_York")
 
 internal fun Instant.inBoston() = this.atZone(BOSTON)
 
