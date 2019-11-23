@@ -19,6 +19,7 @@ import com.parmet.squashlambdas.activity.Court.Court3
 import com.parmet.squashlambdas.activity.Court.Court5
 import com.parmet.squashlambdas.activity.Court.Court6
 import com.parmet.squashlambdas.activity.Court.Court7
+import com.parmet.squashlambdas.activity.Court.FitnessClasses
 import com.parmet.squashlambdas.activity.Court.RacquetsCourt
 import com.parmet.squashlambdas.activity.Court.TennisCourt
 import com.parmet.squashlambdas.activity.Match
@@ -197,6 +198,7 @@ internal val COURTS_BY_ID =
         .put(1694, Court7)
         .put(1690, TennisCourt)
         .put(1691, RacquetsCourt)
+        .put(2813, FitnessClasses)
         .build()
 
 @Suppress("UNUSED")
