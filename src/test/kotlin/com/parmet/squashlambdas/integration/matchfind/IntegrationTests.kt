@@ -8,8 +8,22 @@ import org.junit.Test
 
 class IntegrationTests {
     @Test
-    fun `reading a csv from an email`() {
-        val csvString = emailFromBody("matchfind").csvAttachment!!
+    fun `reading a csv from an email with text_csv`() {
+        run("matchfind")
+    }
+
+    @Test
+    fun `reading a csv from an email with application_octet_stream`() {
+        run("matchfindOctetStream")
+    }
+
+    @Test
+    fun `reading a csv from an email with application_vnd_ms_excel`() {
+        run("matchfindVndMsExcel")
+    }
+
+    private fun run(fileName: String) {
+        val csvString = emailFromBody(fileName).csvAttachment!!
         val squash = CsvType.SQUASH.filterCsv(csvString)
         val tennis = CsvType.TENNIS.filterCsv(csvString)
 
