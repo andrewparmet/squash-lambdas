@@ -1,5 +1,6 @@
 package com.parmet.squashlambdas.activity
 
+import com.parmet.squashlambdas.activity.Sport.Fitness
 import com.parmet.squashlambdas.activity.Sport.Hardball
 import com.parmet.squashlambdas.activity.Sport.Racquets
 import com.parmet.squashlambdas.activity.Sport.Squash
@@ -41,6 +42,10 @@ sealed class Court(val sport: Sport) {
 
     object RacquetsCourt : Court(Racquets) {
         override val pretty = "Racquets Court"
+    }
+
+    object FitnessClasses : Court(Fitness) {
+        override val pretty = "Fitness Classes"
     }
 
     companion object

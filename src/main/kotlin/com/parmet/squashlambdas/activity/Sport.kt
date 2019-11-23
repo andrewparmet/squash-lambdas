@@ -7,4 +7,5 @@ sealed class Sport {
     object Hardball : Sport()
     object Tennis : Sport()
     object Racquets : Sport()
+    object Fitness: Sport()
 }
