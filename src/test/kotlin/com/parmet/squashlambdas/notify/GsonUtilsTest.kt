@@ -50,8 +50,8 @@ class GsonUtilsTest {
     @Test
     fun `sport serializer works for all subclasses`() {
         val instances: Map<KClass<*>, *> =
-            listOf(Sport.Squash, Sport.Hardball, Sport.Racquets, Sport.Tennis)
-                .associate { it::class to it }
+            listOf(Sport.Squash, Sport.Hardball, Sport.Racquets, Sport.Tennis, Sport.Fitness)
+                .associateBy { it::class }
 
         assertHasAnExampleOfEachConcreteSubclass(Sport::class, instances)
 
@@ -63,7 +63,7 @@ class GsonUtilsTest {
         val instances: Map<KClass<*>, *> =
             listOf(
                 Court.Court1, Court.Court2, Court.Court3, Court.Court5, Court.Court6,
-                Court.Court7, Court.TennisCourt, Court.RacquetsCourt
+                Court.Court7, Court.TennisCourt, Court.RacquetsCourt, Court.FitnessClasses
             ).associateBy { it::class }
 
         assertHasAnExampleOfEachConcreteSubclass(Court::class, instances)
@@ -100,7 +100,7 @@ class GsonUtilsTest {
         klass: KClass<*>,
         adapter: TypeAdapterFactory
     ) {
-        instances.forEach { kclass, instance ->
+        instances.forEach { (kclass, instance) ->
             val serialized =
                 GsonBuilder()
                     .registerTypeAdapterFactory(adapter)

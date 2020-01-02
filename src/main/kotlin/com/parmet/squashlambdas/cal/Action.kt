@@ -21,25 +21,31 @@ sealed class Action(
             listOf(
                 "A reservation including you has been made",
                 "You've joined a reservation",
-                "You have been added to the activity")
+                "You have been added to the activity"
+            )
 
         private val UPDATING =
             listOf(
+                "has cancelled out of reservation",
                 "has been removed",
-                "has joined your reservation")
+                "has joined your reservation"
+            )
 
         private val DELETION =
             listOf(
                 "You've been removed from a reservation",
-                "You have successfully cancelled a reservation",
-                "A reservation including you has been cancelled")
+                "has been successfully cancelled",
+                "has cancelled your reservation",
+                "A reservation including you has been cancelled",
+                "You have successfully cancelled"
+            )
 
         private val NO_ACTION =
             listOf(
                 "This is a reminder",
                 "Here are your scores recorded",
-                "has cancelled your reservation",
-                "has re-confirmed a reservation made")
+                "has re-confirmed a reservation made"
+            )
 
         fun parseFromSubject(body: String): Action {
             return when {
