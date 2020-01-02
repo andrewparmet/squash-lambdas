@@ -40,7 +40,10 @@ class MatchFindHandler : RequestHandler<Any, Any> {
                 val squashCsv = CsvType.SQUASH.filterCsv(it)
                 val tennisCsv = CsvType.TENNIS.filterCsv(it)
 
-                return sender.send(squashCsv, tennisCsv, config.getString("matchfind.recipient"))
+                return config.getString("matchfind.recipient").split(',').map { addr ->
+                    logger.info { "Sending to $addr" }
+                    sender.send(squashCsv, tennisCsv, addr)
+                }
             }
         } catch (t: Throwable) {
             logger.error(t) { "Error in email processing" }
