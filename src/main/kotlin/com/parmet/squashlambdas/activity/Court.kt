@@ -59,6 +59,9 @@ private val NUMBERED_COURT = Pattern.compile(".*Courts?: Court #(\\d) [/\\-].*")
 // "Court: Court Tennis / Court Tennis" (player joins)
 private val TENNIS_COURT = Pattern.compile(".*Court Tennis [-/] Court Tennis.*")
 
+// "Court: Racquets - Racquets" (match creation)
+private val RACQUETS_COURT = Pattern.compile(".*Racquets - Racquets.*")
+
 private val map =
     Court::class.nestedClasses
         .map { it.objectInstance }
@@ -69,12 +72,15 @@ internal fun Court.Companion.valueOf(value: String) = requireNotNull(map[value])
     "No enum constant ${Court::class.java.name}.$value"
 }
 
-internal fun Court.Companion.fromLocationString(body: String): Court {
-    if (TENNIS_COURT.matcher(body).matches()) {
-        return Court.TennisCourt
+internal fun Court.Companion.fromLocationString(body: String) =
+    when {
+        TENNIS_COURT.matcher(body).matches() ->
+            Court.TennisCourt
+        RACQUETS_COURT.matcher(body).matches() ->
+            Court.RacquetsCourt
+        else -> {
+            val matcher = NUMBERED_COURT.matcher(body)
+            require(matcher.matches()) { "Unable to parse court from $body" }
+            valueOf("Court ${matcher.group(1)}")
+        }
     }
-
-    val matcher = NUMBERED_COURT.matcher(body)
-    require(matcher.matches()) { "Unable to parse court from $body" }
-    return valueOf("Court ${matcher.group(1)}")
-}
