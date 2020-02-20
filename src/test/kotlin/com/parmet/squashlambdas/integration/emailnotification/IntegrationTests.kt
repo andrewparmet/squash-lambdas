@@ -322,6 +322,22 @@ class IntegrationTests {
             )
     }
 
+    @Test
+    fun `creating a racquets reservation`() {
+        assertThat(getSummary("racquetsCreated"))
+            .isEqualTo(
+                summary(
+                    Action.Create,
+                    Match(
+                        Court.RacquetsCourt,
+                        Instant.parse("2020-01-30T21:30:00Z"),
+                        Instant.parse("2020-01-30T22:30:00Z"),
+                        playerSet("Andrew Peabody")
+                    )
+                )
+            )
+    }
+
     private fun getSummary(fileName: String) =
         ChangeSummary.fromEmail(emailFromBody(fileName))
 
