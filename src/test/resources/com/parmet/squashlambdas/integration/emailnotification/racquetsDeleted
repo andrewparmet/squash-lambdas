@@ -1,0 +1,141 @@
+Return-Path: <andrewparmet+caf_=squash=andrew.parmet.com@gmail.com>
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+ by inbound-smtp.us-east-1.amazonaws.com with SMTP id ja9ctipt5m775dq18mrcrbt42nqbgq2ijea0ce01
+ for squash@andrew.parmet.com;
+ Thu, 20 Feb 2020 00:14:10 +0000 (UTC)
+X-SES-Spam-Verdict: PASS
+X-SES-Virus-Verdict: PASS
+Received-SPF: pass (spfCheck: domain of _spf.google.com designates 209.85.208.173 as permitted sender) client-ip=209.85.208.173; envelope-from=andrewparmet+caf_=squash=andrew.parmet.com@gmail.com; helo=mail-lj1-f173.google.com;
+Authentication-Results: amazonses.com;
+ spf=pass (spfCheck: domain of _spf.google.com designates 209.85.208.173 as permitted sender) client-ip=209.85.208.173; envelope-from=andrewparmet+caf_=squash=andrew.parmet.com@gmail.com; helo=mail-lj1-f173.google.com;
+ dkim=pass header.i=@amazonses.com;
+ dmarc=none header.from=clublocker.com;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFFQXlTSEViTkxoQi9Eay9XZWo0a0o0VjN1Z1Z4Yy94WFVnajFKcFRRY3gxbjdtdkp0R1dJQlZiS1k5Q3FCbEpIamlQMkJFd1hFNlFzYmtuZmx4b0R0TGt0Y0h6clE3c1RwVlFZNXY3ZWNRakFZZnhkcVdra2F3T1NwalAzTlBOVkpYRTlDNHRtMENaUlljZVdUdUgwT2p5VThPcjZwN0h0cDlKbldZempORmczYjNCK3cwWS9TMmczWGlteWRqM01VWWNKNnVCVVdsOWlxYkdrb1hDQ3duRmxvNFlTUVdHK0dxa3M1K29PNDRmV09aNmJUZWpCU244VC9JS1lQV25uYi9JTFJoNFo5dGMxRmtBQkdCTklFY3MrVGpjK1B3ZEc2Q2x4NUlFdXFsb0ZhOWxKQ3NhK0llUHR5UWw4SnhCUXRYSXdUVkN5ZjBRbU5aamVBVFgwdEQ=
+X-SES-DKIM-SIGNATURE: a=rsa-sha256; q=dns/txt; b=E8WgRL0Nhe7dAeI6IMlGXk7WGCn6w9fE48SiBiES5SaNYB8ah4GDrU02wZT7jwbvai/zEoDI0YAwYXBBTbE9oDHB6/kbTvUxX5OP9nCnALAsTz6tpqy8/+YdceZAbm6tjKRJXSXXCdF7PI3n0jzGe6PWaeS/CnESJLlRe2QXFr0=; c=relaxed/simple; s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1582157650; v=1; bh=2IqjjCkdxJbJdEnNoA21f4TABeX77O9b8u1itbhvdnc=; h=From:To:Cc:Bcc:Subject:Date:Message-ID:MIME-Version:Content-Type:X-SES-RECEIPT;
+Received: by mail-lj1-f173.google.com with SMTP id w1so2305800ljh.5
+        for <squash@andrew.parmet.com>; Wed, 19 Feb 2020 16:14:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:delivered-to:dkim-signature:dkim-signature:from
+         :to:reply-to:subject:message-id:content-transfer-encoding:date
+         :mime-version:feedback-id;
+        bh=w74WInSf8LW56vdPN8Qxk7Zz3Zlsvpxrep+jsUZ9Lpg=;
+        b=H9DqLhFMrB9HbekoMHJAtxPOuT9CKKMz9I7DoVPC7mD+YhEFLibNSobyLcDY5tgeOv
+         nS3bkBwM5fsqe3L32DoB0aYBcJtRp9mL5i2BkuKTIgpv1QBG3vwh4YoxKY/6ImMAJ0cE
+         3jWtcoTXCMBEViNR1hSC+E2RGJEzI23w87xk37YQymugFhiM2jKQnXBui0dOVU0/oBBf
+         mC1QLNnD4eJmF/pMWiry0oja0Cv2jqoDyB/FKxdJDUZ+MYCYf9eOBxDn37jn87pD770h
+         gXeWdBwjwAjAjGGH5PgUP5OKuO7mHFsGfN51M1fmivsU/+b7Ef8NcpCLYV6poRYktSnW
+         Dr4Q==
+X-Gm-Message-State: APjAAAUoUFDlzDTxj2zy583LUEZAMZvZJe4Q+eCE9VygSmgYaYTSRQet
+	LqMbO7VMbD2v3sfNQjYMlC/wF4DvQzMh/g/fzAVgvKTwF9tblWs=
+X-Received: by 2002:a2e:b4ac:: with SMTP id q12mr16163268ljm.285.1582157648759;
+        Wed, 19 Feb 2020 16:14:08 -0800 (PST)
+X-Forwarded-To: squash@andrew.parmet.com
+X-Forwarded-For: andrewparmet@gmail.com squash@andrew.parmet.com
+Delivered-To: andrew.parmet@gmail.com
+Received: by 2002:a19:5f59:0:0:0:0:0 with SMTP id a25csp1041972lfj;
+        Wed, 19 Feb 2020 16:14:07 -0800 (PST)
+X-Google-Smtp-Source: APXvYqy3Bn5hopgGg7eyKAPHtG/yCjZxdoILXA+SrNvhxIcjmXgkqKqClBoBe0jT6IilDXCU/fX6
+X-Received: by 2002:a02:c558:: with SMTP id g24mr22866266jaj.81.1582157647138;
+        Wed, 19 Feb 2020 16:14:07 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1582157647; cv=none;
+        d=google.com; s=arc-20160816;
+        b=XSf18tz8eF1geE/wR7BQ9ftPi3Q5nZKtlpJ/aNyzqMdzxudoncz/fWlM/JDwCnM3sd
+         nf7s8rpPJy6a8W/qR6Gar0ga2yGVDNM6soGnzETmNf3WPb5E6i7QFbMYFHz/fYMIWp9k
+         ll3gm2ejuI/oOsQShCt79NtIxWDVZ1hWKKK1fj+UKuXsggsmmauCYw5z/x33bfrzJpoA
+         GUvW2d0/sPH80OTnLro7+F7o0WSGtagNy/FqacJBF3B+f493dZrJf79U24Yq7ndRHZcB
+         51bh2c6HqbDkoH95jcuPaa6MQurP1TR4096aQy2KhotG1QvBA4Eu+FnvlqWqo0VY4iuQ
+         tHEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=feedback-id:mime-version:date:content-transfer-encoding:message-id
+         :subject:reply-to:to:from:dkim-signature:dkim-signature;
+        bh=w74WInSf8LW56vdPN8Qxk7Zz3Zlsvpxrep+jsUZ9Lpg=;
+        b=EdevchJNPYxfm8j0T4RoQQ7VdUL7xzjfbREnKlCrIcLQ/s+TEAw/zOha50WLmc+gLk
+         GjtKErdl3gMFWREZgrql52Iel/WwUOmpTOzkHQG+tU1W8Vr8Ns/zFWSZcVWSsBfBOToU
+         YVQh/EYTkPIOrtwjanbrUDuHr0AbZjthILiHpUkhrYAtxGAKGkzRUWhHFLteM1JPz3d+
+         0twQRjsiTQKJAf1nfJCo3rwkMYjyN8k36XDGiCLGBP2ueIgqAeOqmKDyaA9ZW95A9wky
+         K7/uhx4Ad+IgED+ezjgTnx7P6fft79bJVMljadgclOOO25+yRXYpskEBZOb68d/+Xufs
+         1eZQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=temperror (no key for signature) header.i=@clublocker.com header.s=dkim header.b=kwoKGzhO;
+       dkim=pass header.i=@amazonses.com header.s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw header.b=jBzWTMO4;
+       spf=pass (google.com: domain of srs0=q4qw3l=4i=amazonses.com=010001705ff1b45f-446b4b9f-c99d-4f60-bf2f-a976c5a0a1d8-000000@parmet.com designates 66.96.190.1 as permitted sender) smtp.mailfrom="SRS0=Q4Qw3l=4I=amazonses.com=010001705ff1b45f-446b4b9f-c99d-4f60-bf2f-a976c5a0a1d8-000000@parmet.com"
+Return-Path: <SRS0=Q4Qw3l=4I=amazonses.com=010001705ff1b45f-446b4b9f-c99d-4f60-bf2f-a976c5a0a1d8-000000@parmet.com>
+Received: from bosmailout01.eigbox.net (bosmailout01.eigbox.net. [66.96.190.1])
+        by mx.google.com with ESMTPS id x8si848415ilg.119.2020.02.19.16.14.06
+        for <andrew.parmet@gmail.com>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Feb 2020 16:14:07 -0800 (PST)
+Received-SPF: pass (google.com: domain of srs0=q4qw3l=4i=amazonses.com=010001705ff1b45f-446b4b9f-c99d-4f60-bf2f-a976c5a0a1d8-000000@parmet.com designates 66.96.190.1 as permitted sender) client-ip=66.96.190.1;
+Authentication-Results: mx.google.com;
+       dkim=temperror (no key for signature) header.i=@clublocker.com header.s=dkim header.b=kwoKGzhO;
+       dkim=pass header.i=@amazonses.com header.s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw header.b=jBzWTMO4;
+       spf=pass (google.com: domain of srs0=q4qw3l=4i=amazonses.com=010001705ff1b45f-446b4b9f-c99d-4f60-bf2f-a976c5a0a1d8-000000@parmet.com designates 66.96.190.1 as permitted sender) smtp.mailfrom="SRS0=Q4Qw3l=4I=amazonses.com=010001705ff1b45f-446b4b9f-c99d-4f60-bf2f-a976c5a0a1d8-000000@parmet.com"
+Received: from bosmailscan02.eigbox.net ([10.20.15.2])
+	by bosmailout01.eigbox.net with esmtp (Exim)
+	id 1j4ZTi-00027F-Iy
+	for andrew.parmet@gmail.com; Wed, 19 Feb 2020 19:14:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=clublocker.com; s=dkim; h=MIME-Version:Date:Content-Transfer-Encoding:
+	Message-ID:Subject:Reply-To:To:From:Content-Type:Sender:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=w74WInSf8LW56vdPN8Qxk7Zz3Zlsvpxrep+jsUZ9Lpg=; b=kwoKGzhOyn1tX0XzT8X2hnwV0g
+	xvk4IplpBneFFBAn27k1CHRnKMx+qTBVM4GcntcbBZ9jmipZINBeZ1e0EzbFu+p8Tuiq5wqasOaGv
+	c9YbUNGk8TvQ5FwcWRfiYeMpBNWqYliMmuzw31S9UcQRHJQSFf+8A2kUXrd7Bs3Y6Gz9DS83XxY3T
+	C6v8cgmsUqCf7bOf+4dTSLvR++mFd9uRQbJWTcS+soPTItgeOSe4Esa2eOfzOwAhwJFClgeBUi4Rj
+	TWN5R9d3kJsnD8YrK3T5/hf7PH5AxU+WRCRSMeX+Ozdgy63xVRKWEeScF1twKO2AIfvJXsFpmlEPi
+	EE9YqLLQ==;
+Received: from [10.115.3.11] (helo=smtp.maileig.com)
+	by bosmailscan02.eigbox.net with esmtp (Exim)
+	id 1j4ZTi-0007ew-GW
+	for andrew@parmet.com; Wed, 19 Feb 2020 19:14:06 -0500
+Received: from a8-61.smtp-out.amazonses.com ([54.240.8.61])
+	by bosimpinc11 with bizsmtp
+	id 4oE12201L1K0jKJ01oE2ub; Wed, 19 Feb 2020 19:14:04 -0500
+X-EN-OrigIP: 54.240.8.61
+X-EN-IMPSID: 4oE12201L1K0jKJ01oE2ub
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1582157641;
+	h=Content-Type:From:To:Reply-To:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Feedback-ID;
+	bh=2IqjjCkdxJbJdEnNoA21f4TABeX77O9b8u1itbhvdnc=;
+	b=jBzWTMO4hKY2yCKwkui5GdPe0Lng8R+U0/IdUcSM97d3bZ1KQzMQr1e0pvdWZRkr
+	wAvf+HqNozbYarwz2kDwNF8MM6OMCLnrVFuq7Zrn2IC6dK+SRhIPwgQNIRfbXGl1HC2
+	pT8XxbVSWujpax3AjVNu0FErD9LafEOyQU8Nt/xg=
+Content-Type: text/html
+From: Club Locker <no-reply@clublocker.com>
+To: andrew@parmet.com
+Reply-To: tony.hollins@tandr.org
+Subject: Your place in a reservation at Tennis & Racquet Club has been
+ successfully cancelled
+Message-ID: <010001705ff1b45f-446b4b9f-c99d-4f60-bf2f-a976c5a0a1d8-000000@email.amazonses.com>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 20 Feb 2020 00:14:01 +0000
+MIME-Version: 1.0
+X-SES-Outgoing: 2020.02.20-54.240.8.61
+Feedback-ID: 1.us-east-1.nvEQFBLrnsYYlHOIclFpo0WN7dgvcT2b+eS5HXR6suE=:AmazonSES
+
+
+<p>
+Hello Andrew Parmet,
+</p>
+
+<p>
+You have successfully=20
+cancelled out of a reservation made at the Tennis & Racquet Club court =
+reservation system.
+</p>
+<p>
+Reservation details:<br/>
+<strong> Court: </strong> Racquets / Racquets <br/>
+<strong> Date: </strong> Thursday, February 20th 2020 <br/>
+<strong> Time: </strong> 09:30 AM to 10:30 AM <br/>
+</p>
+
+<p>
+    <strong>
+        This is an automatically generated email, please do not reply to it=
+.
+    </strong>
+</p>

@@ -55,12 +55,13 @@ sealed class Court(val sport: Sport) {
 // "Courts: Court #x" (activity creation)
 private val NUMBERED_COURT = Pattern.compile(".*Courts?: Court #(\\d) [/\\-].*")
 
-// "Court: Court Tennis - Court Tennis" (player joins)
+// "Court: Court Tennis - Court Tennis" (match creation)
 // "Court: Court Tennis / Court Tennis" (player joins)
 private val TENNIS_COURT = Pattern.compile(".*Court Tennis [-/] Court Tennis.*")
 
 // "Court: Racquets - Racquets" (match creation)
-private val RACQUETS_COURT = Pattern.compile(".*Racquets - Racquets.*")
+// "Court: Racquets / Racquets" (match deletion)
+private val RACQUETS_COURT = Pattern.compile(".*Racquets [-/] Racquets.*")
 
 private val map =
     Court::class.nestedClasses
