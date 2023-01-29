@@ -2,6 +2,7 @@ package com.parmet.squashlambdas.reserve
 
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
+import com.google.gson.JsonParser
 import com.google.gson.reflect.TypeToken
 import com.parmet.squashlambdas.clublocker.Affiliation
 import com.parmet.squashlambdas.clublocker.CourtResp
@@ -10,7 +11,6 @@ import com.parmet.squashlambdas.clublocker.ReservationReq
 import com.parmet.squashlambdas.clublocker.Slot
 import com.parmet.squashlambdas.clublocker.User
 import com.parmet.squashlambdas.clublocker.UserResp
-import com.parmet.squashlambdas.testutil.PARSER
 import com.parmet.squashlambdas.testutil.getResourceAsString
 import org.junit.Test
 import java.time.LocalDate
@@ -47,16 +47,16 @@ class SerializationTests {
                 listOf(Player.member(167759), Player.member("open"))
             )
 
-        assertThat(PARSER.parse(req.toJson()).asJsonObject.entrySet())
+        assertThat(JsonParser.parseString(req.toJson()).asJsonObject.entrySet())
             .containsExactlyElementsIn(
-                PARSER.parse(getResourceAsString("reservation-request.json")).asJsonObject.entrySet()
+                JsonParser.parseString(getResourceAsString("reservation-request.json")).asJsonObject.entrySet()
             )
     }
 
     @Test
     fun `test slots taken parsing`() {
-        val taken: List<com.parmet.squashlambdas.clublocker.Slot> =
-            gson.fromJson(getResourceAsString("slots-taken.json"), object : TypeToken<List<com.parmet.squashlambdas.clublocker.Slot>>() {}.type)
+        val taken: List<Slot> =
+            gson.fromJson(getResourceAsString("slots-taken.json"), object : TypeToken<List<Slot>>() {}.type)
 
         assertThat(taken.subList(0, 2)).containsExactly(
             Slot(

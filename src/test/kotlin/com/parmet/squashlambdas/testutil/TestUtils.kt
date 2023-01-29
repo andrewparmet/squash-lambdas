@@ -3,9 +3,7 @@ package com.parmet.squashlambdas.testutil
 import com.google.gson.JsonParser
 import java.nio.charset.StandardCharsets.UTF_8
 
-val PARSER = JsonParser()
-
-fun removeJsonWhitespace(string: String) = PARSER.parse(string).toString()
+fun removeJsonWhitespace(string: String) = JsonParser.parseString(string).toString()
 
 fun getJsonResourceAsString(resourceName: String) =
     removeJsonWhitespace(getResourceAsString(getCallerCallerClass(), resourceName))
