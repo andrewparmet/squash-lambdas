@@ -4,6 +4,7 @@ import com.google.common.base.Joiner
 import com.google.common.collect.ImmutableBiMap
 import com.google.common.net.HttpHeaders.ACCEPT
 import com.google.common.net.HttpHeaders.AUTHORIZATION
+import com.google.common.net.HttpHeaders.CONTENT_TYPE
 import com.google.common.net.MediaType.FORM_DATA
 import com.google.common.net.MediaType.JSON_UTF_8
 import com.google.common.net.UrlEscapers
@@ -29,15 +30,15 @@ import com.parmet.squashlambdas.reserve.startTime
 import com.parmet.squashlambdas.util.fromJson
 import com.parmet.squashlambdas.util.inBoston
 import mu.KotlinLogging
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
-import okio.Buffer
 import org.apache.http.client.HttpResponseException
 import org.jsoup.Jsoup
 import java.lang.reflect.Type
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpRequest.BodyPublishers
+import java.net.http.HttpResponse
+import java.net.http.HttpResponse.BodyHandlers
 import java.time.LocalDate
 
 internal class ClubLockerClientImpl(
@@ -46,7 +47,7 @@ internal class ClubLockerClientImpl(
 
     private val logger = KotlinLogging.logger { }
 
-    private val httpClient = OkHttpClient.Builder().followRedirects(false).build()
+    private val httpClient = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NEVER).build()
     private val gson = Gson()
 
     private val baseUrl = "https://api.ussquash.com"
@@ -64,18 +65,17 @@ internal class ClubLockerClientImpl(
 
     private fun authenticate() =
         responseBody(
-            Request.Builder()
-                .url("$baseUrl/clublocker_login")
-                .post(
-                    Joiner.on("&").withKeyValueSeparator("=").join(
-                        mapOf(
-                            "username" to user.username,
-                            "password" to user.password
-                        ).mapValues { (_, v) ->
-                            UrlEscapers.urlFormParameterEscaper().escape(v)
-                        }
-                    ).toRequestBody(FORM_DATA.toString().toMediaType())
-                )
+            HttpRequest.newBuilder()
+                .uri(URI("$baseUrl/clublocker_login"))
+                .setHeader(CONTENT_TYPE, FORM_DATA.toString()),
+            Joiner.on("&").withKeyValueSeparator("=").join(
+                mapOf(
+                    "username" to user.username,
+                    "password" to user.password
+                ).mapValues { (_, v) ->
+                    UrlEscapers.urlFormParameterEscaper().escape(v)
+                }
+            )
         ).substringAfter("access_token=")
 
     override fun user(): UserResp =
@@ -90,10 +90,10 @@ internal class ClubLockerClientImpl(
     override fun slotsTaken(from: LocalDate, to: LocalDate): List<Slot> =
         get("$clubResource/slots_taken/from/$from/to/$to")
 
-    private fun responseBody(builder: Request.Builder): String {
-        val response = response(builder)
-        val code = response.code
-        val respBody = response.body!!.string()
+    private fun responseBody(builder: HttpRequest.Builder, requestBody: String? = null): String {
+        val response = response(builder, requestBody)
+        val code = response.statusCode()
+        val respBody = response.body()
         logger.info { "Received response: $code, $respBody" }
         if (code >= 400) {
             try {
@@ -106,15 +106,22 @@ internal class ClubLockerClientImpl(
         return respBody
     }
 
-    private fun response(builder: Request.Builder): Response {
-        val request = builder.build()
-        logger.info { "Performing request: $request, body: ${Buffer().also { request.body?.writeTo(it) }}" }
-        return httpClient.newCall(request).execute()
+    private fun response(builder: HttpRequest.Builder, requestBody: String? = null): HttpResponse<String> {
+        val request =
+            builder
+                .apply {
+                    if (requestBody != null) {
+                        POST(BodyPublishers.ofString(requestBody))
+                    }
+                }
+                .build()
+        logger.info { "Performing request: $request, body: $requestBody" }
+        return httpClient.send(request, BodyHandlers.ofString())
     }
 
     private inline fun <reified T> get(resource: String): T {
         checkRunning()
-        return gson.fromJson(responseBody(Request.Builder().url(resource).authorized()))
+        return gson.fromJson(responseBody(HttpRequest.newBuilder(URI(resource)).authorized()))
     }
 
     override fun makeReservation(match: Match): ReservationResp {
@@ -122,17 +129,15 @@ internal class ClubLockerClientImpl(
             checkRunning()
             val response =
                 response(
-                    Request.Builder()
-                        .url("$clubResource/reservations")
+                    HttpRequest.newBuilder()
+                        .uri(URI("$clubResource/reservations"))
                         .authorized()
-                        .post(
-                            match.toReservationRequest().toJson()
-                                .toRequestBody(JSON_UTF_8.toString().toMediaType())
-                        )
+                        .header(CONTENT_TYPE, JSON_UTF_8.toString()),
+                    match.toReservationRequest().toJson()
                 )
 
-            val code = response.code
-            val body: Map<String, Any> = gson.fromJson(response.body!!.string())
+            val code = response.statusCode()
+            val body: Map<String, Any> = gson.fromJson(response.body())
             return if (code == 200) {
                 if (body.containsKey("createDenied")) {
                     ReservationResp.Error(code, body["reason"] as String, match)
@@ -172,7 +177,7 @@ internal class ClubLockerClientImpl(
     private val Court.clubLockerId: Int
         get() = COURTS_BY_ID.inverse().getValue(this)
 
-    private fun Request.Builder.authorized() =
+    private fun HttpRequest.Builder.authorized() =
         header(AUTHORIZATION, "Bearer $accessToken")
             .header(ACCEPT, JSON_UTF_8.toString())
 
