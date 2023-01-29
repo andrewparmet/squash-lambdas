@@ -92,7 +92,7 @@ ${printer.toJson(result)}
         """
     }
 
-    fun publishFailedReservation(t: Throwable, context: Map<*, *>) {
+    fun publishFailedReservation(t: Throwable, context: Map<*, *> = emptyMap<Any, Any>()) {
         sns.publish(
             PublishRequest(
                 myTopicArn,
@@ -165,7 +165,7 @@ ${result.joinToString("\n") { prettyPrint(it) }}
             "${properNoun(it.dayOfWeek.name)}, ${properNoun(it.month.name)} ${it.dayOfMonth}"
         }
 
-    fun publishFailedSlotMonitoring(failure: Throwable, context: Map<*, *>) {
+    fun publishFailedSlotMonitoring(failure: Throwable, context: Map<*, *> = emptyMap<Any, Any>()) {
         sns.publish(
             PublishRequest(
                 myTopicArn,
