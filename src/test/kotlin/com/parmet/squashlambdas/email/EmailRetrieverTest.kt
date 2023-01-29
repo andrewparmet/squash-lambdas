@@ -7,16 +7,17 @@ import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.integration.emailnotification.IntegrationTests
 import com.parmet.squashlambdas.testutil.EmailReturningS3
 import com.parmet.squashlambdas.testutil.getResourceAsString
+import org.junit.Test
 import java.sql.Date
 import java.time.Instant
-import org.junit.Test
 
 class EmailRetrieverTest {
     @Test
     fun `retrieveEmail properly deserializes S3 object`() {
         val s3 =
             EmailReturningS3(
-                getResourceAsString(IntegrationTests::class.java, "reservationCreated2"))
+                getResourceAsString(IntegrationTests::class.java, "reservationCreated2")
+            )
         val data = EmailRetriever(s3).retrieveEmail("", "")
         assertThat(data).isEqualTo(emailData())
     }
@@ -48,5 +49,6 @@ fun emailData() =
                     Date: Wednesday, March 28th 2018 Time: 09:00 PM to 09:45 PM To cancel your spot
                     or the whole reservation please log into Club Locker and use the My Reservations
                     area.
-                """.trimIndent().replace("\n", " "),
-        event())
+        """.trimIndent().replace("\n", " "),
+        event()
+    )

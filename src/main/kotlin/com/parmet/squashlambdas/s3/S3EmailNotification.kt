@@ -23,6 +23,7 @@ internal data class S3EmailNotification(
         fun fromInputObject(input: Any) =
             GSON.fromJson(
                 GSON.toJsonTree(input).asJsonObject.getAsJsonArray("Records").get(0),
-                S3EmailNotification::class.java)
+                S3EmailNotification::class.java
+            )
     }
 }

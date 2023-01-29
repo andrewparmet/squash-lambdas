@@ -4,8 +4,8 @@ import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.parmet.squashlambdas.testutil.getJsonResourceAsString
-import java.time.Instant
 import org.junit.Test
+import java.time.Instant
 
 class S3EmailNotificationTest {
     @Test
@@ -21,7 +21,9 @@ class S3EmailNotificationTest {
                 "ObjectCreated:Put",
                 S3CreateObjectInfo(
                     BucketInfo("parmet-squash-emails"),
-                    S3ObjectInfo("emails/srnvood65ihat8t9o7m1p1fjaiqumeq4do1p3bo1")))
+                    S3ObjectInfo("emails/srnvood65ihat8t9o7m1p1fjaiqumeq4do1p3bo1")
+                )
+            )
 
         assertThat(note).isEqualTo(expected)
     }
@@ -40,6 +42,7 @@ class S3EmailNotificationTest {
         fun inputFromFile(filename: String): Any =
             GSON.fromJson(
                 getJsonResourceAsString(filename),
-                object : TypeToken<Map<String, Any>>() {}.type)
+                object : TypeToken<Map<String, Any>>() {}.type
+            )
     }
 }

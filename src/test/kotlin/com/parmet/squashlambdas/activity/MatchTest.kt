@@ -47,6 +47,7 @@ class MatchTest {
         assertThat(event.description)
             .isEqualTo(
                 "Match(court=Court 2, start=2018-03-26T22:45:00Z, end=2018-03-26T23:30:00Z, " +
-                    "players=[Player(name=Philipp Rimmler, email=null, memberId=null)])")
+                    "players=[Player(name=Philipp Rimmler, email=null, memberId=null)])"
+            )
     }
 }

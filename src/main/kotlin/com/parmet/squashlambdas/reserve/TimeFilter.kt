@@ -33,7 +33,8 @@ internal class TimeFilter(
         val tooSoonToMakeReservation = requestDate > dateInBoston.plusDays(7)
         logger.info {
             "Checking request date $requestDate against date in Boston $dateInBoston; " +
-                "Too soon to make a reservation? $tooSoonToMakeReservation" }
+                "Too soon to make a reservation? $tooSoonToMakeReservation"
+        }
         return tooSoonToMakeReservation
     }
 

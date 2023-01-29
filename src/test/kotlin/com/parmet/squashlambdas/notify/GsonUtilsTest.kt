@@ -40,7 +40,8 @@ class GsonUtilsTest {
         val instances: Map<KClass<*>, *> =
             mapOf(
                 Match::class to match,
-                Clinic::class to clinic)
+                Clinic::class to clinic
+            )
 
         assertHasAnExampleOfEachConcreteSubclass(Activity::class, instances)
 

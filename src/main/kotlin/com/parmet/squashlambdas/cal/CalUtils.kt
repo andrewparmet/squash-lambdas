@@ -13,7 +13,8 @@ internal fun giveUserOwnership(calendar: Calendar, calendarId: String, userEmail
             calendarId,
             AclRule()
                 .setRole("owner")
-                .setScope(AclRule.Scope().setType("user").setValue(userEmail)))
+                .setScope(AclRule.Scope().setType("user").setValue(userEmail))
+        )
         .execute()
 }
 

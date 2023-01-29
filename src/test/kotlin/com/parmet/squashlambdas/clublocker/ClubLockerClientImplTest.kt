@@ -58,7 +58,8 @@ class ClubLockerClientImplTest : ConfiguredTest() {
         val resp = client.makeReservation(match)
 
         assertThat(resp).isEqualTo(
-            ReservationResp.Error(500, "Court doesn't have that slot", match))
+            ReservationResp.Error(500, "Court doesn't have that slot", match)
+        )
     }
 
     @Test

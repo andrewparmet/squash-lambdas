@@ -4,9 +4,9 @@ import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.testutil.ConfiguredTest
-import java.time.Instant
 import org.junit.Ignore
 import org.junit.Test
+import java.time.Instant
 
 @Ignore // These actually modify a calendar
 class EventManagerTest : ConfiguredTest() {
