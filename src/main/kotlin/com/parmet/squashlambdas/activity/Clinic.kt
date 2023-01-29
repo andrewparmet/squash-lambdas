@@ -17,7 +17,8 @@ internal data class Clinic(
             return Clinic(
                 Court.fromLocationString(email.body),
                 startAndEnd.start,
-                startAndEnd.end)
+                startAndEnd.end
+            )
         }
     }
 }

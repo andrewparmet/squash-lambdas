@@ -58,7 +58,8 @@ class NotifierTest {
     fun `notifier sends a reasonable message on failure`() {
         notifier.publishFailedParse(
             ExceptionInInitializerError("something terrible has happened"),
-            mapOf("key123" to "val456"))
+            mapOf("key123" to "val456")
+        )
 
         logger.info { "Received ${received[0].message}" }
 

@@ -12,9 +12,9 @@ import com.parmet.squashlambdas.cal.Action
 import com.parmet.squashlambdas.cal.ChangeSummary
 import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
 import com.parmet.squashlambdas.clublocker.Slot
-import com.parmet.squashlambdas.util.inBoston
 import com.parmet.squashlambdas.monitor.TimeFormatter
 import com.parmet.squashlambdas.reserve.ReservationMaker
+import com.parmet.squashlambdas.util.inBoston
 import java.time.Instant
 
 class Notifier(

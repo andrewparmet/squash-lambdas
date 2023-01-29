@@ -48,7 +48,7 @@ sealed class ReservationResp {
         val match: Match
     ) : ReservationResp()
 
-    abstract class NonSuccess : ReservationResp()
+    sealed class NonSuccess : ReservationResp()
 
     internal data class Error(
         val statusCode: Int,

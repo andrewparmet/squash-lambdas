@@ -4,10 +4,10 @@ import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.parmet.squashlambdas.activity.Sport
 import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
-import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.clublocker.Slot
 import com.parmet.squashlambdas.monitor.SlotStorageManagerImpl
 import com.parmet.squashlambdas.monitor.SlotsTracker
+import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.util.inBoston
 import mu.KotlinLogging
 import org.apache.commons.configuration2.Configuration

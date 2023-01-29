@@ -14,7 +14,7 @@ class Schedule(
         fun fromString(schedule: String): Schedule {
             return Schedule(
                 schedule.mapNonEmptyLines {
-                    DayOfWeek.valueOf(it.toUpperCase())
+                    DayOfWeek.valueOf(it.uppercase())
                 }
             )
         }

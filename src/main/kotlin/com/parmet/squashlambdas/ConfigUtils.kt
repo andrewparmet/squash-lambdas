@@ -38,7 +38,8 @@ fun loadConfiguration(file: String) =
                 .xml()
                 .setURL(object : Any() {}.javaClass.getResource(file))
                 .setValidating(false)
-                .setThrowExceptionOnMissing(true))
+                .setThrowExceptionOnMissing(true)
+        )
         .configuration
 
 fun configureS3() = AmazonS3ClientBuilder.defaultClient()
@@ -117,6 +118,7 @@ private fun loadFile(
             check("s3" == it)
             s3.getObjectAsString(
                 config.getString("aws.$configKey.bucket"),
-                config.getString("aws.$configKey.key"))
+                config.getString("aws.$configKey.key")
+            )
         }
     }
