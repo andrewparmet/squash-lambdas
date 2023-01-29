@@ -35,6 +35,7 @@ sealed class Action(
         private val DELETION =
             listOf(
                 "You've been removed from a reservation",
+                "You have been removed from a reservation",
                 "has been successfully cancelled",
                 "has cancelled your reservation",
                 "A reservation including you has been cancelled",

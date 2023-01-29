@@ -160,6 +160,22 @@ class IntegrationTests {
     }
 
     @Test
+    fun `removed from reservation 2`() {
+        assertThat(getSummary("removedFromReservation2"))
+            .isEqualTo(
+                summary(
+                    Action.Delete,
+                    Match(
+                        Court.Court1,
+                        Instant.parse("2023-01-31T23:00:00Z"),
+                        Instant.parse("2023-01-31T23:45:00Z"),
+                        emptySet()
+                    )
+                )
+            )
+    }
+
+    @Test
     fun `create reservation with another player`() {
         assertThat(getSummary("joinReservationWithPlayer"))
             .isEqualTo(
