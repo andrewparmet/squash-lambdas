@@ -2,6 +2,8 @@ package com.parmet.squashlambdas
 
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
+import com.parmet.squashlambdas.Context.addToContext
+import com.parmet.squashlambdas.Context.withInput
 import com.parmet.squashlambdas.activity.Sport
 import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
 import com.parmet.squashlambdas.clublocker.Slot
@@ -16,7 +18,6 @@ import java.time.DayOfWeek.MONDAY
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
-import java.util.concurrent.ConcurrentSkipListMap
 
 class MonitorSlotsHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }
@@ -32,10 +33,10 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
         notifier = configureNotifier(config)
 
         val client = try {
-            val clientAndPlayer = configureClubLockerClient(config, s3)
-            clientAndPlayer.first.apply { startAsync().awaitRunning() }
+            val (client, _) = configureClubLockerClient(config, s3)
+            client.apply { startAsync().awaitRunning() }
         } catch (t: Throwable) {
-            notifier.publishFailedSlotMonitoring(t, context)
+            notifier.publishFailedSlotMonitoring(t)
             throw t
         }
 
@@ -43,18 +44,8 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
             SlotsTracker(client, SlotStorageManagerImpl(dynamoDb, config.getString("aws.dynamo.squashSlotsTableName")))
     }
 
-    override fun handleRequest(input: Any, context: Context): Any {
-        logger.info { "Starting handling of $input" }
-        addToContext("input", input)
-
-        return try {
-            doHandleRequest()
-        } catch (ex: Exception) {
-            notifier.publishFailedSlotMonitoring(ex, MonitorSlotsHandler.context)
-        } finally {
-            MonitorSlotsHandler.context.clear()
-        }
-    }
+    override fun handleRequest(input: Any, context: Context) =
+        withInput(notifier::publishFailedSlotMonitoring, input) { doHandleRequest() }
 
     private fun doHandleRequest(): Any {
         val now = Instant.now().inBoston()
@@ -102,13 +93,5 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
                     notifier.publishFoundOpenSlot(it)
                 }
             }
-    }
-
-    companion object {
-        val context = ConcurrentSkipListMap<String, Any>()
-
-        fun addToContext(key: String, value: Any?) {
-            context[key] = value ?: "Value for key $key was null!"
-        }
     }
 }

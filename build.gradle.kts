@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.ByteArrayOutputStream
+
 plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("org.jetbrains.kotlin.jvm") version "1.8.0"
@@ -58,9 +61,38 @@ tasks.register("stage") {
     dependsOn("ktlintCheck", "shadowJar")
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
+tasks.withType<KotlinCompile>().all {
     kotlinOptions {
         jvmTarget = "11"
         allWarningsAsErrors = true
     }
+    dependsOn("generateGitShaConstant")
+}
+
+val gitShaOutputDir = file("$buildDir/generated-sources/git-sha")
+
+sourceSets["main"].java.srcDir(gitShaOutputDir)
+
+tasks.register("generateGitShaConstant") {
+    doFirst {
+        val srcFile = File(gitShaOutputDir, "com/parmet/squashlambdas/GitSha.kt")
+        srcFile.parentFile.mkdirs()
+        srcFile.writeText(
+            """
+                package com.parmet.squashlambdas
+                
+                const val GIT_SHA = "${getGitSha()}"
+                
+            """.trimIndent()
+        )
+    }
+}
+
+fun getGitSha(): String {
+    val stdout = ByteArrayOutputStream()
+    exec {
+        commandLine("git", "rev-parse", "--short", "HEAD")
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
 }

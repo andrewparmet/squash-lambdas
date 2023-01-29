@@ -2,6 +2,8 @@ package com.parmet.squashlambdas
 
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
+import com.parmet.squashlambdas.Context.addToContext
+import com.parmet.squashlambdas.Context.withInput
 import com.parmet.squashlambdas.email.EmailRetriever
 import com.parmet.squashlambdas.matchfind.CsvEmailSender
 import com.parmet.squashlambdas.matchfind.CsvType
@@ -10,7 +12,6 @@ import com.parmet.squashlambdas.s3.S3CreateObjectInfo
 import com.parmet.squashlambdas.s3.S3EmailNotification
 import mu.KotlinLogging
 import org.apache.commons.configuration2.Configuration
-import java.util.concurrent.ConcurrentSkipListMap
 
 class MatchFindHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }
@@ -27,10 +28,8 @@ class MatchFindHandler : RequestHandler<Any, Any> {
         sender = CsvEmailSender(configureSes())
     }
 
-    override fun handleRequest(input: Any, ignore: Context): Any {
-        logger.info { "Starting handling of $input" }
-        addToContext("input", input)
-        try {
+    override fun handleRequest(input: Any, ignore: Context) =
+        withInput(notifier::publishFailedMatchFind, input) {
             val info = getS3Info(input)
             val email = getEmail(info)
 
@@ -40,17 +39,12 @@ class MatchFindHandler : RequestHandler<Any, Any> {
                 val squashCsv = CsvType.SQUASH.filterCsv(it)
                 val tennisCsv = CsvType.TENNIS.filterCsv(it)
 
-                return config.getString("matchfind.recipient").split(',').map { addr ->
+                config.getString("matchfind.recipient").split(',').map { addr ->
                     logger.info { "Sending to $addr" }
                     sender.send(squashCsv, tennisCsv, addr)
                 }
             }
-        } catch (t: Throwable) {
-            logger.error(t) { "Error in email processing" }
-            notifier.publishFailedMatchFind(t, context)
-            throw t
         }
-    }
 
     private fun getS3Info(input: Any) =
         S3EmailNotification.fromInputObject(input).s3ObjectInfo.also {
@@ -59,12 +53,4 @@ class MatchFindHandler : RequestHandler<Any, Any> {
 
     private fun getEmail(info: S3CreateObjectInfo) =
         retriever.retrieveEmail(info.bucketName, info.objectKey)
-
-    companion object {
-        private val context = ConcurrentSkipListMap<String, Any>()
-
-        fun addToContext(key: String, value: Any?) {
-            context[key] = value ?: "Value for key $key was null!"
-        }
-    }
 }
