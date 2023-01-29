@@ -21,6 +21,7 @@ sealed class Action(
             listOf(
                 "A reservation including you has been made",
                 "You've joined a reservation",
+                "You have joined a reservation",
                 "You have been added to the activity"
             )
 
