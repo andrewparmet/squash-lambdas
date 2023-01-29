@@ -63,4 +63,4 @@ this is probably overkill - not too many slots are cancelled on a daily basis du
 
 ## Comments
 
-Parsing email is a bit of a pain, as is daylight savings time.
+Parsing email is a bit of a pain, as is daylight saving time.

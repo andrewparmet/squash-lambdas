@@ -192,6 +192,22 @@ class IntegrationTests {
     }
 
     @Test
+    fun `join a reservation with another player 3`() {
+        assertThat(getSummary("joinReservationWithPlayer3"))
+            .isEqualTo(
+                summary(
+                    Action.Create,
+                    Match(
+                        Court.Court1,
+                        Instant.parse("2023-01-31T23:00:00Z"),
+                        Instant.parse("2023-01-31T23:45:00Z"),
+                        playerSet("Brad Ursprung")
+                    )
+                )
+            )
+    }
+
+    @Test
     fun `reminder email does nothing`() {
         assertThat(getSummary("reminder")).isNull()
     }

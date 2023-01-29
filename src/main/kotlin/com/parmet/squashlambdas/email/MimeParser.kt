@@ -4,7 +4,6 @@ import biweekly.Biweekly
 import com.sun.mail.util.BASE64DecoderStream
 import org.jsoup.Jsoup
 import java.nio.charset.StandardCharsets.UTF_8
-import javax.mail.BodyPart
 import javax.mail.Part
 
 internal class MimeParser<T> private constructor(

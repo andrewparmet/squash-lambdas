@@ -1,0 +1,174 @@
+Return-Path: <andrewparmet+caf_=squash=andrew.parmet.com@gmail.com>
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+ by inbound-smtp.us-east-1.amazonaws.com with SMTP id u058sec5c3huio480u5tcvu29alh4pg7lqgj6381
+ for squash@andrew.parmet.com;
+ Sun, 29 Jan 2023 03:55:47 +0000 (UTC)
+X-SES-Spam-Verdict: PASS
+X-SES-Virus-Verdict: PASS
+Received-SPF: pass (spfCheck: domain of _spf.google.com designates 209.85.216.54 as permitted sender) client-ip=209.85.216.54; envelope-from=andrewparmet+caf_=squash=andrew.parmet.com@gmail.com; helo=mail-pj1-f54.google.com;
+Authentication-Results: amazonses.com;
+ spf=pass (spfCheck: domain of _spf.google.com designates 209.85.216.54 as permitted sender) client-ip=209.85.216.54; envelope-from=andrewparmet+caf_=squash=andrew.parmet.com@gmail.com; helo=mail-pj1-f54.google.com;
+ dkim=pass header.i=@amazonses.com;
+ dmarc=none header.from=clublocker.com;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFHZTdReVFZTmw5OWoxanc4WG5hSlVvT2tnN0tXNExPVWpMeDYvbnpGWTd0V1JBSmFtZk1mNlB5Y29zRkRVMUJVRkVHK205bFgvdmRtczE4TnFhTnBzMCtvaEovMGx1cmlNdEZLd05XbmVBbEs2YjdTY2xiaVpadTF6akMrU2Zka1daTlFLcmFoTmRDRFpTRTczL2xodWpIT3I3bGIxQVYrNWM1eW4xMWltMk9VdFIwZnpVNzZGWlNaYysyU0RzUS9RdE9RWnU5dHJ4RExqcWV1MEVVNkVvTUtRMlg0YWQvQ2V1L08yU1NXeUIxNkZZb0VFdU9Ha2tBS2dja05SaURscE1SZERHSjlBZUJqZDdzZGdCTmhJNmVEcTdZRUdFQnRUMVhtMEpHQTFhTk4ra2RNUzYzU3RtcGxxZ21nVVFjN1BoNGlidEIxemVCK3VlU3VMWWpIcys=
+X-SES-DKIM-SIGNATURE: a=rsa-sha256; q=dns/txt; b=Rj5tjqz37JCC/bb6ha0+ysy1v8Si1BWcCbAZqPUhWVl4B5f1yr+snM70FwYR+o0FuvslTo0V63DsSHWhxJ0EAVyRQ4UWbxymZUzktyqpYVZI0D110GKEETjry9IqkfyKdrgY2vWupG8q7Ps5VGK7oHtO7WsPkfxCEaHhg+IRyYA=; c=relaxed/simple; s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1674964548; v=1; bh=NlWyjs4gZEmeAXUSaUeomyM+URR/wmEZwSNgqclQBd8=; h=From:To:Cc:Bcc:Subject:Date:Message-ID:MIME-Version:Content-Type:X-SES-RECEIPT;
+Received: by mail-pj1-f54.google.com with SMTP id x2-20020a17090a46c200b002295ca9855aso12373940pjg.2
+        for <squash@andrew.parmet.com>; Sat, 28 Jan 2023 19:55:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=feedback-id:mime-version:date:message-id:subject:reply-to:to:from
+         :dkim-signature:dkim-signature:delivered-to:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=7S1HKZc7WIbo8G/39E4ApoiS+5Snn2+jsEYqIOfxbbI=;
+        b=5ESXSrRIGNWzcgFaELadHq/MTBxT1pbehdWJEXX69Zhfl1A43/gMZZ8HkcaLQ7V1//
+         +3kvumioqIw4GxGY1hA32kBFfm5/1UzDIEwtxHgQKOMzUEuTsxSvutTcDtpTIZ1ILgCz
+         S1JrvTqKRHYnc2Z1zYc1DGBza4Fofe+pO2jmKi2AHJQa+t+3zKLgg2VXDhgguWyZhMp+
+         Ti8gkUd2ZfeL1lv5gNQUoqG1ycRsW9839b0wVfdoGGMgTOe5sd6HKQEq2eurzRSMJSaO
+         Z/Tpb+qVowgzh1VoOC7nFyfsYBav8De0B35W3pM8yayvJY3aVY2MdAPmlBwuKwK/36BN
+         TajQ==
+X-Gm-Message-State: AFqh2kr9U+6hiLuAb6Y98T7yKnvrP2OZFmQorHQZirCmOeghEVM7Ookk
+	9aIr60mdFn0BVYJWt+W52kELtupKFipuJiWKiNw0X0P9r+wZoRPAvg==
+X-Received: by 2002:a17:90b:703:b0:218:e3e8:c024 with SMTP id s3-20020a17090b070300b00218e3e8c024mr5484746pjz.125.1674964546988;
+        Sat, 28 Jan 2023 19:55:46 -0800 (PST)
+X-Forwarded-To: squash@andrew.parmet.com, zi2jcb8n@robot.zapier.com
+X-Forwarded-For: andrewparmet@gmail.com squash@andrew.parmet.com, zi2jcb8n@robot.zapier.com
+Delivered-To: andrew.parmet@gmail.com
+Received: by 2002:a05:6a11:438a:b0:3ef:90ff:26e9 with SMTP id mk10csp2191263pxb;
+        Sat, 28 Jan 2023 19:55:45 -0800 (PST)
+X-Google-Smtp-Source: AK7set9U4piel9F5x+TYwjK5SvggRLedTAMttsyRaZzSr/zV4zgUhaHcSnzOf8KakIBxqi5Ybjpy
+X-Received: by 2002:ac8:7c4e:0:b0:3b5:4aae:cb0b with SMTP id o14-20020ac87c4e000000b003b54aaecb0bmr6653184qtv.22.1674964545227;
+        Sat, 28 Jan 2023 19:55:45 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1674964545; cv=none;
+        d=google.com; s=arc-20160816;
+        b=isHcVqxq42Nu5KPPD5JrXgr7wbJUIk4XvpwCJIv35JXBhkrF5Qdl/RivAUwlrHwRap
+         CtlBJsa441IEGrl4lBW8CtTTdHgWo/fGqQWJZszCZoLXGwUyLX4T/oiS40aZ2/3Z+FyV
+         xz1T6Z8WAGed1qAgDXETGofPQLim1MjcxVXXEbOIt1cr4M7EUn1ns6WhL5p03On+GbOE
+         yrgJRUre+C5aR1KVegX/vH9iqM/cW9LliA4TPgBsw+V76XOy+qT3GyAH8lUXAsxLYCWf
+         WNWg1x9ClF1dSmae329XJ7uWHwu4DC1Y7w0pn7W9PPhKkMgdY8Ootu0bjgXib4jelQPo
+         2Cmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=feedback-id:mime-version:date:message-id:subject:reply-to:to:from
+         :dkim-signature:dkim-signature;
+        bh=7S1HKZc7WIbo8G/39E4ApoiS+5Snn2+jsEYqIOfxbbI=;
+        b=JSLzm6vuT5hlNf+rvk7WhTiyiI1JCPDZcEhbX8udQ2c4qRMmr8gE2nHekGKTHIEEwj
+         Et8IWjlbreJQ+QjlpX5O3iANn7NMmHaySlKHYrkIRi28h4CDGI918J7J1EjFtXq3VBgM
+         PX1R28VwEYhIcj0sZBjO7pYAqyAuHLSEMaL2QtYZakYk6BBbRQXC5hvPh6NW2a9oi/az
+         tpgGy3KV8njY590GUZUnDSkXaEDf8gfTKtSzeivU+IuDAPul6rKqWumWgHe1LQ5IDT5L
+         WgEFfOFRvSFPFX4DpxuvSLhH/g/NTw7Qg7ZUEcKJpRuD6N3SEiVX3VO3mkLzlEH2jfec
+         MahQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=temperror (no key for signature) header.i=@clublocker.com header.s=dkim header.b=ZpHEJWLy;
+       dkim=pass header.i=@amazonses.com header.s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw header.b=lK44ZZGk;
+       spf=pass (google.com: domain of srs0=+yugdi=52=amazonses.com=01000185fbaaa57d-68a75fcd-ba98-4986-b551-ae1fb412bdf6-000000@parmet.com designates 66.96.190.7 as permitted sender) smtp.mailfrom="SRS0=+YUGDi=52=amazonses.com=01000185fbaaa57d-68a75fcd-ba98-4986-b551-ae1fb412bdf6-000000@parmet.com"
+Return-Path: <SRS0=+YUGDi=52=amazonses.com=01000185fbaaa57d-68a75fcd-ba98-4986-b551-ae1fb412bdf6-000000@parmet.com>
+Received: from bosmailout07.eigbox.net (bosmailout07.eigbox.net. [66.96.190.7])
+        by mx.google.com with ESMTPS id e9-20020ac85989000000b003b6a28cf1eesi5342362qte.31.2023.01.28.19.55.45
+        for <andrew.parmet@gmail.com>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 28 Jan 2023 19:55:45 -0800 (PST)
+Received-SPF: pass (google.com: domain of srs0=+yugdi=52=amazonses.com=01000185fbaaa57d-68a75fcd-ba98-4986-b551-ae1fb412bdf6-000000@parmet.com designates 66.96.190.7 as permitted sender) client-ip=66.96.190.7;
+Authentication-Results: mx.google.com;
+       dkim=temperror (no key for signature) header.i=@clublocker.com header.s=dkim header.b=ZpHEJWLy;
+       dkim=pass header.i=@amazonses.com header.s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw header.b=lK44ZZGk;
+       spf=pass (google.com: domain of srs0=+yugdi=52=amazonses.com=01000185fbaaa57d-68a75fcd-ba98-4986-b551-ae1fb412bdf6-000000@parmet.com designates 66.96.190.7 as permitted sender) smtp.mailfrom="SRS0=+YUGDi=52=amazonses.com=01000185fbaaa57d-68a75fcd-ba98-4986-b551-ae1fb412bdf6-000000@parmet.com"
+Received: from [10.20.15.9] (helo=bosmailscan09.eigbox.net)
+	by bosmailout07.eigbox.net with esmtp (Exim)
+	id 1pLynA-0007G8-O3
+	for andrew.parmet@gmail.com; Sat, 28 Jan 2023 22:55:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=clublocker.com; s=dkim; h=MIME-Version:Date:Message-ID:Subject:Reply-To:To:
+	From:Content-Type:Sender:Cc:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=7S1HKZc7WIbo8G/39E4ApoiS+5Snn2+jsEYqIOfxbbI=; b=ZpHEJWLyOK+jAj4H8yWE77e1gZ
+	l3DfzZgsizo2UmDRArihYDhR2aCKG4VgbEGYh0B/SagP/pqR1HsPbzcl1VxzBwRh09h4EFNqCXIIa
+	pgJ+akX1cHx6alGHO6s1eFPutq9IN1Rqh4M75GmzxTUbQjkQZfGKJ5isomeFWk1V6RMj+dX9n7LCY
+	05t9fTyHQNAbI/x7U3YhNfsu5Z8qAhvXtH4MXosotmP8PujISxrZWwbRt8zV5ZTLxThor7Zn0t79L
+	phK62b75M4bKQXzOuH1CNbktZU6b7DXW4vV/pfMRkmxo5bTQ1ilzboqDew3cpUR/UVbRI1IfOSIvn
+	dM35DfFQ==;
+Received: from [10.115.3.2] (helo=bosimpinc02)
+	by bosmailscan09.eigbox.net with esmtp (Exim)
+	id 1pLynA-0003p4-E7
+	for andrew@parmet.com; Sat, 28 Jan 2023 22:55:44 -0500
+Received: from a8-61.smtp-out.amazonses.com ([54.240.8.61])
+	by bizsmtp with ESMTP
+	id LyggpONpLuyemLygipk2xt; Sat, 28 Jan 2023 22:49:04 -0500
+X-EN-OrigIP: 54.240.8.61
+X-EN-IMPSID: LyggpONpLuyemLygipk2xt
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1674964543;
+	h=Content-Type:From:To:Reply-To:Subject:Message-ID:Date:MIME-Version:Feedback-ID;
+	bh=NlWyjs4gZEmeAXUSaUeomyM+URR/wmEZwSNgqclQBd8=;
+	b=lK44ZZGkWgqiToiu4XIrXvo3Bt/9eWaB55juELCFVsTG20sdgMP3aFhGkwRGDrVd
+	caN8NzSKB9wFH/VL5J0bcgz73DhDuoJYFvybp7hg1JKBAN1Qy1dCS9bjJ4ehtl4xAlM
+	hQvnToK/Z+cBObaO26eb57a0tpmk+sDxW45IY1Z4=
+Content-Type: multipart/mixed; boundary="--_NmP-7b98cfb655901d1e-Part_1"
+From: Club Locker <no-reply@clublocker.com>
+To: andrew@parmet.com
+Reply-To: pros@tandr.org
+Subject: Tennis & Racquet Club Reservation Joined
+Message-ID: <01000185fbaaa57d-68a75fcd-ba98-4986-b551-ae1fb412bdf6-000000@email.amazonses.com>
+Date: Sun, 29 Jan 2023 03:55:42 +0000
+MIME-Version: 1.0
+Feedback-ID: 1.us-east-1.nvEQFBLrnsYYlHOIclFpo0WN7dgvcT2b+eS5HXR6suE=:AmazonSES
+X-SES-Outgoing: 2023.01.29-54.240.8.61
+X-CMAE-Envelope: MS4wfK+pI5c3AXDF2Mti496Qwo+G+wURqFS1X4KTaZTUyCKAH8sGOzrwk75qwKF3JiF0nulDM9pXGIuH6pAqV0TbsLxpvdlpbhcSO/TXh/sWivR1OrKLthA5
+ w1nxAA8MsXcxqRwqjyzmYuv+skw2IWggQrHuEVAojH2RbddQJglqbkn1vM/nCACJglT7Hq2HJIaxGlmD+g3iIqRuBxs9ufP4PSVqTqhi5YU5uS5UxFdcwavl
+ 1kMp0AOTQ0h5+ZidvZZHuA==
+
+----_NmP-7b98cfb655901d1e-Part_1
+Content-Type: text/html
+Content-Transfer-Encoding: quoted-printable
+
+<p>Hello Andrew Parmet,</p>
+<p></p>
+<p>You have joined a reservation at =
+Tennis & Racquet Club.</p>
+<p>
+  Reservation details:<br />
+  <strong> Other players in the slot: </strong> Brad Ursprung
+  <br />
+  <strong> Court: </strong> Court #1 / Squash <br />
+  <strong> Date: </strong> Tuesday, January 31st 2023 <br />
+  <strong> Time: </strong> 06:00 PM to 06:45 PM <br />
+</p>
+ =20
+<a href=3D"https://api.ussquash.com/email-actions/reservations/2831425/play=
+er/167759/accept/2MSghSnrofxWOihkYmFGbHikl2DLoAL86lCJBhDBxD5Pqymo4uE2TPr0uO=
+0vqKhO">Re-Confirm Reservation</a>
+(The reservation is already confirmed. =
+This will just send an email to the other
+players telling them you've =
+confirmed.)=20
+<br />
+<p></p>
+<br />
+<br />
+To cancel your spot or the =
+whole reservation please log into
+<a href=3D"https://clublocker.com">Club =
+Locker</a> and use the My Reservations
+area.
+
+----_NmP-7b98cfb655901d1e-Part_1
+Content-Type: text/calendar; name=event.ics
+Content-Disposition: attachment; filename=event.ics
+Content-Transfer-Encoding: 7bit
+
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Tri Tech Computers//node-icalendar//EN
+BEGIN:VEVENT
+DTSTAMP:20230129T035542Z
+UID:26646a9f-60b5-45cd-a62a-338bbce83047
+DTSTART:20230131T230000Z
+DTEND:20230131T234500Z
+SUMMARY:Reservation for Squash
+ORGANIZER;CN=Tennis & Racquet Club:mailto:no-reply@clublocker.com
+LOCATION:Tennis & Racquet Club / Court: Court #1
+ATTENDEE;CN=Brad Ursprung;CUTYPE=INDIVIDUAL:mailto:bradursprung@gmail.com
+END:VEVENT
+END:VCALENDAR
+
+----_NmP-7b98cfb655901d1e-Part_1--
