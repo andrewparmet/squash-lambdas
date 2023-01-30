@@ -23,20 +23,22 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }
 
     private val config: Configuration
-    private val notifier: Notifier
+    private val myNotifier: Notifier
+    private val publicNotifier: Notifier
     private val slotsTracker: SlotsTracker
 
     init {
         config = loadConfiguration(System.getenv("CONFIG_NAME") + ".xml")
         val s3 = configureS3()
         val dynamoDb = configureDynamoDb()
-        notifier = configureNotifier(config)
+        myNotifier = configureNotifier(config.getString("aws.sns.myTopicArn"))
+        publicNotifier = configureNotifier(config.getString("aws.sns.publicTopicArn"))
 
         val client = try {
             val (client, _) = configureClubLockerClient(config, s3)
             client.apply { startAsync().awaitRunning() }
         } catch (t: Throwable) {
-            notifier.publishFailedSlotMonitoring(t)
+            myNotifier.publishFailedSlotMonitoring(t)
             throw t
         }
 
@@ -45,9 +47,9 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
     }
 
     override fun handleRequest(input: Any, context: Context) =
-        withInput(notifier::publishFailedSlotMonitoring, input) { doHandleRequest() }
+        withInput(myNotifier::publishFailedSlotMonitoring, input) { doHandleRequest() }
 
-    private fun doHandleRequest(): Any {
+    private fun doHandleRequest() {
         val now = Instant.now().inBoston()
 
         val date = if (now.toLocalTime().isAfter(LocalTime.of(18, 0))) {
@@ -56,7 +58,7 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
             now
         }.toLocalDate()
 
-        return (0L..1).flatMap {
+        (0L..1).flatMap {
             checkForDate(date.plusDays(it))
         }.also {
             publish(it)
@@ -90,7 +92,7 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
             .let {
                 addToContext("filteredSlots", it)
                 if (it.isNotEmpty()) {
-                    notifier.publishFoundOpenSlot(it)
+                    publicNotifier.publishFoundOpenSlot(it)
                 }
             }
     }

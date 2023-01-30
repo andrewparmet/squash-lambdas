@@ -19,8 +19,7 @@ import java.time.Instant
 
 class Notifier(
     private val sns: AmazonSNS,
-    private val myTopicArn: String,
-    private val publicTopicArn: String,
+    private val topicArn: String,
     private val context: Map<*, *>
 ) {
     private val printer =
@@ -46,7 +45,7 @@ class Notifier(
     fun publishSuccessfulParse(summary: ChangeSummary) {
         sns.publish(
             PublishRequest(
-                myTopicArn,
+                topicArn,
                 successfulParseMsg(summary),
                 "Processed Club Locker Email: ${summary.summary()}"
             )
@@ -66,7 +65,7 @@ class Notifier(
     fun publishFailedParse(t: Throwable) {
         sns.publish(
             PublishRequest(
-                myTopicArn,
+                topicArn,
                 failedParseMsg(t),
                 "Failed to Process Club Locker Email"
             )
@@ -88,7 +87,7 @@ class Notifier(
     fun publishSuccessfulReservation(result: ReservationMaker.Result.Success) {
         sns.publish(
             PublishRequest(
-                myTopicArn,
+                topicArn,
                 successfulParseMsg(result),
                 "Made a Reservation on Club Locker"
             )
@@ -108,7 +107,7 @@ class Notifier(
     fun publishFailedReservation(t: Throwable) {
         sns.publish(
             PublishRequest(
-                myTopicArn,
+                topicArn,
                 failedReservationMsg(t),
                 "Failed to make reservation on Club Locker"
             )
@@ -130,7 +129,7 @@ class Notifier(
     fun publishFoundOpenSlot(result: List<Slot>) {
         sns.publish(
             PublishRequest(
-                publicTopicArn,
+                topicArn,
                 foundOpenSlotMsg(result),
                 "Squash Monitoring (${Instant.now().inBoston().toLocalDate()}): Found new open slots on Club Locker"
             )
@@ -159,7 +158,7 @@ class Notifier(
     fun publishFailedSlotMonitoring(failure: Throwable) {
         sns.publish(
             PublishRequest(
-                myTopicArn,
+                topicArn,
                 failedSlotMonitoringMsg(failure),
                 "Could not track open slots on Club Locker"
             )
@@ -181,7 +180,7 @@ class Notifier(
     fun publishFailedMatchFind(t: Throwable) {
         sns.publish(
             PublishRequest(
-                myTopicArn,
+                topicArn,
                 failedMatchFindMsg(t),
                 "Failed to Process Club Locker Email"
             )

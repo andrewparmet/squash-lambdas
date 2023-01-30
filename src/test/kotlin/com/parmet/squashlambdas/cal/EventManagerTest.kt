@@ -47,5 +47,5 @@ class EventManagerTest : ConfiguredTest() {
     }
 
     private fun manager() =
-        EventManager(calendar, config.getString("google.cal.calendarId"))
+        EventManagerImpl(calendar, config.getString("google.cal.calendarId"))
 }

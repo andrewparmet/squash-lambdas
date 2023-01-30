@@ -10,6 +10,7 @@ class EmailRetriever(private val s3: AmazonS3) {
         s3.getObjectAsString(bucket, key).byteInputStream(UTF_8).use { stream ->
             val message = MimeMessage(null, stream)
             EmailData(
+                message.allRecipients.map { it.toString() },
                 message.subject,
                 BodyExtractor.extract(message).toString(),
                 CalendarExtractor.extract(message).flatMap { it.events }.firstOrNull(),
