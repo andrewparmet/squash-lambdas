@@ -2,7 +2,6 @@ package com.parmet.squashlambdas
 
 import mu.KotlinLogging
 import java.util.concurrent.ConcurrentSkipListMap
-import kotlin.reflect.KFunction1
 
 object Context {
     private val logger = KotlinLogging.logger { }
@@ -17,15 +16,14 @@ object Context {
         context[key] = value ?: "Value for key $key was null!"
     }
 
-    fun <T> withInput(notifier: KFunction1<Throwable, Unit>, input: Any, action: () -> T): T? {
+    fun <T> withInput(notifier: (Throwable) -> Unit, input: Any, action: () -> T) {
         logger.info { "Starting handling of $input" }
         addToContext("input", input)
 
-        return try {
+        try {
             action()
         } catch (ex: Exception) {
             notifier.invoke(ex)
-            null
         } finally {
             context.clear()
         }

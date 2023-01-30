@@ -6,6 +6,7 @@
       </creds>
 
       <calendarId>primary</calendarId>
+      <secondaryCalendarId>03c1043ad5803cc98aefb8971bd42c77a6616e656e7305ef1f410a260cdda558@group.calendar.google.com</secondaryCalendarId>
     </cal>
   </google>
 
@@ -44,6 +45,7 @@
     <sns>
       <myTopicArn>${env:MY_TOPIC_ARN}</myTopicArn>
       <publicTopicArn>${env:PUBLIC_TOPIC_ARN}</publicTopicArn>
+      <secondaryTopicArn>${env:SECONDARY_TOPIC_ARN}</secondaryTopicArn>
     </sns>
 
     <dynamo>

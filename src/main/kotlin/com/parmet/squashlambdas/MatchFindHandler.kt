@@ -23,7 +23,7 @@ class MatchFindHandler : RequestHandler<Any, Any> {
 
     init {
         config = loadConfiguration(System.getenv("CONFIG_NAME") + ".xml")
-        notifier = configureNotifier(config)
+        notifier = configureNotifier(config.getString("aws.sns.myTopicArn"))
         retriever = EmailRetriever(configureS3())
         sender = CsvEmailSender(configureSes())
     }

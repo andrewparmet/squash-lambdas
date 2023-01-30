@@ -5,18 +5,26 @@ import com.google.common.collect.Iterables
 import com.parmet.squashlambdas.activity.Activity
 import mu.KotlinLogging
 
-class EventManager(
+interface EventManager {
+    fun create(activity: Activity)
+
+    fun update(activity: Activity)
+
+    fun delete(activity: Activity)
+}
+
+class EventManagerImpl(
     private val calendar: Calendar,
     private val calendarId: String
-) {
+) : EventManager {
     private val logger = KotlinLogging.logger { }
 
-    fun create(activity: Activity) {
+    override fun create(activity: Activity) {
         logger.info { "Creating activity $activity" }
         calendar.events().insert(calendarId, activity.toEvent()).execute()
     }
 
-    fun update(activity: Activity) {
+    override fun update(activity: Activity) {
         logger.info { "Updating activity $activity" }
 
         val events = findEvents(activity)
@@ -34,7 +42,7 @@ class EventManager(
         }
     }
 
-    fun delete(activity: Activity) {
+    override fun delete(activity: Activity) {
         logger.info { "Deleting activity $activity" }
         findEvents(activity).forEach {
             logger.info { "Deleting event $it" }

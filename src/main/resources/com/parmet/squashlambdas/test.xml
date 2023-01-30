@@ -7,13 +7,15 @@
       </creds>
 
       <calendarId>primary</calendarId>
+      <secondaryCalendarId>03c1043ad5803cc98aefb8971bd42c77a6616e656e7305ef1f410a260cdda558@group.calendar.google.com</secondaryCalendarId>
     </cal>
   </google>
 
   <aws>
     <sns>
       <myTopicArn>fake-arn</myTopicArn>
-      <publicTopicArn>fake-arn</publicTopicArn>
+      <publicTopicArn>fake-arn-2</publicTopicArn>
+      <secondaryTopicArn>fake-arn-3</secondaryTopicArn>
     </sns>
 
     <dynamo>

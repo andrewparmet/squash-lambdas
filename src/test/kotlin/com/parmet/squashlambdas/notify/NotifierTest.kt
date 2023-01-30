@@ -28,7 +28,7 @@ class NotifierTest {
     }
 
     private val context = mutableMapOf<Any, Any>()
-    private val notifier = Notifier(sns, "some-arn", "another-arn", context)
+    private val notifier = Notifier(sns, "some-arn", context)
 
     @Test
     fun `notifier sends a reasonable message on success`() {
@@ -77,7 +77,7 @@ class NotifierTest {
         logger.info { "Received ${received[0].message}" }
 
         assertThat(received).hasSize(1)
-        assertThat(received[0].topicArn).isEqualTo("another-arn")
+        assertThat(received[0].topicArn).isEqualTo("some-arn")
         assertThat(received[0].subject).contains("Found new open slots on Club Locker")
         assertThat(received[0].message).contains("Friday, May 31: Court 1, 0:01 am-0:01 am")
     }

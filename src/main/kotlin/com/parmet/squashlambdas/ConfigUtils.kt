@@ -45,11 +45,10 @@ fun loadConfiguration(file: String) =
 
 fun configureS3() = AmazonS3ClientBuilder.defaultClient()
 
-fun configureNotifier(config: Configuration) =
+fun configureNotifier(topicArn: String) =
     Notifier(
         AmazonSNSClientBuilder.defaultClient(),
-        config.getString("aws.sns.myTopicArn"),
-        config.getString("aws.sns.publicTopicArn"),
+        topicArn,
         context
     )
 

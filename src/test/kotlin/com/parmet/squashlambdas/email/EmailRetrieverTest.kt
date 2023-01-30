@@ -42,6 +42,7 @@ fun attendee() =
 
 fun emailData() =
     EmailData(
+        listOf("joecool@peanuts.com"),
         "Tennis & Racquet Club Reservation Confirmation",
         """
                     Hello Andrew Parmet, A reservation including you has been made via the Tennis & Racquet
