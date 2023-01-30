@@ -20,7 +20,8 @@ import java.time.Instant
 class Notifier(
     private val sns: AmazonSNS,
     private val myTopicArn: String,
-    private val publicTopicArn: String
+    private val publicTopicArn: String,
+    private val context: Map<*, *>
 ) {
     private val printer =
         GsonBuilder()
@@ -36,43 +37,52 @@ class Notifier(
     private fun GsonBuilder.registerAllJavaTimeAdapters() =
         Converters.registerAll(this)
 
+    private fun print(any: Any) =
+        printer.toJson(any).replace("\n", "\n|")
+
+    private fun print(t: Throwable) =
+        Throwables.getStackTraceAsString(t).replace("\n", "\n|")
+
     fun publishSuccessfulParse(summary: ChangeSummary) {
         sns.publish(
             PublishRequest(
                 myTopicArn,
                 successfulParseMsg(summary),
-                "Processed Club Locker Email"
+                "Processed Club Locker Email: ${summary.summary()}"
             )
         )
     }
 
     private fun successfulParseMsg(summary: ChangeSummary): String {
         return """
-Successfully processed change:
-${printer.toJson(summary)}
-        """
+            |Successfully processed change:
+            |${print(summary)}
+            |
+            |Context:
+            |${print(context)}
+        """.trimMargin()
     }
 
-    fun publishFailedParse(t: Throwable, context: Map<*, *>) {
+    fun publishFailedParse(t: Throwable) {
         sns.publish(
             PublishRequest(
                 myTopicArn,
-                failedParseMsg(t, context),
+                failedParseMsg(t),
                 "Failed to Process Club Locker Email"
             )
         )
     }
 
-    private fun failedParseMsg(t: Throwable, context: Map<*, *>): String {
+    private fun failedParseMsg(t: Throwable): String {
         return """
-Encountered an error processing a Club Locker email:
-
-Context:
-${printer.toJson(context)}
-
-Stack trace:
-${Throwables.getStackTraceAsString(t)}
-        """
+            |Encountered an error processing a Club Locker email:
+            |
+            |Context:
+            |${print(context)}
+            |
+            |Stack trace:
+            |${print(t)}
+        """.trimMargin()
     }
 
     fun publishSuccessfulReservation(result: ReservationMaker.Result.Success) {
@@ -87,53 +97,34 @@ ${Throwables.getStackTraceAsString(t)}
 
     private fun successfulParseMsg(result: ReservationMaker.Result.Success): String {
         return """
-Successfully made a reservation:
-${printer.toJson(result)}
-        """
+            |Successfully made a reservation:
+            |${print(result)}
+            |
+            |Context:
+            |${print(context)}
+        """.trimMargin()
     }
 
-    fun publishFailedReservation(t: Throwable, context: Map<*, *> = emptyMap<Any, Any>()) {
+    fun publishFailedReservation(t: Throwable) {
         sns.publish(
             PublishRequest(
                 myTopicArn,
-                failedReservationMsg(t, context),
-                "Failed to Make Reservation on Club Locker"
+                failedReservationMsg(t),
+                "Failed to make reservation on Club Locker"
             )
         )
     }
 
-    private fun failedReservationMsg(t: Throwable, context: Map<*, *>): String {
+    private fun failedReservationMsg(t: Throwable): String {
         return """
-Encountered an error making a reservation:
-
-Context:
-${printer.toJson(context)}
-
-Stack trace:
-${Throwables.getStackTraceAsString(t)}
-        """
-    }
-
-    fun publishFailedReservation(result: ReservationMaker.Result.Failure, context: Map<*, *>) {
-        sns.publish(
-            PublishRequest(
-                myTopicArn,
-                failedReservationMsg(result, context),
-                "Failed to Make Reservation on Club Locker"
-            )
-        )
-    }
-
-    private fun failedReservationMsg(result: ReservationMaker.Result.Failure, context: Map<*, *>): String {
-        return """
-Could not make a reservation:
-
-Context:
-${printer.toJson(context)}
-
-Failures:
-$result
-        """
+            |Encountered an error making a reservation:
+            |
+            |Context:
+            |${print(context)}
+            |
+            |Stack trace:
+            |${print(t)}
+        """.trimMargin()
     }
 
     fun publishFoundOpenSlot(result: List<Slot>) {
@@ -148,9 +139,9 @@ $result
 
     private fun foundOpenSlotMsg(result: List<Slot>): String {
         return """
-Found open slots:
-${result.joinToString("\n") { prettyPrint(it) }}
-        """
+            |Found open slots:
+            |${result.joinToString("\n") { prettyPrint(it) }}
+        """.trimMargin()
     }
 
     private fun properNoun(name: String) =
@@ -165,47 +156,47 @@ ${result.joinToString("\n") { prettyPrint(it) }}
             "${properNoun(it.dayOfWeek.name)}, ${properNoun(it.month.name)} ${it.dayOfMonth}"
         }
 
-    fun publishFailedSlotMonitoring(failure: Throwable, context: Map<*, *> = emptyMap<Any, Any>()) {
+    fun publishFailedSlotMonitoring(failure: Throwable) {
         sns.publish(
             PublishRequest(
                 myTopicArn,
-                failedSlotMonitoringMsg(failure, context),
+                failedSlotMonitoringMsg(failure),
                 "Could not track open slots on Club Locker"
             )
         )
     }
 
-    private fun failedSlotMonitoringMsg(failure: Throwable, context: Map<*, *>): String {
+    private fun failedSlotMonitoringMsg(failure: Throwable): String {
         return """
-Could not monitor slots.
-
-Context:
-${printer.toJson(context)}
-
-Stack trace:
-${Throwables.getStackTraceAsString(failure)}
-        """
+            |Could not monitor slots.
+            |
+            |Context:
+            |${print(context)}
+            |
+            |Stack trace:
+            |${print(failure)}
+        """.trimMargin()
     }
 
-    fun publishFailedMatchFind(t: Throwable, context: Map<*, *>) {
+    fun publishFailedMatchFind(t: Throwable) {
         sns.publish(
             PublishRequest(
                 myTopicArn,
-                failedMatchFindMsg(t, context),
+                failedMatchFindMsg(t),
                 "Failed to Process Club Locker Email"
             )
         )
     }
 
-    private fun failedMatchFindMsg(t: Throwable, context: Map<*, *>): String {
+    private fun failedMatchFindMsg(t: Throwable): String {
         return """
-Encountered an error processing a MatchFind request:
-
-Context:
-${printer.toJson(context)}
-
-Stack trace:
-${Throwables.getStackTraceAsString(t)}
-        """
+            |Encountered an error processing a MatchFind request:
+            |
+            |Context:
+            |${print(context)}
+            |
+            |Stack trace:
+            |${print(t)}
+        """.trimMargin()
     }
 }

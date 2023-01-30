@@ -13,6 +13,7 @@ import com.google.auth.http.HttpCredentialsAdapter
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.common.io.Files
 import com.google.gson.Gson
+import com.parmet.squashlambdas.Context.context
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.activity.valueOf
@@ -48,7 +49,8 @@ fun configureNotifier(config: Configuration) =
     Notifier(
         AmazonSNSClientBuilder.defaultClient(),
         config.getString("aws.sns.myTopicArn"),
-        config.getString("aws.sns.publicTopicArn")
+        config.getString("aws.sns.publicTopicArn"),
+        context
     )
 
 fun configureDynamoDb() = AmazonDynamoDBClientBuilder.defaultClient()
