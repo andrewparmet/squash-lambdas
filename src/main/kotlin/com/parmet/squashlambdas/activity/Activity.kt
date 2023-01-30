@@ -8,6 +8,8 @@ interface Activity {
 
     fun searchString(): String
 
+    fun summary(): String
+
     companion object {
         fun fromEmailData(email: EmailData) =
             if (email.isMatch()) {

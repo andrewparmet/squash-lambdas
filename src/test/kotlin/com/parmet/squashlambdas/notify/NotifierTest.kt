@@ -27,7 +27,8 @@ class NotifierTest {
         }
     }
 
-    private val notifier = Notifier(sns, "some-arn", "another-arn")
+    private val context = mutableMapOf<Any, Any>()
+    private val notifier = Notifier(sns, "some-arn", "another-arn", context)
 
     @Test
     fun `notifier sends a reasonable message on success`() {
@@ -47,7 +48,7 @@ class NotifierTest {
 
         assertThat(received).hasSize(1)
         assertThat(received[0].topicArn).isEqualTo("some-arn")
-        assertThat(received[0].subject).isEqualTo("Processed Club Locker Email")
+        assertThat(received[0].subject).isEqualTo("Processed Club Locker Email: Squash Match")
         assertThat(received[0].message).contains("Andrew Parmet")
         assertThat(received[0].message).contains("Court 1")
         assertThat(received[0].message).contains("Squash")
@@ -56,10 +57,8 @@ class NotifierTest {
 
     @Test
     fun `notifier sends a reasonable message on failure`() {
-        notifier.publishFailedParse(
-            ExceptionInInitializerError("something terrible has happened"),
-            mapOf("key123" to "val456")
-        )
+        context["key123"] = "val456"
+        notifier.publishFailedParse(ExceptionInInitializerError("something terrible has happened"))
 
         logger.info { "Received ${received[0].message}" }
 

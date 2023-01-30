@@ -6,8 +6,6 @@ import com.google.api.services.calendar.model.EventDateTime
 import java.time.Instant
 
 abstract class AbstractActivity : Activity {
-    private val createTime = Instant.now()
-
     abstract val start: Instant
     abstract val end: Instant
     abstract val court: Court
@@ -21,6 +19,4 @@ abstract class AbstractActivity : Activity {
             .setLocation("$court, Tennis and Racquet Club")
             .setSummary(summary())
             .setDescription(toString())
-
-    protected abstract fun summary(): String
 }
