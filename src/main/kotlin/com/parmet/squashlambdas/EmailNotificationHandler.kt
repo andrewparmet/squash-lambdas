@@ -3,9 +3,7 @@ package com.parmet.squashlambdas
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.parmet.squashlambdas.Context.addToContext
-import com.parmet.squashlambdas.activity.Activity
 import com.parmet.squashlambdas.cal.ChangeSummary
-import com.parmet.squashlambdas.cal.EventManager
 import com.parmet.squashlambdas.cal.EventManagerImpl
 import com.parmet.squashlambdas.email.EmailRetriever
 import com.parmet.squashlambdas.notify.Notifier
@@ -23,29 +21,16 @@ class EmailNotificationHandler : RequestHandler<Any, Any> {
         retriever = EmailRetriever(s3)
 
         val calendar = configureCalendar(config, s3)
-        val myNotifier = configureNotifier(config.getString("aws.sns.myTopicArn"))
         myLambdaUser =
             SingleLambdaUser(
-                myNotifier,
+                configureNotifier(config.getString("aws.sns.myTopicArn")),
                 EventManagerImpl(calendar, config.getString("google.cal.calendarId"))
             )
 
         secondaryLambdaUser =
-            CompoundLambdaUser(
-                listOf(
-                    SingleLambdaUser(
-                        myNotifier,
-                        object : EventManager {
-                            override fun create(activity: Activity) = Unit
-                            override fun update(activity: Activity) = Unit
-                            override fun delete(activity: Activity) = Unit
-                        }
-                    ),
-                    SingleLambdaUser(
-                        configureNotifier(config.getString("aws.sns.secondaryTopicArn")),
-                        EventManagerImpl(calendar, config.getString("google.cal.secondaryCalendarId"))
-                    )
-                )
+            SingleLambdaUser(
+                configureNotifier(config.getString("aws.sns.secondaryTopicArn")),
+                EventManagerImpl(calendar, config.getString("google.cal.secondaryCalendarId"))
             )
     }
 

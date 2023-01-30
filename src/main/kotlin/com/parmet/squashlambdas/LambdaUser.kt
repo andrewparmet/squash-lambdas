@@ -26,15 +26,3 @@ class SingleLambdaUser(
     override fun withInput(notifier: (Notifier, Throwable) -> Unit, input: Any, action: () -> Unit) =
         Context.withInput({ notifier(this.notifier, it) }, input, action)
 }
-
-class CompoundLambdaUser(
-    private val lambdaUsers: List<SingleLambdaUser>
-) : LambdaUser {
-    override fun handleEmail(changeSummary: ChangeSummary) {
-        lambdaUsers.forEach { it.handleEmail(changeSummary) }
-    }
-
-    override fun withInput(notifier: (Notifier, Throwable) -> Unit, input: Any, action: () -> Unit) {
-        lambdaUsers.forEach { it.withInput(notifier, input, action) }
-    }
-}
