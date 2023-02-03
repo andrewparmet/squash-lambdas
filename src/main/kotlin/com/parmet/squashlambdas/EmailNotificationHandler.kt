@@ -9,14 +9,16 @@ import com.parmet.squashlambdas.email.EmailRetriever
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.s3.S3CreateObjectInfo
 import com.parmet.squashlambdas.s3.S3EmailNotification
+import org.apache.commons.configuration2.Configuration
 
 class EmailNotificationHandler : RequestHandler<Any, Any> {
+    private val config: Configuration
     private val retriever: EmailRetriever
     private val myLambdaUser: LambdaUser
     private val secondaryLambdaUser: LambdaUser
 
     init {
-        val config = loadConfiguration(System.getenv("CONFIG_NAME") + ".xml")
+        config = loadConfiguration(System.getenv("CONFIG_NAME") + ".xml")
         val s3 = configureS3()
         retriever = EmailRetriever(s3)
 
@@ -40,7 +42,7 @@ class EmailNotificationHandler : RequestHandler<Any, Any> {
             val email = getEmail(info)
             ChangeSummary.fromEmail(email)?.also {
                 addToContext("changeSummary", it)
-                if (email.recipients.singleOrNull() == "squash@andrew.parmet.com") {
+                if (email.recipients.singleOrNull() == config.getString("parse.primaryRecipient")) {
                     myLambdaUser.handleEmail(it)
                 } else {
                     secondaryLambdaUser.handleEmail(it)

@@ -43,6 +43,6 @@
   </times>
 
   <matchfind>
-    <recipient>andrew@parmet.com</recipient>
+    <recipient>foo@bar.com</recipient>
   </matchfind>
 </configuration>

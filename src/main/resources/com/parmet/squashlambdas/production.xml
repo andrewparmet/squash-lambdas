@@ -75,4 +75,9 @@
   <matchfind>
     <recipient>${env:MATCH_FIND_RECIPIENT}</recipient>
   </matchfind>
+
+  <parse>
+    <primaryRecipient>${env:PARSE_PRIMARY_RECIPIENT}</primaryRecipient>
+    <secondaryRecipient>${env:PARSE_SECONDARY_RECIPIENT}</secondaryRecipient>
+  </parse>
 </configuration>
