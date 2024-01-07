@@ -11,8 +11,7 @@ data class Clinic(
 ) : AbstractActivity() {
 
     override fun summary() =
-        "${court.sport} Clinic" +
-            "\n\nOrigin: $origin"
+        "${court.sport} Clinic"
 
     companion object {
         fun fromEmailData(email: EmailData): Clinic {
