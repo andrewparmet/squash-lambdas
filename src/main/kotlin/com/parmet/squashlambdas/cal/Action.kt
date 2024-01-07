@@ -29,7 +29,8 @@ sealed class Action(
             listOf(
                 "has cancelled out of reservation",
                 "has been removed",
-                "has joined your reservation"
+                "has joined your reservation",
+                "has cancelled out of a reservation"
             )
 
         private val DELETION =

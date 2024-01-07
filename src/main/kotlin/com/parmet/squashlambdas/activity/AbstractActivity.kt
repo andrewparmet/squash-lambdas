@@ -9,6 +9,7 @@ abstract class AbstractActivity : Activity {
     abstract val start: Instant
     abstract val end: Instant
     abstract val court: Court
+    abstract val origin: String
 
     override fun searchString() = "$start $end $court"
 

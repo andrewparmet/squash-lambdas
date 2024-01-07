@@ -9,6 +9,6 @@ class ClinicTest {
 
     @Test
     fun `match can be serialized`() {
-        gson.toJson(Clinic(Court.Court2, Instant.now(), Instant.now()))
+        gson.toJson(Clinic(Court.Court2, Instant.now(), Instant.now(), "foo"))
     }
 }

@@ -3,13 +3,16 @@ package com.parmet.squashlambdas.activity
 import com.parmet.squashlambdas.email.EmailData
 import java.time.Instant
 
-internal data class Clinic(
+data class Clinic(
     override val court: Court,
     override val start: Instant,
-    override val end: Instant
+    override val end: Instant,
+    override val origin: String
 ) : AbstractActivity() {
 
-    override fun summary() = "${court.sport} Clinic"
+    override fun summary() =
+        "${court.sport} Clinic" +
+            "\n\nOrigin: $origin"
 
     companion object {
         fun fromEmailData(email: EmailData): Clinic {
@@ -17,7 +20,8 @@ internal data class Clinic(
             return Clinic(
                 Court.fromLocationString(email.body),
                 startAndEnd.start,
-                startAndEnd.end
+                startAndEnd.end,
+                email.origin
             )
         }
     }

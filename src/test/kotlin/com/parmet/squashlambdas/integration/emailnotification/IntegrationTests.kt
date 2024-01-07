@@ -25,6 +25,7 @@ class IntegrationTests {
                         Court.Court2,
                         Instant.parse("2018-04-17T22:45:00Z"),
                         Instant.parse("2018-04-17T23:30:00Z"),
+                        "emails/some-file-name",
                         emptySet()
                     )
                 )
@@ -41,6 +42,7 @@ class IntegrationTests {
                         Court.Court7,
                         Instant.parse("2018-03-29T01:00:00Z"),
                         Instant.parse("2018-03-29T01:45:00Z"),
+                        "emails/some-file-name",
                         emptySet()
                     )
                 )
@@ -57,6 +59,7 @@ class IntegrationTests {
                         Court.Court2,
                         Instant.parse("2018-03-26T22:45:00Z"),
                         Instant.parse("2018-03-26T23:30:00Z"),
+                        "emails/some-file-name",
                         playerSet("Philipp Rimmler")
                     )
                 )
@@ -73,6 +76,7 @@ class IntegrationTests {
                         Court.Court1,
                         Instant.parse("2018-07-03T22:45:00Z"),
                         Instant.parse("2018-07-03T23:30:00Z"),
+                        "emails/some-file-name",
                         emptySet()
                     )
                 )
@@ -89,6 +93,7 @@ class IntegrationTests {
                         Court.Court2,
                         Instant.parse("2018-05-31T23:30:00Z"),
                         Instant.parse("2018-06-01T00:15:00Z"),
+                        "emails/some-file-name",
                         playerSet("Stephen Santulli")
                     )
                 )
@@ -105,6 +110,7 @@ class IntegrationTests {
                         Court.Court3,
                         Instant.parse("2018-06-29T00:15:00Z"),
                         Instant.parse("2018-06-29T01:00:00Z"),
+                        "emails/some-file-name",
                         playerSet("Aaron bhole (Guest)")
                     )
                 )
@@ -121,6 +127,7 @@ class IntegrationTests {
                         Court.Court1,
                         Instant.parse("2018-06-12T22:45:00Z"),
                         Instant.parse("2018-06-12T23:30:00Z"),
+                        "emails/some-file-name",
                         playerSet("James Wall")
                     )
                 )
@@ -137,6 +144,7 @@ class IntegrationTests {
                         Court.Court1,
                         Instant.parse("2018-03-28T22:45:00Z"),
                         Instant.parse("2018-03-28T23:30:00Z"),
+                        "emails/some-file-name",
                         playerSet("Bruce Chafee")
                     )
                 )
@@ -153,6 +161,7 @@ class IntegrationTests {
                         Court.Court1,
                         Instant.parse("2018-04-26T22:45:00Z"),
                         Instant.parse("2018-04-26T23:30:00Z"),
+                        "emails/some-file-name",
                         emptySet()
                     )
                 )
@@ -169,6 +178,7 @@ class IntegrationTests {
                         Court.Court1,
                         Instant.parse("2023-01-31T23:00:00Z"),
                         Instant.parse("2023-01-31T23:45:00Z"),
+                        "emails/some-file-name",
                         emptySet()
                     )
                 )
@@ -185,6 +195,7 @@ class IntegrationTests {
                         Court.Court3,
                         Instant.parse("2018-06-28T23:30:00Z"),
                         Instant.parse("2018-06-29T00:15:00Z"),
+                        "emails/some-file-name",
                         playerSet("Paul Cathcart")
                     )
                 )
@@ -201,6 +212,7 @@ class IntegrationTests {
                         Court.Court3,
                         Instant.parse("2018-04-25T22:00:00Z"),
                         Instant.parse("2018-04-25T22:45:00Z"),
+                        "emails/some-file-name",
                         playerSet("Bruce Chafee")
                     )
                 )
@@ -217,6 +229,7 @@ class IntegrationTests {
                         Court.Court1,
                         Instant.parse("2023-01-31T23:00:00Z"),
                         Instant.parse("2023-01-31T23:45:00Z"),
+                        "emails/some-file-name",
                         playerSet("Brad Ursprung")
                     )
                 )
@@ -253,6 +266,7 @@ class IntegrationTests {
                         Court.Court1,
                         Instant.parse("2018-10-11T23:30:00Z"),
                         Instant.parse("2018-10-12T00:15:00Z"),
+                        "emails/some-file-name",
                         emptySet()
                     )
                 )
@@ -269,6 +283,7 @@ class IntegrationTests {
                         Court.Court1,
                         Instant.parse("2018-10-11T23:30:00Z"),
                         Instant.parse("2018-10-12T00:15:00Z"),
+                        "emails/some-file-name",
                         playerSet("Elisabeth Hill")
                     )
                 )
@@ -284,7 +299,8 @@ class IntegrationTests {
                     Clinic(
                         Court.Court3,
                         Instant.parse("2018-12-03T23:45:00Z"),
-                        Instant.parse("2018-12-04T00:30:00Z")
+                        Instant.parse("2018-12-04T00:30:00Z"),
+                        "emails/some-file-name",
                     )
                 )
             )
@@ -300,6 +316,7 @@ class IntegrationTests {
                         Court.TennisCourt,
                         Instant.parse("2019-07-09T23:30:00Z"),
                         Instant.parse("2019-07-10T00:30:00Z"),
+                        "emails/some-file-name",
                         emptySet()
                     )
                 )
@@ -316,6 +333,7 @@ class IntegrationTests {
                         Court.TennisCourt,
                         Instant.parse("2019-07-09T23:30:00Z"),
                         Instant.parse("2019-07-10T00:30:00Z"),
+                        "emails/some-file-name",
                         playerSet("Brayden Minahan")
                     )
                 )
@@ -332,6 +350,7 @@ class IntegrationTests {
                         Court.Court1,
                         Instant.parse("2019-12-27T21:30:00Z"),
                         Instant.parse("2019-12-27T22:15:00Z"),
+                        "emails/some-file-name",
                         emptySet()
                     )
                 )
@@ -348,6 +367,7 @@ class IntegrationTests {
                         Court.Court1,
                         Instant.parse("2020-01-06T23:00:00Z"),
                         Instant.parse("2020-01-06T23:45:00Z"),
+                        "emails/some-file-name",
                         emptySet()
                     )
                 )
@@ -364,6 +384,7 @@ class IntegrationTests {
                         Court.RacquetsCourt,
                         Instant.parse("2020-01-30T21:30:00Z"),
                         Instant.parse("2020-01-30T22:30:00Z"),
+                        "emails/some-file-name",
                         playerSet("Andrew Peabody")
                     )
                 )
@@ -380,6 +401,24 @@ class IntegrationTests {
                         Court.RacquetsCourt,
                         Instant.parse("2020-02-20T14:30:00Z"),
                         Instant.parse("2020-02-20T15:30:00Z"),
+                        "emails/some-file-name",
+                        emptySet()
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun `cancelled out of a reservation`() {
+        assertThat(getSummary("cancelledOutOfAReservation"))
+            .isEqualTo(
+                summary(
+                    Action.Update,
+                    Match(
+                        Court.Court1,
+                        Instant.parse("2023-12-21T14:45:00Z"),
+                        Instant.parse("2023-12-21T15:30:00Z"),
+                        "emails/some-file-name",
                         emptySet()
                     )
                 )

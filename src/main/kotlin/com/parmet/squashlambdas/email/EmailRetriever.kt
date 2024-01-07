@@ -1,7 +1,6 @@
 package com.parmet.squashlambdas.email
 
 import com.amazonaws.services.s3.AmazonS3
-import com.google.common.base.Strings
 import java.nio.charset.StandardCharsets.UTF_8
 import javax.mail.internet.MimeMessage
 
@@ -14,7 +13,8 @@ class EmailRetriever(private val s3: AmazonS3) {
                 message.subject,
                 BodyExtractor.extract(message).toString(),
                 CalendarExtractor.extract(message).flatMap { it.events }.firstOrNull(),
-                Strings.emptyToNull(CsvExtractor.extract(message).toString())
+                key,
+                CsvExtractor.extract(message).toString().takeIf { it.isNotEmpty() }
             )
         }
 }

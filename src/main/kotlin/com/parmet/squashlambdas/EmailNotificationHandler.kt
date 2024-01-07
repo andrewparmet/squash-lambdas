@@ -42,7 +42,7 @@ class EmailNotificationHandler : RequestHandler<Any, Any> {
             val email = getEmail(info)
             ChangeSummary.fromEmail(email)?.also {
                 addToContext("changeSummary", it)
-                if (email.recipients.singleOrNull() == config.getString("parse.primaryRecipient")) {
+                if (config.getString("parse.primaryRecipient") in email.recipients) {
                     myLambdaUser.handleEmail(it)
                 } else {
                     secondaryLambdaUser.handleEmail(it)
