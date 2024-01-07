@@ -4,7 +4,7 @@ import com.google.api.client.util.DateTime
 import com.google.api.services.calendar.model.EventDateTime
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.Instant
 
 class MatchTest {
@@ -18,8 +18,8 @@ class MatchTest {
                 Instant.now(),
                 Instant.now(),
                 "",
-                setOf(Player(name = "Me"))
-            )
+                setOf(Player(name = "Me")),
+            ),
         )
     }
 
@@ -31,7 +31,7 @@ class MatchTest {
                 Instant.parse("2018-03-26T22:45:00Z"),
                 Instant.parse("2018-03-26T23:30:00Z"),
                 "foobar",
-                setOf(Player(name = "Philipp Rimmler"))
+                setOf(Player(name = "Philipp Rimmler")),
             ).toEvent()
 
         assertThat(event.start)
@@ -49,7 +49,7 @@ class MatchTest {
         assertThat(event.description)
             .isEqualTo(
                 "Match(court=Court 2, start=2018-03-26T22:45:00Z, end=2018-03-26T23:30:00Z, " +
-                    "origin=foobar, players=[Player(name=Philipp Rimmler, email=null, memberId=null)])"
+                    "origin=foobar, players=[Player(name=Philipp Rimmler, email=null, memberId=null)])",
             )
     }
 }

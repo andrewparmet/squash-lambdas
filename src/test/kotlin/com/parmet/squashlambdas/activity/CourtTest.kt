@@ -1,7 +1,7 @@
 package com.parmet.squashlambdas.activity
 
 import com.google.common.truth.Truth.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class CourtTest {
     @Test

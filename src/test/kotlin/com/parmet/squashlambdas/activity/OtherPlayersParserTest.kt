@@ -2,7 +2,7 @@ package com.parmet.squashlambdas.activity
 
 import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.integration.emailnotification.emailFromBody
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class OtherPlayersParserTest {
     @Test

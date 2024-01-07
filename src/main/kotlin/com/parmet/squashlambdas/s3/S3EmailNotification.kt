@@ -12,7 +12,7 @@ internal data class S3EmailNotification(
     private val eventTime: Instant,
     private val eventName: String,
     @SerializedName("s3")
-    val s3ObjectInfo: S3CreateObjectInfo
+    val s3ObjectInfo: S3CreateObjectInfo,
 ) {
     companion object {
         private val GSON =
@@ -23,7 +23,7 @@ internal data class S3EmailNotification(
         fun fromInputObject(input: Any) =
             GSON.fromJson(
                 GSON.toJsonTree(input).asJsonObject.getAsJsonArray("Records").get(0),
-                S3EmailNotification::class.java
+                S3EmailNotification::class.java,
             )
     }
 }

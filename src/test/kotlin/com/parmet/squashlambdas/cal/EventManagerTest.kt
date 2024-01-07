@@ -4,11 +4,11 @@ import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.testutil.ConfiguredTest
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.time.Instant
 
-@Ignore // These actually modify a calendar
+@Disabled // These actually modify a calendar
 class EventManagerTest : ConfiguredTest() {
     @Test
     fun `create creates a match`() {
@@ -18,8 +18,8 @@ class EventManagerTest : ConfiguredTest() {
                 Instant.parse("2018-06-25T23:30:00Z"),
                 Instant.parse("2018-06-26T00:15:00Z"),
                 "",
-                setOf()
-            )
+                setOf(),
+            ),
         )
     }
 
@@ -31,8 +31,8 @@ class EventManagerTest : ConfiguredTest() {
                 Instant.parse("2018-06-25T23:30:00Z"),
                 Instant.parse("2018-06-26T00:15:00Z"),
                 "",
-                setOf(Player(name = "Logan Ramseyer"))
-            )
+                setOf(Player(name = "Logan Ramseyer")),
+            ),
         )
     }
 
@@ -44,11 +44,10 @@ class EventManagerTest : ConfiguredTest() {
                 Instant.parse("2018-06-25T23:30:00Z"),
                 Instant.parse("2018-06-26T00:15:00Z"),
                 "",
-                setOf(Player(name = "Logan Ramseyer"))
-            )
+                setOf(Player(name = "Logan Ramseyer")),
+            ),
         )
     }
 
-    private fun manager() =
-        EventManagerImpl(calendar, config.getString("google.cal.calendarId"))
+    private fun manager() = EventManagerImpl(calendar, config.getString("google.cal.calendarId"))
 }

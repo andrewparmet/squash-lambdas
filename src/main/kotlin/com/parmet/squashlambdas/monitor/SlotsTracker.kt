@@ -6,7 +6,7 @@ import java.time.LocalDate
 
 internal class SlotsTracker(
     private val client: ClubLockerClient,
-    private val slotStorageManager: SlotStorageManager
+    private val slotStorageManager: SlotStorageManager,
 ) {
     fun findNewlyOpen(date: LocalDate): List<Slot> {
         val lastSlotsTaken = slotStorageManager.loadLatest(date)

@@ -14,8 +14,7 @@ internal object InputParser {
             .registerTypeAdapter(Instant::class.java, InstantConverter())
             .create()
 
-    fun parseRequestDate(input: Any): LocalDate =
-        parseRequestDate(gson.fromJson(gson.toJsonTree(input), Input::class.java))
+    fun parseRequestDate(input: Any): LocalDate = parseRequestDate(gson.fromJson(gson.toJsonTree(input), Input::class.java))
 
     internal fun parseRequestDate(input: Input): LocalDate =
         input.time
@@ -33,6 +32,6 @@ internal object InputParser {
         val time: Instant,
         val region: String,
         val resources: List<String>,
-        val detail: Map<String, Any>
+        val detail: Map<String, Any>,
     )
 }

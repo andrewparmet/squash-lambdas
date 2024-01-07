@@ -39,7 +39,7 @@ fun loadConfiguration(file: String) =
                 .xml()
                 .setURL(object : Any() {}.javaClass.getResource(file))
                 .setValidating(false)
-                .setThrowExceptionOnMissing(true)
+                .setThrowExceptionOnMissing(true),
         )
         .configuration
 
@@ -49,35 +49,41 @@ fun configureNotifier(topicArn: String) =
     Notifier(
         AmazonSNSClientBuilder.defaultClient(),
         topicArn,
-        context
+        context,
     )
 
 fun configureDynamoDb() = AmazonDynamoDBClientBuilder.defaultClient()
 
-fun configureCalendar(config: Configuration, s3: AmazonS3) =
-    Calendar.Builder(
-        GoogleNetHttpTransport.newTrustedTransport(),
-        JacksonFactory.getDefaultInstance(),
-        HttpCredentialsAdapter(
-            loadCredentials(config, s3).createScoped(listOf(CalendarScopes.CALENDAR))
-        )
-    )
-        .setApplicationName("PARMET_SQUASH_LAMBDAS")
-        .build()
+fun configureCalendar(
+    config: Configuration,
+    s3: AmazonS3,
+) = Calendar.Builder(
+    GoogleNetHttpTransport.newTrustedTransport(),
+    JacksonFactory.getDefaultInstance(),
+    HttpCredentialsAdapter(
+        loadCredentials(config, s3).createScoped(listOf(CalendarScopes.CALENDAR)),
+    ),
+)
+    .setApplicationName("PARMET_SQUASH_LAMBDAS")
+    .build()
 
-fun configureSes() =
-    AmazonSimpleEmailServiceClientBuilder.defaultClient()
+fun configureSes() = AmazonSimpleEmailServiceClientBuilder.defaultClient()
 
-private fun loadCredentials(config: Configuration, s3: AmazonS3) =
-    GoogleCredentials.fromStream(loadFile(config, "google.cal.creds", s3).byteInputStream(UTF_8))
+private fun loadCredentials(
+    config: Configuration,
+    s3: AmazonS3,
+) = GoogleCredentials.fromStream(loadFile(config, "google.cal.creds", s3).byteInputStream(UTF_8))
 
-fun configureClubLockerClient(config: Configuration, s3: AmazonS3): Pair<ClubLockerClient, Player> {
+fun configureClubLockerClient(
+    config: Configuration,
+    s3: AmazonS3,
+): Pair<ClubLockerClient, Player> {
     val creds: Map<String, String> = Gson().fromJson(loadFile(config, "clubLocker.creds", s3))
 
     val hostPlayer =
         Player(
             email = creds.getValue("username"),
-            name = config.getString("clubLocker.name")
+            name = config.getString("clubLocker.name"),
         )
 
     return Pair(
@@ -85,32 +91,36 @@ fun configureClubLockerClient(config: Configuration, s3: AmazonS3): Pair<ClubLoc
             ClubLockerUser(
                 hostPlayer.email!!,
                 creds.getValue("password"),
-                hostPlayer.name!!
-            )
+                hostPlayer.name!!,
+            ),
         ),
-        hostPlayer
+        hostPlayer,
     )
 }
 
-fun getSchedule(config: Configuration, s3: AmazonS3) =
-    Schedule.fromString(loadFile(config, "schedule", s3))
+fun getSchedule(
+    config: Configuration,
+    s3: AmazonS3,
+) = Schedule.fromString(loadFile(config, "schedule", s3))
 
-fun getPreferredCourts(config: Configuration, s3: AmazonS3) =
-    getPreferredCourts(loadFile(config, "courts", s3))
+fun getPreferredCourts(
+    config: Configuration,
+    s3: AmazonS3,
+) = getPreferredCourts(loadFile(config, "courts", s3))
 
-fun getPreferredCourts(s: String) =
-    s.mapNonEmptyLines { Court.valueOf(it) }
+fun getPreferredCourts(s: String) = s.mapNonEmptyLines { Court.valueOf(it) }
 
-fun getPreferredTimes(config: Configuration, s3: AmazonS3) =
-    getPreferredTimes(loadFile(config, "times", s3))
+fun getPreferredTimes(
+    config: Configuration,
+    s3: AmazonS3,
+) = getPreferredTimes(loadFile(config, "times", s3))
 
-fun getPreferredTimes(s: String) =
-    s.mapNonEmptyLines { LocalTime.parse(it) }
+fun getPreferredTimes(s: String) = s.mapNonEmptyLines { LocalTime.parse(it) }
 
 private fun loadFile(
     config: Configuration,
     configKey: String,
-    s3: AmazonS3
+    s3: AmazonS3,
 ): String =
     config.getString("$configKey.location").let {
         if (it == "local") {
@@ -119,7 +129,7 @@ private fun loadFile(
             check("s3" == it)
             s3.getObjectAsString(
                 config.getString("aws.$configKey.bucket"),
-                config.getString("aws.$configKey.key")
+                config.getString("aws.$configKey.key"),
             )
         }
     }

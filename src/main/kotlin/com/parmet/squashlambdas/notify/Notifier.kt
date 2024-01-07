@@ -20,7 +20,7 @@ import java.time.Instant
 class Notifier(
     private val sns: AmazonSNS,
     private val topicArn: String,
-    private val context: Map<*, *>
+    private val context: Map<*, *>,
 ) {
     private val printer =
         GsonBuilder()
@@ -33,22 +33,19 @@ class Notifier(
             .setPrettyPrinting()
             .create()
 
-    private fun GsonBuilder.registerAllJavaTimeAdapters() =
-        Converters.registerAll(this)
+    private fun GsonBuilder.registerAllJavaTimeAdapters() = Converters.registerAll(this)
 
-    private fun print(any: Any) =
-        printer.toJson(any).replace("\n", "\n|")
+    private fun print(any: Any) = printer.toJson(any).replace("\n", "\n|")
 
-    private fun print(t: Throwable) =
-        Throwables.getStackTraceAsString(t).replace("\n", "\n|")
+    private fun print(t: Throwable) = Throwables.getStackTraceAsString(t).replace("\n", "\n|")
 
     fun publishSuccessfulParse(summary: ChangeSummary) {
         sns.publish(
             PublishRequest(
                 topicArn,
                 successfulParseMsg(summary),
-                "Processed: ${summary.summary()}"
-            )
+                "Processed: ${summary.summary()}",
+            ),
         )
     }
 
@@ -59,7 +56,7 @@ class Notifier(
             |
             |Context:
             |${print(context)}
-        """.trimMargin()
+            """.trimMargin()
     }
 
     fun publishFailedParse(t: Throwable) {
@@ -67,8 +64,8 @@ class Notifier(
             PublishRequest(
                 topicArn,
                 failedParseMsg(t),
-                "Failed to Process Club Locker Email"
-            )
+                "Failed to Process Club Locker Email",
+            ),
         )
     }
 
@@ -81,7 +78,7 @@ class Notifier(
             |
             |Stack trace:
             |${print(t)}
-        """.trimMargin()
+            """.trimMargin()
     }
 
     fun publishSuccessfulReservation(result: ReservationMaker.Result.Success) {
@@ -89,8 +86,8 @@ class Notifier(
             PublishRequest(
                 topicArn,
                 successfulParseMsg(result),
-                "Made a Reservation on Club Locker"
-            )
+                "Made a Reservation on Club Locker",
+            ),
         )
     }
 
@@ -101,7 +98,7 @@ class Notifier(
             |
             |Context:
             |${print(context)}
-        """.trimMargin()
+            """.trimMargin()
     }
 
     fun publishFailedReservation(t: Throwable) {
@@ -109,8 +106,8 @@ class Notifier(
             PublishRequest(
                 topicArn,
                 failedReservationMsg(t),
-                "Failed to make reservation on Club Locker"
-            )
+                "Failed to make reservation on Club Locker",
+            ),
         )
     }
 
@@ -123,7 +120,7 @@ class Notifier(
             |
             |Stack trace:
             |${print(t)}
-        """.trimMargin()
+            """.trimMargin()
     }
 
     fun publishFoundOpenSlot(result: List<Slot>) {
@@ -131,8 +128,8 @@ class Notifier(
             PublishRequest(
                 topicArn,
                 foundOpenSlotMsg(result),
-                "Squash Monitoring (${Instant.now().inBoston().toLocalDate()}): Found new open slots on Club Locker"
-            )
+                "Squash Monitoring (${Instant.now().inBoston().toLocalDate()}): Found new open slots on Club Locker",
+            ),
         )
     }
 
@@ -140,11 +137,10 @@ class Notifier(
         return """
             |Found open slots:
             |${result.joinToString("\n") { prettyPrint(it) }}
-        """.trimMargin()
+            """.trimMargin()
     }
 
-    private fun properNoun(name: String) =
-        CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.UPPER_CAMEL).convert(name)
+    private fun properNoun(name: String) = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.UPPER_CAMEL).convert(name)
 
     private fun prettyPrint(slot: Slot) =
         "${formatDate(slot)}: ${COURTS_BY_ID.getValue(slot.court).pretty}, " +
@@ -160,8 +156,8 @@ class Notifier(
             PublishRequest(
                 topicArn,
                 failedSlotMonitoringMsg(failure),
-                "Could not track open slots on Club Locker"
-            )
+                "Could not track open slots on Club Locker",
+            ),
         )
     }
 
@@ -174,7 +170,7 @@ class Notifier(
             |
             |Stack trace:
             |${print(failure)}
-        """.trimMargin()
+            """.trimMargin()
     }
 
     fun publishFailedMatchFind(t: Throwable) {
@@ -182,8 +178,8 @@ class Notifier(
             PublishRequest(
                 topicArn,
                 failedMatchFindMsg(t),
-                "Failed to Process Club Locker Email"
-            )
+                "Failed to Process Club Locker Email",
+            ),
         )
     }
 
@@ -196,6 +192,6 @@ class Notifier(
             |
             |Stack trace:
             |${print(t)}
-        """.trimMargin()
+            """.trimMargin()
     }
 }

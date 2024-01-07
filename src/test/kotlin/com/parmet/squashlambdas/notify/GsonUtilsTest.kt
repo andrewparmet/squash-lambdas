@@ -11,7 +11,7 @@ import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.activity.Sport
 import com.parmet.squashlambdas.cal.Action
 import mu.KotlinLogging
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.reflections.Reflections
 import java.lang.reflect.Modifier
 import java.time.Instant
@@ -26,7 +26,7 @@ class GsonUtilsTest {
             Instant.parse("2018-03-26T22:45:00Z"),
             Instant.parse("2018-03-26T23:30:00Z"),
             "",
-            setOf(Player(name = "Philipp Rimmler"))
+            setOf(Player(name = "Philipp Rimmler")),
         )
 
     private val clinic =
@@ -42,7 +42,7 @@ class GsonUtilsTest {
         val instances: Map<KClass<*>, *> =
             mapOf(
                 Match::class to match,
-                Clinic::class to clinic
+                Clinic::class to clinic,
             )
 
         assertHasAnExampleOfEachConcreteSubclass(Activity::class, instances)
@@ -66,7 +66,7 @@ class GsonUtilsTest {
         val instances: Map<KClass<*>, *> =
             listOf(
                 Court.Court1, Court.Court2, Court.Court3, Court.Court5, Court.Court6,
-                Court.Court7, Court.TennisCourt, Court.RacquetsCourt, Court.FitnessClasses
+                Court.Court7, Court.TennisCourt, Court.RacquetsCourt, Court.FitnessClasses,
             ).associateBy { it::class }
 
         assertHasAnExampleOfEachConcreteSubclass(Court::class, instances)
@@ -85,7 +85,10 @@ class GsonUtilsTest {
         assertSerializedFormContainsTypeString(instances, Action::class, ActionSerializer)
     }
 
-    private fun assertHasAnExampleOfEachConcreteSubclass(kclass: KClass<*>, instances: Map<KClass<*>, *>) {
+    private fun assertHasAnExampleOfEachConcreteSubclass(
+        kclass: KClass<*>,
+        instances: Map<KClass<*>, *>,
+    ) {
         val jClassInstances = instances.mapKeys { it.key.java }
 
         Reflections("com.parmet").getSubTypesOf(kclass.java)
@@ -101,7 +104,7 @@ class GsonUtilsTest {
     private fun assertSerializedFormContainsTypeTag(
         instances: Map<KClass<*>, *>,
         klass: KClass<*>,
-        adapter: TypeAdapterFactory
+        adapter: TypeAdapterFactory,
     ) {
         instances.forEach { (kclass, instance) ->
             val serialized =
@@ -118,7 +121,7 @@ class GsonUtilsTest {
     private fun assertSerializedFormContainsTypeString(
         instances: Map<KClass<*>, *>,
         klass: KClass<*>,
-        adapter: Any
+        adapter: Any,
     ) {
         instances.forEach { (kclass, instance) ->
             val serialized =

@@ -12,5 +12,4 @@ internal fun Instant.inBoston() = this.atZone(BOSTON)
 
 internal fun ChronoLocalDateTime<*>.inBoston() = this.atZone(BOSTON)
 
-internal inline fun <reified T> Gson.fromJson(obj: String): T =
-    fromJson(obj, object : TypeToken<T>() {}.type)
+internal inline fun <reified T> Gson.fromJson(obj: String): T = fromJson(obj, object : TypeToken<T>() {}.type)

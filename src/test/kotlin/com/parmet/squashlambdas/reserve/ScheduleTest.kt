@@ -2,7 +2,7 @@ package com.parmet.squashlambdas.reserve
 
 import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.testutil.getResourceAsString
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
 class ScheduleTest {

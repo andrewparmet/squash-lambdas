@@ -12,11 +12,18 @@ object Context {
         addToContext("git sha", GIT_SHA)
     }
 
-    fun addToContext(key: String, value: Any?) {
+    fun addToContext(
+        key: String,
+        value: Any?,
+    ) {
         context[key] = value ?: "Value for key $key was null!"
     }
 
-    fun <T> withInput(notifier: (Throwable) -> Unit, input: Any, action: () -> T) {
+    fun <T> withInput(
+        notifier: (Throwable) -> Unit,
+        input: Any,
+        action: () -> T,
+    ) {
         logger.info { "Starting handling of $input" }
         addToContext("input", input)
 

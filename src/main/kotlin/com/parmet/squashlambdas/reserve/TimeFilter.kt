@@ -9,7 +9,7 @@ import java.time.ZonedDateTime
 
 internal class TimeFilter(
     private val requestDate: LocalDate,
-    private val clock: Clock = Clock.systemUTC()
+    private val clock: Clock = Clock.systemUTC(),
 ) {
     private val logger = KotlinLogging.logger { }
 
@@ -24,7 +24,7 @@ internal class TimeFilter(
                 reservationShouldAlreadyHaveBeenMade(time) ->
                     "Not scheduling past 1 am; assuming that the 12 am run already ran ($time)"
                 else -> null
-            }
+            },
         )
     }
 

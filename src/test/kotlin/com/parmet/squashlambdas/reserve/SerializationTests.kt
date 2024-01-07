@@ -12,7 +12,7 @@ import com.parmet.squashlambdas.clublocker.Slot
 import com.parmet.squashlambdas.clublocker.User
 import com.parmet.squashlambdas.clublocker.UserResp
 import com.parmet.squashlambdas.testutil.getResourceAsString
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -32,7 +32,7 @@ class SerializationTests {
             CourtResp(1689, "Court #3", 45),
             CourtResp(1692, "Court #5", 45),
             CourtResp(1693, "Court #6", 45),
-            CourtResp(1694, "Court #7", 45)
+            CourtResp(1694, "Court #7", 45),
         )
     }
 
@@ -44,12 +44,12 @@ class SerializationTests {
                 1692,
                 LocalDate.parse("2019-02-02"),
                 Slot(LocalTime.parse("18:45"), LocalTime.parse("19:30")),
-                listOf(Player.member(167759), Player.member("open"))
+                listOf(Player.member(167759), Player.member("open")),
             )
 
         assertThat(JsonParser.parseString(req.toJson()).asJsonObject.entrySet())
             .containsExactlyElementsIn(
-                JsonParser.parseString(getResourceAsString("reservation-request.json")).asJsonObject.entrySet()
+                JsonParser.parseString(getResourceAsString("reservation-request.json")).asJsonObject.entrySet(),
             )
     }
 
@@ -65,7 +65,7 @@ class SerializationTests {
                 1411,
                 1930,
                 2015,
-                1495323000
+                1495323000,
             ),
             Slot(
                 535800,
@@ -73,8 +73,8 @@ class SerializationTests {
                 1411,
                 2015,
                 2100,
-                1495325700
-            )
+                1495325700,
+            ),
         )
     }
 
@@ -85,8 +85,8 @@ class SerializationTests {
                 UserResp(
                     167759,
                     listOf(Affiliation(1413, "Tennis & Racquet Club")),
-                    "joecool@peanuts.com"
-                )
+                    "joecool@peanuts.com",
+                ),
             )
     }
 
@@ -96,7 +96,7 @@ class SerializationTests {
             gson.fromJson(getResourceAsString("directory.json"), object : TypeToken<List<User>>() {}.type)
 
         assertThat(directory).containsExactly(
-            User(167759, "Parmet, Andrew")
+            User(167759, "Parmet, Andrew"),
         )
     }
 }

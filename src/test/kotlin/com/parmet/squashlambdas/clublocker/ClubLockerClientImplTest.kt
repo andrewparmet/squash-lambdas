@@ -6,13 +6,13 @@ import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.testutil.ConfiguredTest
 import org.junit.Before
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
-@Ignore
+@Disabled
 class ClubLockerClientImplTest : ConfiguredTest() {
     @Before
     fun startClient() {
@@ -50,16 +50,18 @@ class ClubLockerClientImplTest : ConfiguredTest() {
         val match =
             Match(
                 Court.Court7,
-                Instant.parse("2018-02-03T23:00:00Z"), // Some legal date
-                Instant.parse("2018-02-03T23:44:00Z"), // Not 45 minutes
+                // Some legal date
+                Instant.parse("2018-02-03T23:00:00Z"),
+                // Not 45 minutes
+                Instant.parse("2018-02-03T23:44:00Z"),
                 "",
-                setOf(Player(email = email))
+                setOf(Player(email = email)),
             )
 
         val resp = client.makeReservation(match)
 
         assertThat(resp).isEqualTo(
-            ReservationResp.Error(500, "Court doesn't have that slot", match)
+            ReservationResp.Error(500, "Court doesn't have that slot", match),
         )
     }
 
@@ -72,8 +74,8 @@ class ClubLockerClientImplTest : ConfiguredTest() {
                     Instant.parse("2019-02-04T23:00:00Z"),
                     Instant.parse("2019-02-04T23:45:00Z"),
                     "",
-                    setOf(Player(email = email))
-                )
+                    setOf(Player(email = email)),
+                ),
             )
 
         println(resp)

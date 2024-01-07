@@ -15,7 +15,7 @@ interface EventManager {
 
 class EventManagerImpl(
     private val calendar: Calendar,
-    private val calendarId: String
+    private val calendarId: String,
 ) : EventManager {
     private val logger = KotlinLogging.logger { }
 
