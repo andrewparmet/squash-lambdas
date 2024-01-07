@@ -1,6 +1,6 @@
 # squash-lambdas
 
-This project contains several AWS Lambdas. Build with `./gradlew stage`.
+This project contains several AWS Lambdas. Build with `./gradlew shadowJar`.
 
 ## Email Parser
 
