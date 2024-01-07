@@ -18,7 +18,7 @@ class EmailRetrieverTest {
             EmailReturningS3(
                 getResourceAsString(IntegrationTests::class.java, "reservationCreated2")
             )
-        val data = EmailRetriever(s3).retrieveEmail("", "")
+        val data = EmailRetriever(s3).retrieveEmail("", "some-object-key")
         assertThat(data).isEqualTo(emailData())
     }
 }

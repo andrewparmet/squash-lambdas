@@ -49,7 +49,7 @@ class NotifierTest {
 
         assertThat(received).hasSize(1)
         assertThat(received[0].topicArn).isEqualTo("some-arn")
-        assertThat(received[0].subject).isEqualTo("Processed Club Locker Email: Squash Match")
+        assertThat(received[0].subject).isEqualTo("Processed: Squash Match")
         assertThat(received[0].message).contains("Andrew Parmet")
         assertThat(received[0].message).contains("Court 1")
         assertThat(received[0].message).contains("Squash")

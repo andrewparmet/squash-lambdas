@@ -12,8 +12,7 @@ data class Match(
 ) : AbstractActivity() {
 
     override fun summary() =
-        "${court.sport} ${renderOtherPlayers()}" +
-            "\n\nOrigin: $origin"
+        "${court.sport} ${renderOtherPlayers()}"
 
     private fun otherPlayers() =
         players.filter { it.name != "Parmet, Andrew" && it.name != "Andrew Parmet" }
