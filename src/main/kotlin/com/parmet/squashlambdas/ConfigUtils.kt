@@ -6,7 +6,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder
 import com.amazonaws.services.sns.AmazonSNSClientBuilder
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
-import com.google.api.client.json.jackson2.JacksonFactory
+import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.CalendarScopes
 import com.google.auth.http.HttpCredentialsAdapter
@@ -58,7 +58,7 @@ fun configureDynamoDb() = AmazonDynamoDBClientBuilder.defaultClient()
 fun configureCalendar(config: Configuration, s3: AmazonS3) =
     Calendar.Builder(
         GoogleNetHttpTransport.newTrustedTransport(),
-        JacksonFactory.getDefaultInstance(),
+        GsonFactory(),
         HttpCredentialsAdapter(
             loadCredentials(config, s3).createScoped(listOf(CalendarScopes.CALENDAR))
         )
