@@ -2,7 +2,7 @@ package com.parmet.squashlambdas.s3
 
 import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.s3.S3EmailNotificationTest.Companion.inputFromFile
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class S3CreateObjectInfoTest {
     @Test

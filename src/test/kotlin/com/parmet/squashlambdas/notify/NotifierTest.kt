@@ -11,7 +11,7 @@ import com.parmet.squashlambdas.cal.Action
 import com.parmet.squashlambdas.cal.ChangeSummary
 import com.parmet.squashlambdas.clublocker.Slot
 import mu.KotlinLogging
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.time.ZoneOffset
 
@@ -20,12 +20,13 @@ class NotifierTest {
 
     private val received = mutableListOf<PublishRequest>()
 
-    private val sns = object : AbstractAmazonSNS() {
-        override fun publish(req: PublishRequest): PublishResult {
-            received.add(req)
-            return PublishResult()
+    private val sns =
+        object : AbstractAmazonSNS() {
+            override fun publish(req: PublishRequest): PublishResult {
+                received.add(req)
+                return PublishResult()
+            }
         }
-    }
 
     private val context = mutableMapOf<Any, Any>()
     private val notifier = Notifier(sns, "some-arn", context)
@@ -40,9 +41,9 @@ class NotifierTest {
                     Instant.now(),
                     Instant.now(),
                     "",
-                    setOf(Player(name = "Andrew Parmet"))
-                )
-            )
+                    setOf(Player(name = "Andrew Parmet")),
+                ),
+            ),
         )
 
         logger.info { "Received ${received[0].message}" }

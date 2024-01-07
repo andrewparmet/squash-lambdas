@@ -8,7 +8,7 @@ interface LambdaUser {
     fun withInput(
         notifier: (Notifier, Throwable) -> Unit,
         input: Any,
-        action: () -> Unit
+        action: () -> Unit,
     )
 
     fun handleEmail(changeSummary: ChangeSummary)
@@ -16,13 +16,16 @@ interface LambdaUser {
 
 class SingleLambdaUser(
     private val notifier: Notifier,
-    private val eventManager: EventManager
+    private val eventManager: EventManager,
 ) : LambdaUser {
     override fun handleEmail(changeSummary: ChangeSummary) {
         changeSummary.process(eventManager)
         notifier.publishSuccessfulParse(changeSummary)
     }
 
-    override fun withInput(notifier: (Notifier, Throwable) -> Unit, input: Any, action: () -> Unit) =
-        Context.withInput({ notifier(this.notifier, it) }, input, action)
+    override fun withInput(
+        notifier: (Notifier, Throwable) -> Unit,
+        input: Any,
+        action: () -> Unit,
+    ) = Context.withInput({ notifier(this.notifier, it) }, input, action)
 }

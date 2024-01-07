@@ -5,6 +5,6 @@ internal object CsvExtractor : AbstractMimeMessageExtractor<StringBuilder>(::App
         listOf(
             MimeParser.TEXT_CSV,
             MimeParser.APPLICATION_OCTET_STREAM_CSV,
-            MimeParser.APPLICATION_VND_MS_EXCEL
+            MimeParser.APPLICATION_VND_MS_EXCEL,
         )
 }

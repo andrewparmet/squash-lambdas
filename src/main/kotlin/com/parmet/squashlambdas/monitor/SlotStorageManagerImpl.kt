@@ -10,7 +10,7 @@ import java.time.LocalDate
 
 internal class SlotStorageManagerImpl(
     private val dynamoDb: AmazonDynamoDB,
-    private val tableName: String
+    private val tableName: String,
 ) : SlotStorageManager {
     private val logger = KotlinLogging.logger { }
     private val gson = Gson()
@@ -19,14 +19,17 @@ internal class SlotStorageManagerImpl(
     private val entriesKey = "entries"
     private val modifiedTimeKey = "modifiedTime"
 
-    override fun save(date: LocalDate, slots: List<Slot>) {
+    override fun save(
+        date: LocalDate,
+        slots: List<Slot>,
+    ) {
         dynamoDb.putItem(
             tableName,
             mapOf(
                 primaryKey to key(date),
                 entriesKey to AttributeValue(slots.map(gson::toJson)),
-                modifiedTimeKey to AttributeValue(Instant.now().toString())
-            )
+                modifiedTimeKey to AttributeValue(Instant.now().toString()),
+            ),
         )
 
         logger.info { "Saved latest slots taken for $date: $slots" }
@@ -42,6 +45,5 @@ internal class SlotStorageManagerImpl(
         }
     }
 
-    private fun key(date: LocalDate) =
-        AttributeValue("$date/taken")
+    private fun key(date: LocalDate) = AttributeValue("$date/taken")
 }

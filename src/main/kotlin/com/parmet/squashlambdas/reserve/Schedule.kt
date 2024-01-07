@@ -4,7 +4,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 
 class Schedule(
-    private val days: Collection<DayOfWeek>
+    private val days: Collection<DayOfWeek>,
 ) {
     fun shouldMakeReservation(date: LocalDate): Boolean {
         return days.contains(date.dayOfWeek)
@@ -15,7 +15,7 @@ class Schedule(
             return Schedule(
                 schedule.mapNonEmptyLines {
                     DayOfWeek.valueOf(it.uppercase())
-                }
+                },
             )
         }
     }

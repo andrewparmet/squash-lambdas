@@ -34,29 +34,33 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
         myNotifier = configureNotifier(config.getString("aws.sns.myTopicArn"))
         publicNotifier = configureNotifier(config.getString("aws.sns.publicTopicArn"))
 
-        val client = try {
-            val (client, _) = configureClubLockerClient(config, s3)
-            client.apply { startAsync().awaitRunning() }
-        } catch (t: Throwable) {
-            myNotifier.publishFailedSlotMonitoring(t)
-            throw t
-        }
+        val client =
+            try {
+                val (client, _) = configureClubLockerClient(config, s3)
+                client.apply { startAsync().awaitRunning() }
+            } catch (t: Throwable) {
+                myNotifier.publishFailedSlotMonitoring(t)
+                throw t
+            }
 
         slotsTracker =
             SlotsTracker(client, SlotStorageManagerImpl(dynamoDb, config.getString("aws.dynamo.squashSlotsTableName")))
     }
 
-    override fun handleRequest(input: Any, context: Context) =
-        withInput(myNotifier::publishFailedSlotMonitoring, input) { doHandleRequest() }
+    override fun handleRequest(
+        input: Any,
+        context: Context,
+    ) = withInput(myNotifier::publishFailedSlotMonitoring, input) { doHandleRequest() }
 
     private fun doHandleRequest() {
         val now = Instant.now().inBoston()
 
-        val date = if (now.toLocalTime().isAfter(LocalTime.of(18, 0))) {
-            now.plusDays(1)
-        } else {
-            now
-        }.toLocalDate()
+        val date =
+            if (now.toLocalTime().isAfter(LocalTime.of(18, 0))) {
+                now.plusDays(1)
+            } else {
+                now
+            }.toLocalDate()
 
         (0L..1).flatMap {
             checkForDate(date.plusDays(it))

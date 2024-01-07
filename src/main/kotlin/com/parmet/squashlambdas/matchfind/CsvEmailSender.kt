@@ -26,9 +26,13 @@ private val formatter =
         .withZone(BOSTON)
 
 class CsvEmailSender(
-    private val sesClient: AmazonSimpleEmailService
+    private val sesClient: AmazonSimpleEmailService,
 ) {
-    fun send(squashCsv: String, tennisCsv: String, recipient: String): Any {
+    fun send(
+        squashCsv: String,
+        tennisCsv: String,
+        recipient: String,
+    ): Any {
         val message =
             MimeMessage(Session.getDefaultInstance(Properties())).apply {
                 subject = "MatchFind: ${formatter.format(Instant.now())}"
@@ -44,27 +48,27 @@ class CsvEmailSender(
                                             MimeBodyPart().apply {
                                                 setContent(
                                                     "See attached Squash.csv and Tennis.csv",
-                                                    MediaType.PLAIN_TEXT_UTF_8.toString()
+                                                    MediaType.PLAIN_TEXT_UTF_8.toString(),
                                                 )
-                                            }
+                                            },
                                         )
-                                    }
+                                    },
                                 )
-                            }
+                            },
                         )
                         addBodyPart(
                             MimeBodyPart().apply {
                                 dataHandler = DataHandler(ByteArrayDataSource(squashCsv.toByteArray(), "text/csv"))
                                 fileName = "Squash.csv"
-                            }
+                            },
                         )
                         addBodyPart(
                             MimeBodyPart().apply {
                                 dataHandler = DataHandler(ByteArrayDataSource(tennisCsv.toByteArray(), "text/csv"))
                                 fileName = "Tennis.csv"
-                            }
+                            },
                         )
-                    }
+                    },
                 )
             }
 
@@ -73,10 +77,10 @@ class CsvEmailSender(
                 RawMessage(
                     ByteBuffer.wrap(
                         ByteArrayOutputStream().also { message.writeTo(it) }
-                            .toByteArray()
-                    )
-                )
-            )
+                            .toByteArray(),
+                    ),
+                ),
+            ),
         )
     }
 }

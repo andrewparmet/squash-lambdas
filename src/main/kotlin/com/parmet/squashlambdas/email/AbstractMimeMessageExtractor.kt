@@ -7,7 +7,7 @@ import javax.mail.internet.MimeMessage
 import javax.mail.internet.MimeMultipart
 
 internal abstract class AbstractMimeMessageExtractor<T>(
-    private val newInstance: () -> Appendable<T>
+    private val newInstance: () -> Appendable<T>,
 ) {
     fun extract(message: MimeMessage): Appendable<T> {
         return if (message.isMimeType("multipart/*")) {

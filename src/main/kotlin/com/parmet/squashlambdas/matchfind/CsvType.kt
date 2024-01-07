@@ -12,7 +12,8 @@ private const val TENNIS_HCAP = "rtoSinglesHcap"
 
 enum class CsvType(private val columnName: String) {
     SQUASH(RATING),
-    TENNIS(TENNIS_HCAP);
+    TENNIS(TENNIS_HCAP),
+    ;
 
     fun filterCsv(csv: String): String {
         val reader = CSVReader(csv.reader())
@@ -33,10 +34,15 @@ enum class CsvType(private val columnName: String) {
         return writer.toString()
     }
 
-    private fun rowsFromColumnIdx(rawCsv: List<List<String>>, ratingIdx: Int, firstNameIdx: Int, lastNameIdx: Int, emailIdx: Int) =
-        rawCsv.filter {
-            it.getOrElse(ratingIdx) { "" }.isNotEmpty()
-        }.map {
-            listOf(it[ratingIdx], it[firstNameIdx], it[lastNameIdx], it[emailIdx])
-        }.sortedByDescending { it[0].toDouble() }
+    private fun rowsFromColumnIdx(
+        rawCsv: List<List<String>>,
+        ratingIdx: Int,
+        firstNameIdx: Int,
+        lastNameIdx: Int,
+        emailIdx: Int,
+    ) = rawCsv.filter {
+        it.getOrElse(ratingIdx) { "" }.isNotEmpty()
+    }.map {
+        listOf(it[ratingIdx], it[firstNameIdx], it[lastNameIdx], it[emailIdx])
+    }.sortedByDescending { it[0].toDouble() }
 }

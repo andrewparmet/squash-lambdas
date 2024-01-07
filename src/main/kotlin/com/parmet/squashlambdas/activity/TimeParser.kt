@@ -28,6 +28,8 @@ internal object TimeParser {
         return TimeSlot(inBoston(date, start), inBoston(date, end))
     }
 
-    private fun inBoston(date: LocalDate, time: LocalTime) =
-        LocalDateTime.of(date, time).inBoston().toInstant()
+    private fun inBoston(
+        date: LocalDate,
+        time: LocalTime,
+    ) = LocalDateTime.of(date, time).inBoston().toInstant()
 }

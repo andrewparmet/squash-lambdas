@@ -1,7 +1,7 @@
 package com.parmet.squashlambdas.activity
 
 import com.google.gson.Gson
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.Instant
 
 class ClinicTest {

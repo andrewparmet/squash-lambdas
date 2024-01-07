@@ -28,29 +28,30 @@ class MatchFindHandler : RequestHandler<Any, Any> {
         sender = CsvEmailSender(configureSes())
     }
 
-    override fun handleRequest(input: Any, ignore: Context) =
-        withInput(notifier::publishFailedMatchFind, input) {
-            val info = getS3Info(input)
-            val email = getEmail(info)
+    override fun handleRequest(
+        input: Any,
+        ignore: Context,
+    ) = withInput(notifier::publishFailedMatchFind, input) {
+        val info = getS3Info(input)
+        val email = getEmail(info)
 
-            requireNotNull(email.csvAttachment) {
-                "No CSV attachment in MatchFind email"
-            }.let {
-                val squashCsv = CsvType.SQUASH.filterCsv(it)
-                val tennisCsv = CsvType.TENNIS.filterCsv(it)
+        requireNotNull(email.csvAttachment) {
+            "No CSV attachment in MatchFind email"
+        }.let {
+            val squashCsv = CsvType.SQUASH.filterCsv(it)
+            val tennisCsv = CsvType.TENNIS.filterCsv(it)
 
-                config.getString("matchfind.recipient").split(',').map { addr ->
-                    logger.info { "Sending to $addr" }
-                    sender.send(squashCsv, tennisCsv, addr)
-                }
+            config.getString("matchfind.recipient").split(',').map { addr ->
+                logger.info { "Sending to $addr" }
+                sender.send(squashCsv, tennisCsv, addr)
             }
         }
+    }
 
     private fun getS3Info(input: Any) =
         S3EmailNotification.fromInputObject(input).s3ObjectInfo.also {
             addToContext("s3CreateObjectInfo", it)
         }
 
-    private fun getEmail(info: S3CreateObjectInfo) =
-        retriever.retrieveEmail(info.bucketName, info.objectKey)
+    private fun getEmail(info: S3CreateObjectInfo) = retriever.retrieveEmail(info.bucketName, info.objectKey)
 }

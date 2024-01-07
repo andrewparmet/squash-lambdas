@@ -39,10 +39,12 @@ class MakeReservationHandler : RequestHandler<Any, Any> {
         }
     }
 
-    override fun handleRequest(input: Any, context: Context) =
-        withInput(notifier::publishFailedReservation, input) {
-            doHandleRequest(input).also { logger.info { "Returning result: $it" } }
-        }
+    override fun handleRequest(
+        input: Any,
+        context: Context,
+    ) = withInput(notifier::publishFailedReservation, input) {
+        doHandleRequest(input).also { logger.info { "Returning result: $it" } }
+    }
 
     private fun doHandleRequest(input: Any) {
         val requestDate = InputParser.parseRequestDate(input)
@@ -76,8 +78,8 @@ class MakeReservationHandler : RequestHandler<Any, Any> {
                 ReservationMaker.Options(
                     hostPlayer,
                     getPreferredCourts(config, s3),
-                    getPreferredTimes(config, s3)
-                )
+                    getPreferredTimes(config, s3),
+                ),
             ).makeReservation(requestDate)
 
         addToContext("result", result)
