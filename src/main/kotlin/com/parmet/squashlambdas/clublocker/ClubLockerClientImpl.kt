@@ -42,7 +42,7 @@ import java.net.http.HttpResponse.BodyHandlers
 import java.time.LocalDate
 
 internal class ClubLockerClientImpl(
-    private val user: ClubLockerUser,
+    private val user: ClubLockerUser
 ) : ClubLockerClient, AbstractIdleService() {
     private val logger = KotlinLogging.logger { }
 
@@ -73,24 +73,25 @@ internal class ClubLockerClientImpl(
                     "password" to user.password,
                 ).mapValues { (_, v) ->
                     UrlEscapers.urlFormParameterEscaper().escape(v)
-                },
-            ),
+                }
+            )
         ).substringAfter("access_token=")
 
-    override fun user(): UserResp = get("$resource/user")
+    override fun user(): UserResp =
+        get("$resource/user")
 
-    override fun courts(): List<CourtResp> = get("$clubResource/courts")
+    override fun courts(): List<CourtResp> =
+        get("$clubResource/courts")
 
-    override fun directory(): List<User> = get("$clubResource/players/directory")
+    override fun directory(): List<User> =
+        get("$clubResource/players/directory")
 
-    override fun slotsTaken(
-        from: LocalDate,
-        to: LocalDate,
-    ): List<Slot> = get("$clubResource/slots_taken/from/$from/to/$to")
+    override fun slotsTaken(from: LocalDate, to: LocalDate): List<Slot> =
+        get("$clubResource/slots_taken/from/$from/to/$to")
 
     private fun responseBody(
         builder: HttpRequest.Builder,
-        requestBody: String? = null,
+        requestBody: String? = null
     ): String {
         val response = response(builder, requestBody)
         val code = response.statusCode()
@@ -109,7 +110,7 @@ internal class ClubLockerClientImpl(
 
     private fun response(
         builder: HttpRequest.Builder,
-        requestBody: String? = null,
+        requestBody: String? = null
     ): HttpResponse<String> {
         val request =
             builder
@@ -185,18 +186,19 @@ internal class ClubLockerClientImpl(
         header(AUTHORIZATION, "Bearer $accessToken")
             .header(ACCEPT, JSON_UTF_8.toString())
 
-    private fun checkRunning() = check(isRunning)
+    private fun checkRunning() =
+        check(isRunning)
 
     override fun shutDown() = Unit
 }
 
-internal data class ClubLockerUser(
+data class ClubLockerUser(
     val username: String,
     val password: String,
-    val name: String,
+    val name: String
 )
 
-internal val COURTS_BY_ID =
+val COURTS_BY_ID =
     ImmutableBiMap.builder<Int, Court>()
         .put(1411, Court1)
         .put(1688, Court2)
@@ -210,14 +212,14 @@ internal val COURTS_BY_ID =
         .build()
 
 @Suppress("UNUSED")
-internal data class ReservationReq(
+data class ReservationReq(
     val clubId: Int,
     val courtId: Int,
     @Transient
     val localDate: LocalDate,
     @Transient
     val timeSlot: com.parmet.squashlambdas.reserve.Slot,
-    val players: List<Player>,
+    val players: List<Player>
 ) {
     private val date = localDate.toString()
     private val startTime = timeSlot.startTime
@@ -247,28 +249,24 @@ internal data class ReservationReq(
     }
 }
 
-internal class Player
-    private constructor(
-        val type: String,
-        val id: Any?,
-        @Suppress("UNUSED")
-        val guestName: String?,
-    ) {
-        companion object {
-            fun member(id: Any) = Player("member", id, null)
+class Player(
+    val type: String,
+    val id: Any?,
+    @Suppress("UNUSED")
+    val guestName: String?
+) {
+    companion object {
+        fun member(id: Any) = Player("member", id, null)
 
-            fun guest(name: String) = Player("guest", null, name)
+        fun guest(name: String) = Player("guest", null, name)
 
-            internal val SERIALIZER =
-                object : JsonSerializer<Player> {
-                    // Don't serialize nulls
-                    private val gson = Gson()
+        internal val SERIALIZER =
+            object : JsonSerializer<Player> {
+                // Don't serialize nulls
+                private val gson = Gson()
 
-                    override fun serialize(
-                        src: Player,
-                        typeOfSrc: Type,
-                        context: JsonSerializationContext,
-                    ) = gson.toJsonTree(src)
-                }
-        }
+                override fun serialize(src: Player, typeOfSrc: Type, context: JsonSerializationContext) =
+                    gson.toJsonTree(src)
+            }
     }
+}

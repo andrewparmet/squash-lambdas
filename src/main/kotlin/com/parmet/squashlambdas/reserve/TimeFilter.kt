@@ -9,7 +9,7 @@ import java.time.ZonedDateTime
 
 internal class TimeFilter(
     private val requestDate: LocalDate,
-    private val clock: Clock = Clock.systemUTC(),
+    private val clock: Clock = Clock.systemUTC()
 ) {
     private val logger = KotlinLogging.logger { }
 

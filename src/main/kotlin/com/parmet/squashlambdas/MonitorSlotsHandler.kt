@@ -12,7 +12,6 @@ import com.parmet.squashlambdas.monitor.SlotsTracker
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.util.inBoston
 import mu.KotlinLogging
-import org.apache.commons.configuration2.Configuration
 import java.time.DayOfWeek.FRIDAY
 import java.time.DayOfWeek.MONDAY
 import java.time.Instant
@@ -22,13 +21,12 @@ import java.time.LocalTime
 class MonitorSlotsHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }
 
-    private val config: Configuration
+    private val config = loadConfiguration(System.getenv("CONFIG_NAME") + ".xml")
     private val myNotifier: Notifier
     private val publicNotifier: Notifier
     private val slotsTracker: SlotsTracker
 
     init {
-        config = loadConfiguration(System.getenv("CONFIG_NAME") + ".xml")
         val s3 = configureS3()
         val dynamoDb = configureDynamoDb()
         myNotifier = configureNotifier(config.getString("aws.sns.myTopicArn"))
@@ -47,10 +45,8 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
             SlotsTracker(client, SlotStorageManagerImpl(dynamoDb, config.getString("aws.dynamo.squashSlotsTableName")))
     }
 
-    override fun handleRequest(
-        input: Any,
-        context: Context,
-    ) = withInput(myNotifier::publishFailedSlotMonitoring, input) { doHandleRequest() }
+    override fun handleRequest(input: Any, context: Context) =
+        withInput(myNotifier::publishFailedSlotMonitoring, input) { doHandleRequest() }
 
     private fun doHandleRequest() {
         val now = Instant.now().inBoston()

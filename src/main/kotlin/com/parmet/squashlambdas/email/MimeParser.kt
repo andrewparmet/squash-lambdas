@@ -9,7 +9,7 @@ import javax.mail.Part
 internal class MimeParser<T> private constructor(
     private val mimeType: String,
     private val filter: (String) -> Boolean = { true },
-    private val parser: (Part) -> Appendable<T>,
+    private val parser: (Part) -> Appendable<T>
 ) {
     fun isFor(part: Part) = part.isMimeType(mimeType) && part.fileName.let { it == null || filter(it) }
 
@@ -51,14 +51,14 @@ internal class MimeParser<T> private constructor(
             MimeParser(
                 "application/octet-stream",
                 ENDS_WITH_CSV,
-                EXTRACT_BASE_64,
+                EXTRACT_BASE_64
             )
 
         val APPLICATION_VND_MS_EXCEL =
             MimeParser(
                 "application/vnd.ms-excel",
                 ENDS_WITH_CSV,
-                EXTRACT_BASE_64,
+                EXTRACT_BASE_64
             )
     }
 }

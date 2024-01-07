@@ -6,26 +6,19 @@ import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger { }
 
-internal fun giveUserOwnership(
-    calendar: Calendar,
-    calendarId: String,
-    userEmail: String,
-) {
+internal fun giveUserOwnership(calendar: Calendar, calendarId: String, userEmail: String) {
     calendar
         .acl()
         .insert(
             calendarId,
             AclRule()
                 .setRole("owner")
-                .setScope(AclRule.Scope().setType("user").setValue(userEmail)),
+                .setScope(AclRule.Scope().setType("user").setValue(userEmail))
         )
         .execute()
 }
 
-internal fun printAcl(
-    calendar: Calendar,
-    calendarId: String,
-) {
+internal fun printAcl(calendar: Calendar, calendarId: String) {
     calendar.acl()
         .list(calendarId)
         .execute()
