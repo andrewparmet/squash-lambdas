@@ -25,8 +25,8 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.danilopianini:gson-extras:1.2.0")
     implementation("com.google.guava:guava:33.0.0-jre")
-    implementation("com.google.auth:google-auth-library-oauth2-http:0.17.1")
-    implementation("com.google.apis:google-api-services-calendar:v3-rev411-1.25.0")
+    implementation("com.google.auth:google-auth-library-oauth2-http:1.16.0")
+    implementation("com.google.apis:google-api-services-calendar:v3-rev20231123-2.0.0")
 
     implementation("net.sf.biweekly:biweekly:0.6.7")
     implementation("org.apache.commons:commons-email:1.5")
