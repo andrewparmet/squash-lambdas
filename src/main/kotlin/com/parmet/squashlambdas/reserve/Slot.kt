@@ -3,9 +3,9 @@ package com.parmet.squashlambdas.reserve
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-internal data class Slot(
+data class Slot(
     val start: LocalTime,
-    val end: LocalTime,
+    val end: LocalTime
 )
 
 private val TIME_FORMAT = DateTimeFormatter.ofPattern("HHmm")

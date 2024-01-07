@@ -8,5 +8,5 @@ data class EmailData(
     val body: String,
     val event: VEvent?,
     val origin: String,
-    val csvAttachment: String?,
+    val csvAttachment: String?
 )

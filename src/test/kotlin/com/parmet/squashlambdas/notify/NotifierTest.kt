@@ -41,9 +41,9 @@ class NotifierTest {
                     Instant.now(),
                     Instant.now(),
                     "",
-                    setOf(Player(name = "Andrew Parmet")),
-                ),
-            ),
+                    setOf(Player(name = "Andrew Parmet"))
+                )
+            )
         )
 
         logger.info { "Received ${received[0].message}" }

@@ -17,14 +17,11 @@ import java.time.LocalTime
 
 class ReservationMaker(
     private val client: ClubLockerClient,
-    private val options: Options,
+    private val options: Options
 ) {
     private val logger = KotlinLogging.logger { }
 
-    fun makeReservation(
-        date: LocalDate,
-        otherPlayer: Player? = null,
-    ): Result {
+    fun makeReservation(date: LocalDate, otherPlayer: Player? = null): Result {
         val failures = mutableListOf<ReservationResp.NonSuccess>()
 
         options.startTimes.forEach { time ->
@@ -58,12 +55,7 @@ class ReservationMaker(
         return Result.Failure(date, failures)
     }
 
-    private fun attemptReservation(
-        date: LocalDate,
-        court: Court,
-        startTime: LocalTime,
-        player: Player?,
-    ): ReservationResp {
+    private fun attemptReservation(date: LocalDate, court: Court, startTime: LocalTime, player: Player?): ReservationResp {
         val localDateTime = LocalDateTime.of(date, startTime)
         val start = localDateTime.inBoston().toInstant()
         return client.makeReservation(
@@ -90,18 +82,18 @@ class ReservationMaker(
         val courts: List<Court> =
             listOf(Court1, Court2, Court3),
         val startTimes: List<LocalTime> =
-            listOf(LocalTime.of(18, 0), LocalTime.of(18, 45), LocalTime.of(19, 30)),
+            listOf(LocalTime.of(18, 0), LocalTime.of(18, 45), LocalTime.of(19, 30))
     )
 
     sealed class Result {
         data class Success(
             val match: Match,
-            val failures: List<ReservationResp.NonSuccess>,
+            val failures: List<ReservationResp.NonSuccess>
         ) : Result()
 
         data class Failure(
             val date: LocalDate,
-            val failures: List<ReservationResp.NonSuccess>,
+            val failures: List<ReservationResp.NonSuccess>
         ) : Result()
     }
 }

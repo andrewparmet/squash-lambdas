@@ -3,8 +3,7 @@ package com.parmet.squashlambdas.cal
 import com.parmet.squashlambdas.activity.Activity
 
 sealed class Action(
-    @Transient
-    internal val handle: (Activity, EventManager) -> Unit,
+    val handle: (Activity, EventManager) -> Unit
 ) {
     object Create : Action({ activity, manager -> manager.create(activity) })
 
@@ -22,7 +21,7 @@ sealed class Action(
                 "A reservation including you has been made",
                 "You've joined a reservation",
                 "You have joined a reservation",
-                "You have been added to the activity",
+                "You have been added to the activity"
             )
 
         private val UPDATING =
@@ -30,7 +29,7 @@ sealed class Action(
                 "has cancelled out of reservation",
                 "has been removed",
                 "has joined your reservation",
-                "has cancelled out of a reservation",
+                "has cancelled out of a reservation"
             )
 
         private val DELETION =
@@ -40,14 +39,14 @@ sealed class Action(
                 "has been successfully cancelled",
                 "has cancelled your reservation",
                 "A reservation including you has been cancelled",
-                "You have successfully cancelled",
+                "You have successfully cancelled"
             )
 
         private val NO_ACTION =
             listOf(
                 "This is a reminder",
                 "Here are your scores recorded",
-                "has re-confirmed a reservation made",
+                "has re-confirmed a reservation made"
             )
 
         fun parseFromSubject(body: String): Action {
@@ -60,6 +59,7 @@ sealed class Action(
             }
         }
 
-        private fun List<String>.containsMatch(body: String) = any { body.contains(it) }
+        private fun List<String>.containsMatch(body: String) =
+            any { body.contains(it) }
     }
 }

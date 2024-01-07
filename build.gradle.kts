@@ -50,6 +50,13 @@ dependencies {
 spotless {
     kotlin {
         ktlint()
+            .editorConfigOverride(
+                mapOf(
+                    "ktlint_standard_trailing-comma-on-call-site" to "disabled",
+                    "ktlint_standard_trailing-comma-on-declaration-site" to "disabled",
+                    "ij_kotlin_packages_to_use_import_on_demand" to null
+                )
+            )
     }
 }
 

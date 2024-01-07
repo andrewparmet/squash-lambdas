@@ -26,31 +26,29 @@ class EmailNotificationHandler : RequestHandler<Any, Any> {
         myLambdaUser =
             SingleLambdaUser(
                 configureNotifier(config.getString("aws.sns.myTopicArn")),
-                EventManagerImpl(calendar, config.getString("google.cal.calendarId")),
+                EventManagerImpl(calendar, config.getString("google.cal.calendarId"))
             )
 
         secondaryLambdaUser =
             SingleLambdaUser(
                 configureNotifier(config.getString("aws.sns.secondaryTopicArn")),
-                EventManagerImpl(calendar, config.getString("google.cal.secondaryCalendarId")),
+                EventManagerImpl(calendar, config.getString("google.cal.secondaryCalendarId"))
             )
     }
 
-    override fun handleRequest(
-        input: Any,
-        ignore: Context,
-    ) = myLambdaUser.withInput(Notifier::publishFailedParse, input) {
-        val info = getS3Info(input)
-        val email = getEmail(info)
-        ChangeSummary.fromEmail(email)?.also {
-            addToContext("changeSummary", it)
-            if (config.getString("parse.primaryRecipient") in email.recipients) {
-                myLambdaUser.handleEmail(it)
-            } else {
-                secondaryLambdaUser.handleEmail(it)
+    override fun handleRequest(input: Any, ignore: Context) =
+        myLambdaUser.withInput(Notifier::publishFailedParse, input) {
+            val info = getS3Info(input)
+            val email = getEmail(info)
+            ChangeSummary.fromEmail(email)?.also {
+                addToContext("changeSummary", it)
+                if (config.getString("parse.primaryRecipient") in email.recipients) {
+                    myLambdaUser.handleEmail(it)
+                } else {
+                    secondaryLambdaUser.handleEmail(it)
+                }
             }
         }
-    }
 
     private fun getS3Info(input: Any) =
         S3EmailNotification.fromInputObject(input).s3ObjectInfo.also {

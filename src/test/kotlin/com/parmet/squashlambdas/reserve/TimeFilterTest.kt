@@ -15,7 +15,7 @@ class TimeFilterTest {
         assertThat(
             TimeFilter(InputParser.parseRequestDate(input(time)), clock)
                 .filterBasedOnBostonTime()
-                .reason,
+                .reason
         ).isNull()
     }
 
@@ -26,9 +26,9 @@ class TimeFilterTest {
         assertThat(
             TimeFilter(InputParser.parseRequestDate(input(time)), clock)
                 .filterBasedOnBostonTime()
-                .reason,
+                .reason
         ).isEqualTo(
-            "Date 2019-02-12 is too far in the future to reserve now (2019-02-04T23:01-05:00[America/New_York])",
+            "Date 2019-02-12 is too far in the future to reserve now (2019-02-04T23:01-05:00[America/New_York])"
         )
     }
 
@@ -39,7 +39,7 @@ class TimeFilterTest {
         assertThat(
             TimeFilter(InputParser.parseRequestDate(input(time)), clock)
                 .filterBasedOnBostonTime()
-                .reason,
+                .reason
         ).isNull()
     }
 
@@ -50,12 +50,13 @@ class TimeFilterTest {
         assertThat(
             TimeFilter(InputParser.parseRequestDate(input(time)), clock)
                 .filterBasedOnBostonTime()
-                .reason,
+                .reason
         ).isEqualTo(
             "Not scheduling past 1 am; " +
-                "assuming that the 12 am run already ran (2019-04-05T01:01-04:00[America/New_York])",
+                "assuming that the 12 am run already ran (2019-04-05T01:01-04:00[America/New_York])"
         )
     }
 
-    private fun input(instant: Instant) = InputParser.Input("", UUID.randomUUID(), "", "", "", instant, "", listOf(), mapOf())
+    private fun input(instant: Instant) =
+        InputParser.Input("", UUID.randomUUID(), "", "", "", instant, "", listOf(), mapOf())
 }

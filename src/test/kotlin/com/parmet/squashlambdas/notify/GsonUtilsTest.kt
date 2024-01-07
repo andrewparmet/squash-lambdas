@@ -26,7 +26,7 @@ class GsonUtilsTest {
             Instant.parse("2018-03-26T22:45:00Z"),
             Instant.parse("2018-03-26T23:30:00Z"),
             "",
-            setOf(Player(name = "Philipp Rimmler")),
+            setOf(Player(name = "Philipp Rimmler"))
         )
 
     private val clinic =
@@ -34,7 +34,7 @@ class GsonUtilsTest {
             Court.Court2,
             Instant.parse("2018-03-26T22:45:00Z"),
             Instant.parse("2018-03-26T23:30:00Z"),
-            "",
+            ""
         )
 
     @Test
@@ -42,7 +42,7 @@ class GsonUtilsTest {
         val instances: Map<KClass<*>, *> =
             mapOf(
                 Match::class to match,
-                Clinic::class to clinic,
+                Clinic::class to clinic
             )
 
         assertHasAnExampleOfEachConcreteSubclass(Activity::class, instances)
@@ -85,10 +85,7 @@ class GsonUtilsTest {
         assertSerializedFormContainsTypeString(instances, Action::class, ActionSerializer)
     }
 
-    private fun assertHasAnExampleOfEachConcreteSubclass(
-        kclass: KClass<*>,
-        instances: Map<KClass<*>, *>,
-    ) {
+    private fun assertHasAnExampleOfEachConcreteSubclass(kclass: KClass<*>, instances: Map<KClass<*>, *>) {
         val jClassInstances = instances.mapKeys { it.key.java }
 
         Reflections("com.parmet").getSubTypesOf(kclass.java)
@@ -104,7 +101,7 @@ class GsonUtilsTest {
     private fun assertSerializedFormContainsTypeTag(
         instances: Map<KClass<*>, *>,
         klass: KClass<*>,
-        adapter: TypeAdapterFactory,
+        adapter: TypeAdapterFactory
     ) {
         instances.forEach { (kclass, instance) ->
             val serialized =
@@ -121,7 +118,7 @@ class GsonUtilsTest {
     private fun assertSerializedFormContainsTypeString(
         instances: Map<KClass<*>, *>,
         klass: KClass<*>,
-        adapter: Any,
+        adapter: Any
     ) {
         instances.forEach { (kclass, instance) ->
             val serialized =

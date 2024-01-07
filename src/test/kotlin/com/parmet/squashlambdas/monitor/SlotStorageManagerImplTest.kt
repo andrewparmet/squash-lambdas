@@ -15,7 +15,7 @@ class SlotStorageManagerImplTest : ConfiguredTest() {
 
         SlotStorageManagerImpl(
             configureDynamoDb(),
-            config.getString("aws.dynamo.squashSlotsTableName"),
+            config.getString("aws.dynamo.squashSlotsTableName")
         ).save(LocalDate.now(), slots)
     }
 }

@@ -11,8 +11,8 @@ class InputParserTest {
     fun `input is parsed correctly`() {
         assertThat(
             InputParser.parseRequestDate(
-                JsonParser.parseString(getResourceAsString("reservation-trigger.json")),
-            ),
+                JsonParser.parseString(getResourceAsString("reservation-trigger.json"))
+            )
         ).isEqualTo(LocalDate.of(2017, 1, 6))
     }
 }

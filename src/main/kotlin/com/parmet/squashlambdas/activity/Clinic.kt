@@ -7,9 +7,10 @@ data class Clinic(
     override val court: Court,
     override val start: Instant,
     override val end: Instant,
-    override val origin: String,
+    override val origin: String
 ) : AbstractActivity() {
-    override fun summary() = "${court.sport} Clinic"
+    override fun summary() =
+        "${court.sport} Clinic"
 
     companion object {
         fun fromEmailData(email: EmailData): Clinic {
@@ -18,7 +19,7 @@ data class Clinic(
                 Court.fromLocationString(email.body),
                 startAndEnd.start,
                 startAndEnd.end,
-                email.origin,
+                email.origin
             )
         }
     }

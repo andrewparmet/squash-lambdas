@@ -3,15 +3,19 @@ package com.parmet.squashlambdas.testutil
 import com.google.gson.JsonParser
 import java.nio.charset.StandardCharsets.UTF_8
 
-fun removeJsonWhitespace(string: String) = JsonParser.parseString(string).toString()
+fun removeJsonWhitespace(string: String) =
+    JsonParser.parseString(string).toString()
 
-fun getJsonResourceAsString(resourceName: String) = removeJsonWhitespace(getResourceAsString(getCallerCallerClass(), resourceName))
+fun getJsonResourceAsString(resourceName: String) =
+    removeJsonWhitespace(getResourceAsString(getCallerCallerClass(), resourceName))
 
-fun getResourceAsString(resourceName: String) = getResourceAsString(getCallerCallerClass(), resourceName)
+fun getResourceAsString(resourceName: String) =
+    getResourceAsString(getCallerCallerClass(), resourceName)
 
-fun getResourceAsString(
-    owner: Class<*>,
-    resourceName: String,
-) = owner.getResourceAsStream(resourceName).reader(UTF_8).use { it.readText() }
+fun getResourceAsString(owner: Class<*>, resourceName: String) =
+    owner.getResourceAsStream(resourceName)
+        .reader(UTF_8)
+        .use { it.readText() }
 
-private fun getCallerCallerClass() = Class.forName(Thread.currentThread().stackTrace[3].className)
+private fun getCallerCallerClass() =
+    Class.forName(Thread.currentThread().stackTrace[3].className)

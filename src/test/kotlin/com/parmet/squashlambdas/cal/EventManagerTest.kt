@@ -18,8 +18,8 @@ class EventManagerTest : ConfiguredTest() {
                 Instant.parse("2018-06-25T23:30:00Z"),
                 Instant.parse("2018-06-26T00:15:00Z"),
                 "",
-                setOf(),
-            ),
+                setOf()
+            )
         )
     }
 
@@ -31,8 +31,8 @@ class EventManagerTest : ConfiguredTest() {
                 Instant.parse("2018-06-25T23:30:00Z"),
                 Instant.parse("2018-06-26T00:15:00Z"),
                 "",
-                setOf(Player(name = "Logan Ramseyer")),
-            ),
+                setOf(Player(name = "Logan Ramseyer"))
+            )
         )
     }
 
@@ -44,10 +44,11 @@ class EventManagerTest : ConfiguredTest() {
                 Instant.parse("2018-06-25T23:30:00Z"),
                 Instant.parse("2018-06-26T00:15:00Z"),
                 "",
-                setOf(Player(name = "Logan Ramseyer")),
-            ),
+                setOf(Player(name = "Logan Ramseyer"))
+            )
         )
     }
 
-    private fun manager() = EventManagerImpl(calendar, config.getString("google.cal.calendarId"))
+    private fun manager() =
+        EventManagerImpl(calendar, config.getString("google.cal.calendarId"))
 }

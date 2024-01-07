@@ -8,11 +8,13 @@ data class Match(
     override val start: Instant,
     override val end: Instant,
     override val origin: String,
-    val players: Set<Player>,
+    val players: Set<Player>
 ) : AbstractActivity() {
-    override fun summary() = "${court.sport} ${renderOtherPlayers()}"
+    override fun summary() =
+        "${court.sport} ${renderOtherPlayers()}"
 
-    private fun otherPlayers() = players.filter { it.name != "Parmet, Andrew" && it.name != "Andrew Parmet" }
+    private fun otherPlayers() =
+        players.filter { it.name != "Parmet, Andrew" && it.name != "Andrew Parmet" }
 
     private fun renderOtherPlayers() =
         if (otherPlayers().isEmpty()) {
@@ -31,7 +33,7 @@ data class Match(
                 email.origin,
                 OtherPlayersParser.parse(email.body)
                     .map { Player(name = it) }
-                    .toSet(),
+                    .toSet()
             )
         }
     }

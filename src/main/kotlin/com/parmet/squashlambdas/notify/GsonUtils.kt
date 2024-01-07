@@ -13,19 +13,13 @@ import com.parmet.squashlambdas.cal.Action
 import java.lang.reflect.Type
 
 internal object SportSerializer : JsonSerializer<Sport> {
-    override fun serialize(
-        src: Sport,
-        typeOfSrc: Type,
-        context: JsonSerializationContext,
-    ) = JsonPrimitive(src.toString())
+    override fun serialize(src: Sport, typeOfSrc: Type, context: JsonSerializationContext) =
+        JsonPrimitive(src.toString())
 }
 
 internal object CourtSerializer : JsonSerializer<Court> {
-    override fun serialize(
-        src: Court,
-        typeOfSrc: Type,
-        context: JsonSerializationContext,
-    ) = JsonPrimitive("${src.pretty} (${src.sport})")
+    override fun serialize(src: Court, typeOfSrc: Type, context: JsonSerializationContext) =
+        JsonPrimitive("${src.pretty} (${src.sport})")
 }
 
 internal val ACTIVITY_ADAPTER_FACTORY =
@@ -36,9 +30,6 @@ internal val ACTIVITY_ADAPTER_FACTORY =
 internal object ActionSerializer : ClassNameSerializer<Action>()
 
 internal abstract class ClassNameSerializer<T : Any> : JsonSerializer<T> {
-    override fun serialize(
-        src: T,
-        typeOfSrc: Type,
-        context: JsonSerializationContext,
-    ) = JsonPrimitive(src::class.simpleName)
+    override fun serialize(src: T, typeOfSrc: Type, context: JsonSerializationContext) =
+        JsonPrimitive(src::class.simpleName)
 }

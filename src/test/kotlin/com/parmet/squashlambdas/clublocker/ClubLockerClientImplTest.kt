@@ -55,13 +55,13 @@ class ClubLockerClientImplTest : ConfiguredTest() {
                 // Not 45 minutes
                 Instant.parse("2018-02-03T23:44:00Z"),
                 "",
-                setOf(Player(email = email)),
+                setOf(Player(email = email))
             )
 
         val resp = client.makeReservation(match)
 
         assertThat(resp).isEqualTo(
-            ReservationResp.Error(500, "Court doesn't have that slot", match),
+            ReservationResp.Error(500, "Court doesn't have that slot", match)
         )
     }
 
@@ -74,8 +74,8 @@ class ClubLockerClientImplTest : ConfiguredTest() {
                     Instant.parse("2019-02-04T23:00:00Z"),
                     Instant.parse("2019-02-04T23:45:00Z"),
                     "",
-                    setOf(Player(email = email)),
-                ),
+                    setOf(Player(email = email))
+                )
             )
 
         println(resp)
