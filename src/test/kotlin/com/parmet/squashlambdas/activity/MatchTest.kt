@@ -17,6 +17,7 @@ class MatchTest {
                 Court.Court2,
                 Instant.now(),
                 Instant.now(),
+                "",
                 setOf(Player(name = "Me"))
             )
         )
@@ -29,6 +30,7 @@ class MatchTest {
                 Court.Court2,
                 Instant.parse("2018-03-26T22:45:00Z"),
                 Instant.parse("2018-03-26T23:30:00Z"),
+                "",
                 setOf(Player(name = "Philipp Rimmler"))
             ).toEvent()
 

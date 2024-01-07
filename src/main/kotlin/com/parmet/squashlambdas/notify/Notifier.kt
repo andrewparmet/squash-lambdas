@@ -47,7 +47,7 @@ class Notifier(
             PublishRequest(
                 topicArn,
                 successfulParseMsg(summary),
-                "Processed Club Locker Email: ${summary.summary()}"
+                "Processed: ${summary.summary()}"
             )
         )
     }

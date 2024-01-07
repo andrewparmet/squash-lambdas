@@ -25,6 +25,7 @@ class GsonUtilsTest {
             Court.Court2,
             Instant.parse("2018-03-26T22:45:00Z"),
             Instant.parse("2018-03-26T23:30:00Z"),
+            "",
             setOf(Player(name = "Philipp Rimmler"))
         )
 
@@ -32,7 +33,8 @@ class GsonUtilsTest {
         Clinic(
             Court.Court2,
             Instant.parse("2018-03-26T22:45:00Z"),
-            Instant.parse("2018-03-26T23:30:00Z")
+            Instant.parse("2018-03-26T23:30:00Z"),
+            "",
         )
 
     @Test

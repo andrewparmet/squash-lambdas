@@ -7,10 +7,13 @@ data class Match(
     override val court: Court,
     override val start: Instant,
     override val end: Instant,
+    override val origin: String,
     val players: Set<Player>
 ) : AbstractActivity() {
 
-    override fun summary() = "${court.sport} ${renderOtherPlayers()}"
+    override fun summary() =
+        "${court.sport} ${renderOtherPlayers()}" +
+            "\n\nOrigin: $origin"
 
     private fun otherPlayers() =
         players.filter { it.name != "Parmet, Andrew" && it.name != "Andrew Parmet" }
@@ -29,6 +32,7 @@ data class Match(
                 Court.fromLocationString(email.body),
                 startAndEnd.start,
                 startAndEnd.end,
+                email.origin,
                 OtherPlayersParser.parse(email.body)
                     .map { Player(name = it) }
                     .toSet()

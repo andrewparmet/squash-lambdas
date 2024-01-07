@@ -6,6 +6,7 @@ out/
 .classpath
 .project
 /.settings/
+.DS_Store
 
 **google-squash-project.json**
 **clublocker-creds.json**

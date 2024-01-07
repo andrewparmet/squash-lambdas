@@ -52,6 +52,7 @@ class ClubLockerClientImplTest : ConfiguredTest() {
                 Court.Court7,
                 Instant.parse("2018-02-03T23:00:00Z"), // Some legal date
                 Instant.parse("2018-02-03T23:44:00Z"), // Not 45 minutes
+                "",
                 setOf(Player(email = email))
             )
 
@@ -70,6 +71,7 @@ class ClubLockerClientImplTest : ConfiguredTest() {
                     Court.Court6,
                     Instant.parse("2019-02-04T23:00:00Z"),
                     Instant.parse("2019-02-04T23:45:00Z"),
+                    "",
                     setOf(Player(email = email))
                 )
             )

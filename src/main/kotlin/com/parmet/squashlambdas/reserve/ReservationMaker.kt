@@ -63,6 +63,7 @@ class ReservationMaker(
                 court,
                 start,
                 start.plus(Duration.ofMinutes(45)),
+                "this domain object should probably not be reused this way",
                 if (player == null) {
                     setOf(options.hostPlayer)
                 } else {

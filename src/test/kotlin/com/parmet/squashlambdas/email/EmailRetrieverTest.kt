@@ -51,5 +51,7 @@ fun emailData() =
                     or the whole reservation please log into Club Locker and use the My Reservations
                     area.
         """.trimIndent().replace("\n", " "),
-        event()
+        event(),
+        "some-object-key",
+        null
     )

@@ -39,6 +39,7 @@ class NotifierTest {
                     Court.Court1,
                     Instant.now(),
                     Instant.now(),
+                    "",
                     setOf(Player(name = "Andrew Parmet"))
                 )
             )
