@@ -425,6 +425,23 @@ class IntegrationTests {
             )
     }
 
+    @Test
+    fun `added to an activity`() {
+        assertThat(getSummary("youHaveBeenAddedToAnActivity"))
+            .isEqualTo(
+                summary(
+                    Action.Create,
+                    Match(
+                        Court.Court3,
+                        Instant.parse("2024-07-13T13:45:00Z"),
+                        Instant.parse("2024-07-13T15:15:00Z"),
+                        "emails/some-file-name",
+                        emptySet()
+                    )
+                )
+            )
+    }
+
     private fun getSummary(fileName: String) =
         ChangeSummary.fromEmail(emailFromBody(fileName))
 
