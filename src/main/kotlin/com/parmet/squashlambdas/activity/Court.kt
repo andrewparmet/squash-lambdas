@@ -53,7 +53,7 @@ sealed class Court(val sport: Sport) {
 
 // "Court: Court #x" (match creation)
 // "Courts: Court #x" (activity creation)
-private val NUMBERED_COURT = Pattern.compile(".*Courts?: Court #(\\d) [/\\-].*")
+private val NUMBERED_COURT = Pattern.compile(".*Court #(\\d) [/\\-] (Squash|Hardball).*")
 
 // "Court: Court Tennis - Court Tennis" (match creation)
 // "Court: Court Tennis / Court Tennis" (player joins)

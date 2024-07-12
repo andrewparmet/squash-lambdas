@@ -1,0 +1,207 @@
+Return-Path: <andrewparmet+caf_=squash=andrew.parmet.com@gmail.com>
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+ by inbound-smtp.us-east-1.amazonaws.com with SMTP id lrkdln4995ab9n8488b1ui4fqsr9lf8onulji1o1
+ for squash@andrew.parmet.com;
+ Fri, 12 Jul 2024 19:32:26 +0000 (UTC)
+X-SES-Spam-Verdict: PASS
+X-SES-Virus-Verdict: PASS
+Received-SPF: pass (spfCheck: domain of _spf.google.com designates 209.85.215.177 as permitted sender) client-ip=209.85.215.177; envelope-from=andrewparmet+caf_=squash=andrew.parmet.com@gmail.com; helo=mail-pg1-f177.google.com;
+Authentication-Results: amazonses.com;
+ spf=pass (spfCheck: domain of _spf.google.com designates 209.85.215.177 as permitted sender) client-ip=209.85.215.177; envelope-from=andrewparmet+caf_=squash=andrew.parmet.com@gmail.com; helo=mail-pg1-f177.google.com;
+ dkim=pass header.i=@amazonses.com;
+ dmarc=fail header.from=clublocker.com;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFHTmtXNXArMmZSQm8veTR1YjRUNS90Wks0S0EraXZxZHUyMHJ1WTJycmxVYWQyRWo0S1Jrc0I5dEFzR0ExbzdtMU44WHo2eVpoTamDcvZG1DTjhqdWF4RnFWSVByMFUxREw2eVVwYWloVnZGTG9RdmhkbXd0NDJXbzRaRklNVUhNSWdJM251d2xydE9lazcwT1hvOEtIbmNzZ1dMV3Ira3lSVnJtdjE2Sy8zbVhYNy9jM2I0THV1cE9KdHpGSFd3byt4MG9ZUlNaUTJqSDArMVVlSkJCaDU4VDlQRUx4dzBoYnZPR25iN3gzdFc3UzRCWnJmSVpCR0lmelpKOXFPblkrMVRDZkdSbGlwNjBuR24yakN2RHhkdDROK2o3SG5vc1pXMjVvSXh4aUhaOUpIZVQ2Z1hGN09zd1ZTWGRBODNsZkZCRGd1SmNlRElrdkxNWWhUem9sbkE=
+X-SES-DKIM-SIGNATURE: a=rsa-sha256; q=dns/txt; b=VFTLQ0rq5zdh6mpEIUlCnzQnivQtykfm9KLu7ORn1op1IbRkPelJ1gPC5anMCIPaRHo7mPgZFlZWRQh+UUqKsbYDnUuFjpdL3p3gdjWsGJ6fR4lOJfwryrOeuLWuJngQUiH+0Y/RKTztoV51eDBvrOlAPKmPi8hM5lhZaWcdan0=; c=relaxed/simple; s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1720812747; v=1; bh=1FQ+Y4ZYZnAZceVSj4OoEArPgkXHfpI8/hFdcXmhwl8=; h=From:To:Cc:Bcc:Subject:Date:Message-ID:MIME-Version:Content-Type:X-SES-RECEIPT;
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-78512d44a13so1636124a12.1
+        for <squash@andrew.parmet.com>; Fri, 12 Jul 2024 12:32:26 -0700 (PDT)
+ARC-Seal: i=2; a=rsa-sha256; t=1720812745; cv=pass;
+        d=google.com; s=arc-20160816;
+        b=joiSHSL92qq5BuYELQerrh2kSPNEcBMtuA56zKCVtjdd8loz77Ydjlfu4HCPp8pMoa
+         5ifH2wZLBt/t53QITme9re1q8LhthtnVMj/kYOS31Hk5ts+Q/thlAhM29mqEnioT0hkC
+         2IKIlUc2dAv401lSyiLjV8p48w4aIYn5DWKs78Yj4VyUp7DS/D3xVjGfNBisxY7LEAip
+         g+6tSZubaAFuMqcGLmeAYSorTT8kdvU1CTpjahGqS/J4kpp2ohmFXaqs8dOeYn98PPdU
+         THqWB9+uQx1RS/uXgjRY84p4Sp4KpKE2Mg71h0XJxVvy8Z/EjyB0XH0TSKzcX9f+Qpt6
+         KzcQ==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=feedback-id:mime-version:date:message-id:subject:reply-to:to:from
+         :dkim-signature:dkim-signature:delivered-to;
+        bh=kK1NYE1sjFh8EDMMS2Srm6l2EiG4pi4x5huU9EZSC7E=;
+        fh=309WIb98ud9qLgd4fa3bjbMp5+WJJKXHncp/ypy0ilY=;
+        b=wJctO/pmHVzesM2l0nWnv89YNnn8CE6KwgSrb9vKZR81EHkmQncFpY/jefSP4cSybt
+         GRdtiCZ6NdO4jowC4ap9m9VWfWG0rcB72MiBreG/dhKsEWXUzUbVRnEHC8p171fVifQ1
+         cewwAf7NuuRdwN9EK+vowbtfD0O/CmYMvicAhatScmuG8YD3IueHKDAlO5T6NXNjBodE
+         fWk5eQ6ZBaoZ6XHxO3bnWdcwE4LHTiTxv8GHaqTajhOaIz7dYUP+SU8NAcdGQV7QqZBb
+         VHgr/gtFHMBM6genFIKiul7s2PFXe7zhSt03fIJbOwAqEHPMjR8+cvb7ChucMjLVXuXD
+         5BhQ==;
+        darn=andrew.parmet.com
+ARC-Authentication-Results: i=2; mx.google.com;
+       dkim=temperror (no key for signature) header.i=@clublocker.com header.s=dkim header.b=ZReqWeZw;
+       dkim=pass header.i=@amazonses.com header.s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug header.b=g6+l2l7B;
+       spf=pass (google.com: domain of srs0=h0ww8z=om=amazonses.com=01000190a86e9c38-afa12d7a-bbb7-49af-b597-3246b2d238cd-000000@parmet.com designates 66.96.184.1 as permitted sender) smtp.mailfrom="SRS0=H0ww8Z=OM=amazonses.com=01000190a86e9c38-afa12d7a-bbb7-49af-b597-3246b2d238cd-000000@parmet.com";
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=clublocker.com
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720812745; x=1721417545;
+        h=feedback-id:mime-version:date:message-id:subject:reply-to:to:from
+         :dkim-signature:dkim-signature:delivered-to:x-forwarded-for
+         :x-forwarded-to:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kK1NYE1sjFh8EDMMS2Srm6l2EiG4pi4x5huU9EZSC7E=;
+        b=EWp/fJe4vcjy3vPGVHaKiLuJ2NW8w//VHxZ9+fG/LJExPb/mOmZKmSH7oGPn6lWDhX
+         Tys8aZgiYi/N2kS/KxPeccLM+QM0glFLyGljlrlh7XOzOvRuhMLdZTRPL0ccuTiYEAjg
+         YouTh6sXo1QGq+D0ECZTMx2WFxZ6hDeKuTGn0VqhaCB0SzJTosz/zKqO11AfUydD2AZO
+         mHZGCK23M2/Q9pW6yqoT3MWte+nNzFGoQhgRjd18CvmgD5GwWYrFmOttq6BbcR4ExUCz
+         ajdXBPRudnICa/TUoqG/qYY+yLvQRWjehYjVBQtQUepYixV27zJcSbHu31jpZJzmvcde
+         AyKw==
+X-Forwarded-Encrypted: i=2; AJvYcCX+1rZBzlKOje3UFq8IMUNYzzryhv0Re714b2nkDM8yMw0yPWbQI2Da6TpWrzHc8d08SvWjlfRuYQfmXg3QwqUnzU5kWZUF5a0=
+X-Gm-Message-State: AOJu0YxiP9oMeVv/ThFnwQUJcDtR1HrQcuP1bzl6UGshh75rTiM/q8+Z
+	5om9tTrCO+8KWxvV3DCwuPyll3kAAtVonNvQYbibJUau2K4mtO4nw8TRZrGAJU7eLctBJtfMxBN
+	NdVtUKBGu4I45LfJ0RQ/zemv9OST7ek3F7NxvMvmCNAxc9bO32nzn9rgreg==
+X-Received: by 2002:a05:6a20:a106:b0:1c0:f220:ed2 with SMTP id adf61e73a8af0-1c2981ff899mr17494415637.1.1720812745378;
+        Fri, 12 Jul 2024 12:32:25 -0700 (PDT)
+X-Forwarded-To: squash@andrew.parmet.com
+X-Forwarded-For: andrewparmet@gmail.com squash@andrew.parmet.com
+Delivered-To: andrew.parmet@gmail.com
+Received: by 2002:a05:6a10:27af:b0:586:a44a:8840 with SMTP id ia47csp955978pxb;
+        Fri, 12 Jul 2024 12:32:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=2; AJvYcCVDPTnsxjUJ3lrM7on4CamEhmAyfW98HWZVoHFpvYc8j65iTKnURPzujORa0duYgJ4YmpnAdbuau6XiVLWz89RfDNqBEcaeGQ==
+X-Google-Smtp-Source: AGHT+IEW+AszIL+7C1DNSVbMtT2QL3qrnH01OiAWFPqdhgkxwBMdgyHZg3EiW7HtZXnG24vmm3R+
+X-Received: by 2002:a05:6870:d626:b0:254:c4ab:daf5 with SMTP id 586e51a60fabf-25eae850669mr11598509fac.22.1720812742071;
+        Fri, 12 Jul 2024 12:32:22 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1720812742; cv=none;
+        d=google.com; s=arc-20160816;
+        b=C5Vsa4aYwN+7xzTrTKT+fCw+fzv2rN9y6SNnSp5LvAp5FaTBnb/N1r/cjqGM64Y9bb
+         A2FSSBanAYQm+r/M+TEQThDxMcPUHUb1+9o6Zrs83awsXuG05S9JzwGyEi2CMLkl26bw
+         Jq3yx9xk2pHlArtw42hqrgbqVcLuylL86gxoFlDPAISx+wZ/Foobc7h6oJYWUS57oOr1
+         CxYcjViBtxZyN9oFg3CiUjoTmAIKxXalvNuMfai5M28QnMx7zNHFRMWDBqBMVJGTqE+r
+         SfTltHDPgvkhvEExs//qQaEjxjHBRHNwTPgwHlOnXjyh9Mq0Rusatpfh4vhByvgUfswO
+         taNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=feedback-id:mime-version:date:message-id:subject:reply-to:to:from
+         :dkim-signature:dkim-signature;
+        bh=kK1NYE1sjFh8EDMMS2Srm6l2EiG4pi4x5huU9EZSC7E=;
+        fh=7fUXqjWV6XR0QS1jxX858CaASTPX/wz+scBwGzsocqc=;
+        b=xZUG5IJ3GIylYNCWKAGJuRffUFJ4/LEMdvV1+J0zoqurnSb47jxc7e/vQs9DiEKZcJ
+         +jTPEA0Yml4yKX1GLg3ClPpJYZInw8wGN9IynwiOsVi1LH5kQtv57J//Y2KA6awfJ6bl
+         NPF2SXxDBZQ8+Mz9YalG7sW+fsnW7aHS/QbznlLRBFMpV7QqQoiynFIVxFEdeJGgSJSC
+         oCsyOW4uHtHiWQbc0fO/V+hDe4SyEGwRYFlNIAsHiAoyAuFi7eJvlCX6odd4R+a6upXA
+         p6HYt+W3mZUuwT2esOEiyKD3Ali3gF72DzoIWOXebofuG6ZIjT0JlpPGvn08FOyY2R7k
+         23+w==;
+        dara=google.com
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=temperror (no key for signature) header.i=@clublocker.com header.s=dkim header.b=ZReqWeZw;
+       dkim=pass header.i=@amazonses.com header.s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug header.b=g6+l2l7B;
+       spf=pass (google.com: domain of srs0=h0ww8z=om=amazonses.com=01000190a86e9c38-afa12d7a-bbb7-49af-b597-3246b2d238cd-000000@parmet.com designates 66.96.184.1 as permitted sender) smtp.mailfrom="SRS0=H0ww8Z=OM=amazonses.com=01000190a86e9c38-afa12d7a-bbb7-49af-b597-3246b2d238cd-000000@parmet.com";
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=clublocker.com
+Return-Path: <SRS0=H0ww8Z=OM=amazonses.com=01000190a86e9c38-afa12d7a-bbb7-49af-b597-3246b2d238cd-000000@parmet.com>
+Received: from bosmailout01.eigbox.net (bosmailout01.eigbox.net. [66.96.184.1])
+        by mx.google.com with ESMTPS id af79cd13be357-79f190d75f2si1026803685a.604.2024.07.12.12.32.21
+        for <andrew.parmet@gmail.com>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Jul 2024 12:32:22 -0700 (PDT)
+Received-SPF: pass (google.com: domain of srs0=h0ww8z=om=amazonses.com=01000190a86e9c38-afa12d7a-bbb7-49af-b597-3246b2d238cd-000000@parmet.com designates 66.96.184.1 as permitted sender) client-ip=66.96.184.1;
+Authentication-Results: mx.google.com;
+       dkim=temperror (no key for signature) header.i=@clublocker.com header.s=dkim header.b=ZReqWeZw;
+       dkim=pass header.i=@amazonses.com header.s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug header.b=g6+l2l7B;
+       spf=pass (google.com: domain of srs0=h0ww8z=om=amazonses.com=01000190a86e9c38-afa12d7a-bbb7-49af-b597-3246b2d238cd-000000@parmet.com designates 66.96.184.1 as permitted sender) smtp.mailfrom="SRS0=H0ww8Z=OM=amazonses.com=01000190a86e9c38-afa12d7a-bbb7-49af-b597-3246b2d238cd-000000@parmet.com";
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=clublocker.com
+Received: from bosmailscan04.eigbox.net ([10.20.15.4])
+	by bosmailout01.eigbox.net with esmtp (Exim)
+	id 1sSM0D-0001CX-Hx
+	for andrew.parmet@gmail.com; Fri, 12 Jul 2024 15:32:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=clublocker.com; s=dkim; h=MIME-Version:Date:Message-ID:Subject:Reply-To:To:
+	From:Content-Type:Sender:Cc:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=kK1NYE1sjFh8EDMMS2Srm6l2EiG4pi4x5huU9EZSC7E=; b=ZReqWeZwIWalxRyumfGOuZXdg8
+	J6D1JML3f0huq3uT70IzgQ3m64eoTSFZWN/vJEVMPufkOm0aTA0cLQ2b2wcn2gcHvU5bP2SZViIFf
+	cPC08TtpfPi1w8sE67pbbPLO/8M2Pu8W49FFCN4uV/MCAxt1SZuMHdIGyt00cTHKPQ0IGYUgRc24c
+	iBW+XiuY8LcUU4aODv3Ug3ZkxFn/sNkCt+1KT12sH20gRK4S6yZnEPYg2l2I5ALT7l1hk0fVn6h08
+	yYusc2mqwK0AV+bxnCdRJJHGIQUL9fELbJSiZ/oQtiQtdjZVx7pGfle/+uwJ6U+rTOV1doGQmOr8H
+	672GStUA==;
+Received: from [10.115.3.3] (helo=bosimpinc03)
+	by bosmailscan04.eigbox.net with esmtp (Exim)
+	id 1sSM0D-0006zy-9k
+	for andrew@parmet.com; Fri, 12 Jul 2024 15:32:21 -0400
+Received: from a8-62.smtp-out.amazonses.com ([54.240.8.62])
+	by bizsmtp with ESMTP
+	id SM0CsMl1WjPe0SM0DsWN09; Fri, 12 Jul 2024 15:32:21 -0400
+X-EN-OrigIP: 54.240.8.62
+X-EN-IMPSID: SM0CsMl1WjPe0SM0DsWN09
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1720812739;
+	h=Content-Type:From:To:Reply-To:Subject:Message-ID:Date:MIME-Version:Feedback-ID;
+	bh=1FQ+Y4ZYZnAZceVSj4OoEArPgkXHfpI8/hFdcXmhwl8=;
+	b=g6+l2l7BRqCGcEPB6v/U+qCFGwFOE7rzd4M9e51OjY8/Qz84H5hdyR/itTEh6YsW
+	zp+dbM3DB2ZK/8J4A/1RjP7VTq9Jpme2axu+Yuz/l4ZUWHnCrHzP1n94mmLbYCa5Usz
+	v+5nb4MEmozQsXdIk65STlgTlmouuWSxJtG78snY=
+Content-Type: multipart/mixed; boundary="--_NmP-f73dcf7f1fba4707-Part_1"
+From: Club Locker <no-reply@clublocker.com>
+To: andrew@parmet.com
+Reply-To: pros@tandr.org
+Subject: You have been added to an activity at Tennis & Racquet Club
+Message-ID: <01000190a86e9c38-afa12d7a-bbb7-49af-b597-3246b2d238cd-000000@email.amazonses.com>
+Date: Fri, 12 Jul 2024 19:32:19 +0000
+MIME-Version: 1.0
+Feedback-ID: ::1.us-east-1.nvEQFBLrnsYYlHOIclFpo0WN7dgvcT2b+eS5HXR6suE=:AmazonSES
+X-SES-Outgoing: 2024.07.12-54.240.8.62
+X-CMAE-Envelope: MS4wfJYUnUa08S1noCf7gyEYkmmNABqpcqUB4Ce/mlbp7ieu+2IcWAt2MkrZKWKTquZEB1Gd62VTbzRJXdo2LfuQ4KwAp+dWl80pkT4vUNhQViAN9PENu34T
+ J+Mk0Fu4DasEt3hpmgkCQlK/E9lQ+NIXvdi1r668W6zdq4qjpQakH0Hej38lf4IBFmislBt5gvURxogIbx5ArVjM32R8tOMn1f66hzdkFrZ2o0evcLmQ2MtB
+ Q2stkWOB2RsurmKJBawj1g==
+
+----_NmP-f73dcf7f1fba4707-Part_1
+Content-Type: text/html
+Content-Transfer-Encoding: quoted-printable
+
+<p>Hello Andrew Parmet,</p>
+<p></p>
+<p>
+  You have been added to the =
+activity "6.0 Challenge matches"   at Tennis & Racquet Club
+</p>
+<p>
+  Group activity details:<br />
+  <strong> Date: </strong> Saturday, July =
+13th 2024 <br />
+  <strong> Time: </strong> 09:45 AM to 11:15 AM <br />
+  <strong> Location: </strong> Court #1 - Squash,Court #3 - Squash <br />
+</p>
+
+=20
+<a
+  href=3D'https://clublocker.com/email-actions/reservations/37=
+44671/player/167759/accept/EOyCcDNTaCp2FLasRa3VqEHaO4nG8sjtdjNdH2nQwmzhAOza=
+ZjAklu8cylgq8w2v'
+  >Click here to confirm your presence</a
+>
+<br />
+<p></p>
+<br />
+<br />
+To cancel this reservation please log into
+<a href=3D"https://clublocker.com">Club Locker</a> and use the My =
+Reservations
+area.=20
+
+----_NmP-f73dcf7f1fba4707-Part_1
+Content-Type: text/calendar; name=event.ics
+Content-Disposition: attachment; filename=event.ics
+Content-Transfer-Encoding: 7bit
+
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Tri Tech Computers//node-icalendar//EN
+BEGIN:VEVENT
+DTSTAMP:20240712T193219Z
+UID:bcfffd3e-46a0-40fb-9799-b71a616987b4
+DTSTART:20240713T134500Z
+DTEND:20240713T151500Z
+SUMMARY:6.0 Challenge matches at Tennis & Racquet Club
+ORGANIZER;CN=Tennis & Racquet Club:mailto:no-reply@clublocker.com
+LOCATION:Tennis & Racquet Club / Courts: Court #1 - Squash\, Court #3 - Squ
+ ash
+END:VEVENT
+END:VCALENDAR
+
+----_NmP-f73dcf7f1fba4707-Part_1--
