@@ -21,7 +21,8 @@ sealed class Action(
                 "A reservation including you has been made",
                 "You've joined a reservation",
                 "You have joined a reservation",
-                "You have been added to the activity"
+                "You have been added to the activity",
+                "You have been added to a reservation"
             )
 
         private val UPDATING =
