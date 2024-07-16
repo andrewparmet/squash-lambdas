@@ -442,6 +442,23 @@ class IntegrationTests {
             )
     }
 
+    @Test
+    fun `added to a reservation`() {
+        assertThat(getSummary("addedToAReservation"))
+            .isEqualTo(
+                summary(
+                    Action.Create,
+                    Match(
+                        Court.Court2,
+                        Instant.parse("2024-07-16T22:00:00Z"),
+                        Instant.parse("2024-07-16T22:45:00Z"),
+                        "emails/some-file-name",
+                        emptySet()
+                    )
+                )
+            )
+    }
+
     private fun getSummary(fileName: String) =
         ChangeSummary.fromEmail(emailFromBody(fileName))
 
