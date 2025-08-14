@@ -9,13 +9,12 @@ import javax.mail.internet.MimeMultipart
 internal abstract class AbstractMimeMessageExtractor<T>(
     private val newInstance: () -> Appendable<T>
 ) {
-    fun extract(message: MimeMessage): Appendable<T> {
-        return if (message.isMimeType("multipart/*")) {
+    fun extract(message: MimeMessage): Appendable<T> =
+        if (message.isMimeType("multipart/*")) {
             getFromMimeMultipart(message.content as MimeMultipart)
         } else {
             getFromPart(message)
         }
-    }
 
     private fun getFromMimeMultipart(mimeMultipart: MimeMultipart): Appendable<T> {
         val count = mimeMultipart.count

@@ -5,11 +5,7 @@ import com.parmet.squashlambdas.cal.EventManager
 import com.parmet.squashlambdas.notify.Notifier
 
 interface LambdaUser {
-    fun withInput(
-        notifier: (Notifier, Throwable) -> Unit,
-        input: Any,
-        action: () -> Unit
-    )
+    fun withInput(notifier: (Notifier, Throwable) -> Unit, input: Any, action: () -> Unit)
 
     fun handleEmail(changeSummary: ChangeSummary)
 }

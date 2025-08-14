@@ -7,9 +7,12 @@ internal class AppendableString() : Appendable<StringBuilder> {
         delegate.append(src)
     }
 
-    override fun append(toAppend: StringBuilder) = apply { delegate.append(toAppend) }
+    override fun append(toAppend: StringBuilder) =
+        apply { delegate.append(toAppend) }
 
-    override fun iterator() = listOf(delegate).iterator()
+    override fun iterator() =
+        listOf(delegate).iterator()
 
-    override fun toString() = delegate.toString()
+    override fun toString() =
+        delegate.toString()
 }

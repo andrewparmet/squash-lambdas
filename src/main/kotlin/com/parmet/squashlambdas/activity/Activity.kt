@@ -20,9 +20,11 @@ interface Activity {
             }
 
         // This is imperfect.
-        private fun EmailData.isMatch() = !isClinic()
+        private fun EmailData.isMatch() =
+            !isClinic()
 
         // This seems to be reliable.
-        private fun EmailData.isClinic() = body.contains("Clinic")
+        private fun EmailData.isClinic() =
+            body.contains("Clinic")
     }
 }

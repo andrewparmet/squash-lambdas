@@ -44,7 +44,10 @@ internal class TimeFilter(
         return pastOneAm
     }
 
-    internal class Output(val reason: String?) {
-        fun shouldMakeReservation() = reason == null
+    internal class Output(
+        val reason: String?
+    ) {
+        fun shouldMakeReservation() =
+            reason == null
     }
 }

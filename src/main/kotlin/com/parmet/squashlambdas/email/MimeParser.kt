@@ -11,7 +11,8 @@ internal class MimeParser<T> private constructor(
     private val filter: (String) -> Boolean = { true },
     private val parser: (Part) -> Appendable<T>
 ) {
-    fun isFor(part: Part) = part.isMimeType(mimeType) && part.fileName.let { it == null || filter(it) }
+    fun isFor(part: Part) =
+        part.isMimeType(mimeType) && part.fileName.let { it == null || filter(it) }
 
     fun parse(part: Part): Appendable<T> {
         require(isFor(part)) {

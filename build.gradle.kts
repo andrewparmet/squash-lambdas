@@ -12,8 +12,6 @@ repositories {
     mavenCentral()
 }
 
-val log4jVersion = "2.23.1"
-
 dependencies {
     implementation(platform(libs.aws.bom))
     implementation(platform(libs.log4j.bom))
@@ -51,9 +49,14 @@ spotless {
         ktlint()
             .editorConfigOverride(
                 mapOf(
+                    "max_line_length" to 120,
+                    "ktlint_ignore_back_ticked_identifier" to "true",
+                    "ktlint_class_signature_rule_force_multiline_when_parameter_count_greater_or_equal_than" to 1,
+                    "ktlint_function_signature_body_expression_wrapping" to "always",
                     "ktlint_standard_trailing-comma-on-call-site" to "disabled",
                     "ktlint_standard_trailing-comma-on-declaration-site" to "disabled",
-                    "ij_kotlin_packages_to_use_import_on_demand" to null
+                    "ktlint_standard_discouraged-comment-location" to "disabled",
+                    "ij_kotlin_packages_to_use_import_on_demand" to null,
                 )
             )
     }

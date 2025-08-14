@@ -13,7 +13,8 @@ sealed class Action(
 
     object None : Action({ _, _ -> })
 
-    override fun toString() = this::class.java.simpleName
+    override fun toString() =
+        this::class.java.simpleName
 
     companion object {
         private val CREATION =
@@ -50,15 +51,14 @@ sealed class Action(
                 "has re-confirmed a reservation made"
             )
 
-        fun parseFromSubject(body: String): Action {
-            return when {
+        fun parseFromSubject(body: String): Action =
+            when {
                 CREATION.containsMatch(body) -> Create
                 UPDATING.containsMatch(body) -> Update
                 DELETION.containsMatch(body) -> Delete
                 NO_ACTION.containsMatch(body) -> None
                 else -> throw IllegalArgumentException("Unable to parse action from $body")
             }
-        }
 
         private fun List<String>.containsMatch(body: String) =
             any { body.contains(it) }
