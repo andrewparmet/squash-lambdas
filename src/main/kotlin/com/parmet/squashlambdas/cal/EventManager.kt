@@ -3,7 +3,7 @@ package com.parmet.squashlambdas.cal
 import com.google.api.services.calendar.Calendar
 import com.google.common.collect.Iterables
 import com.parmet.squashlambdas.activity.Activity
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 interface EventManager {
     fun create(activity: Activity)

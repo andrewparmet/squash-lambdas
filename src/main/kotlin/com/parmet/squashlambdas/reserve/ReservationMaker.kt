@@ -9,7 +9,7 @@ import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.clublocker.ReservationResp
 import com.parmet.squashlambdas.util.inBoston
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime

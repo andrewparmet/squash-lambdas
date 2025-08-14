@@ -1,7 +1,7 @@
 package com.parmet.squashlambdas.reserve
 
 import com.parmet.squashlambdas.util.inBoston
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate

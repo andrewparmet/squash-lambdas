@@ -9,7 +9,7 @@ import com.parmet.squashlambdas.matchfind.CsvEmailSender
 import com.parmet.squashlambdas.matchfind.CsvType
 import com.parmet.squashlambdas.s3.S3CreateObjectInfo
 import com.parmet.squashlambdas.s3.S3EmailNotification
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 class MatchFindHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }

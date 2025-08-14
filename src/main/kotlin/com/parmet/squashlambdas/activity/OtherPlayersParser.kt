@@ -1,6 +1,6 @@
 package com.parmet.squashlambdas.activity
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.regex.Pattern
 
 internal object OtherPlayersParser {

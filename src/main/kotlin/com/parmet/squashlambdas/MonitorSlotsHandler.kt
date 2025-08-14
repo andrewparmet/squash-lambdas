@@ -11,7 +11,7 @@ import com.parmet.squashlambdas.monitor.SlotStorageManagerImpl
 import com.parmet.squashlambdas.monitor.SlotsTracker
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.util.inBoston
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.DayOfWeek.FRIDAY
 import java.time.DayOfWeek.MONDAY
 import java.time.Instant
