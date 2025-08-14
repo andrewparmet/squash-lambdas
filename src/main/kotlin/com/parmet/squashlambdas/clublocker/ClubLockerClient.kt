@@ -52,7 +52,7 @@ sealed class ReservationResp {
 
     internal data class Error(
         val statusCode: Int,
-        val message: String,
+        val message: Any?,
         val match: Match
     ) : NonSuccess()
 

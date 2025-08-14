@@ -4,17 +4,18 @@ import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.activity.Player
-import com.parmet.squashlambdas.testutil.ConfiguredTest
-import org.junit.Before
-import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
-@Disabled
-class ClubLockerClientImplTest : ConfiguredTest() {
-    @Before
+class ClubLockerClientImplTest {
+    private val email = "email"
+    private val client = ClubLockerClientImpl(ClubLockerUser(email, "password"))
+
+    @BeforeEach
     fun startClient() {
         client.startAsync().awaitRunning(3, TimeUnit.SECONDS)
     }
@@ -36,8 +37,8 @@ class ClubLockerClientImplTest : ConfiguredTest() {
 
     @Test
     fun `test directory name reversal`() {
-        assertThat(User(0, "Parmet, Andrew").fullName)
-            .isEqualTo("Andrew Parmet")
+        assertThat(User(0, "Last, First").fullName)
+            .isEqualTo("First Last")
     }
 
     @Test
@@ -67,18 +68,22 @@ class ClubLockerClientImplTest : ConfiguredTest() {
 
     @Test
     fun `test make reservation success`() {
+        val start = Instant.parse("2025-08-18T19:00:00Z")
         val resp =
             client.makeReservation(
                 Match(
-                    Court.Court6,
-                    Instant.parse("2019-02-04T23:00:00Z"),
-                    Instant.parse("2019-02-04T23:45:00Z"),
+                    Court.TennisCourt,
+                    start,
+                    start + Duration.ofMinutes(60),
                     "",
-                    setOf(Player(email = email))
+                    setOf(Player(name = "First Last", email = email))
                 )
             )
 
         println(resp)
+        if (resp is ReservationResp.Failure) {
+            resp.t.printStackTrace()
+        }
         assertThat(resp).isInstanceOf(ReservationResp.Success::class.java)
     }
 }

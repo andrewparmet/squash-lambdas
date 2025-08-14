@@ -24,9 +24,7 @@ import com.parmet.squashlambdas.activity.Court.FitnessClasses
 import com.parmet.squashlambdas.activity.Court.RacquetsCourt
 import com.parmet.squashlambdas.activity.Court.TennisCourt
 import com.parmet.squashlambdas.activity.Match
-import com.parmet.squashlambdas.reserve.endTime
 import com.parmet.squashlambdas.reserve.slot
-import com.parmet.squashlambdas.reserve.startTime
 import com.parmet.squashlambdas.util.fromJson
 import com.parmet.squashlambdas.util.inBoston
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -146,7 +144,7 @@ internal class ClubLockerClientImpl(
                     ReservationResp.Success((body["id"] as Number).toInt(), match)
                 }
             } else {
-                ReservationResp.Error(code, body["error"] as String, match)
+                ReservationResp.Error(code, body["error"], match)
             }
         } catch (t: Throwable) {
             return ReservationResp.Failure(t, match)
@@ -189,8 +187,7 @@ internal class ClubLockerClientImpl(
 
 data class ClubLockerUser(
     val username: String,
-    val password: String,
-    val name: String
+    val password: String
 )
 
 val COURTS_BY_ID =
@@ -217,20 +214,11 @@ data class ReservationReq(
     val players: List<Player>
 ) {
     private val date = localDate.toString()
-    private val startTime = timeSlot.startTime
-    private val endTime = timeSlot.endTime
     private val slot = timeSlot.slot
     private val type = "match"
-    private val numberOfPlayers = 2
     private val isPrivate = false
-    private val restrictJoinByRating = false
-    private val minimumRating = -1
-    private val maximumRating = 1.1
     private val notes = listOf<Any>()
-    private val matchType = "singles"
-    private val customMatchType = 144
     private val applyUserRestrictionsForAdmin = false
-    private val paymentCard = null
     private val payingForAll = false
 
     fun toJson() =
