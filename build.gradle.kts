@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    alias(libs.plugins.buildConfig)
     alias(libs.plugins.kotlin)
     alias(libs.plugins.shadow)
     alias(libs.plugins.spotless)
@@ -77,31 +78,14 @@ kotlin {
     }
 }
 
-tasks.withType<KotlinCompile>().all {
-    dependsOn("generateGitShaConstant")
-}
-
 tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-val gitShaOutputDir = file("${layout.buildDirectory.get()}/generated/git-sha")
-
-sourceSets["main"].java.srcDir(gitShaOutputDir)
-
-tasks.register("generateGitShaConstant") {
-    doFirst {
-        val srcFile = File(gitShaOutputDir, "com/parmet/squashlambdas/GitSha.kt")
-        srcFile.parentFile.mkdirs()
-        srcFile.writeText(
-            """
-                package com.parmet.squashlambdas
-                
-                const val GIT_SHA = "${getGitSha()}"
-                
-            """.trimIndent()
-        )
-    }
+buildConfig {
+    useKotlinOutput { topLevelConstants = true }
+    packageName.set("com.parmet.squashlambdas")
+    buildConfigField(String::class.java, "GIT_SHA", getGitSha())
 }
 
 fun getGitSha(): String =

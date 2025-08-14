@@ -2,6 +2,7 @@
 aws = "1.12.760"
 aws-lambda = "1.2.3"
 biweekly = "0.6.8"
+buildConfig = "5.6.5"
 commons-configuration = "2.10.1"
 commons-email = "1.5"
 google-calendar = "v3-rev20231123-2.0.0"
@@ -22,6 +23,7 @@ spotless = "7.2.1"
 truth = "1.4.2"
 
 [plugins]
+buildConfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildConfig" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
