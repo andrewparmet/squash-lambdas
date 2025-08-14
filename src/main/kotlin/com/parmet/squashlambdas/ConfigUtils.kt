@@ -79,7 +79,6 @@ fun configureClubLockerClient(config: Configuration, s3: AmazonS3): Pair<ClubLoc
     val hostPlayer =
         Player(
             email = creds.getValue("username"),
-            name = config.getString("clubLocker.name")
         )
 
     return Pair(
@@ -87,7 +86,6 @@ fun configureClubLockerClient(config: Configuration, s3: AmazonS3): Pair<ClubLoc
             ClubLockerUser(
                 hostPlayer.email!!,
                 creds.getValue("password"),
-                hostPlayer.name!!
             )
         ),
         hostPlayer

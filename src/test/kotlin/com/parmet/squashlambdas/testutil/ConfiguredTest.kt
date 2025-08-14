@@ -7,7 +7,7 @@ import com.parmet.squashlambdas.configureCalendar
 import com.parmet.squashlambdas.configureClubLockerClient
 import com.parmet.squashlambdas.loadConfiguration
 import org.apache.commons.configuration2.Configuration
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 
 abstract class ConfiguredTest {
     lateinit var config: Configuration
@@ -15,7 +15,7 @@ abstract class ConfiguredTest {
     internal lateinit var client: ClubLockerClient
     lateinit var email: String
 
-    @Before
+    @BeforeEach
     fun before() {
         config = loadConfiguration("test.xml")
         calendar = configureCalendar(config, object : AbstractAmazonS3() {})
