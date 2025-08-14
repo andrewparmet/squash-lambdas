@@ -96,7 +96,8 @@ class GsonUtilsTest {
             }
     }
 
-    private fun Class<*>.isConcrete() = !Modifier.isAbstract(modifiers)
+    private fun Class<*>.isConcrete() =
+        !Modifier.isAbstract(modifiers)
 
     private fun assertSerializedFormContainsTypeTag(
         instances: Map<KClass<*>, *>,
@@ -115,11 +116,7 @@ class GsonUtilsTest {
         }
     }
 
-    private fun assertSerializedFormContainsTypeString(
-        instances: Map<KClass<*>, *>,
-        klass: KClass<*>,
-        adapter: Any
-    ) {
+    private fun assertSerializedFormContainsTypeString(instances: Map<KClass<*>, *>, klass: KClass<*>, adapter: Any) {
         instances.forEach { (kclass, instance) ->
             val serialized =
                 GsonBuilder()

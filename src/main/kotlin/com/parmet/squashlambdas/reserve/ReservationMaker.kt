@@ -55,7 +55,12 @@ class ReservationMaker(
         return Result.Failure(date, failures)
     }
 
-    private fun attemptReservation(date: LocalDate, court: Court, startTime: LocalTime, player: Player?): ReservationResp {
+    private fun attemptReservation(
+        date: LocalDate,
+        court: Court,
+        startTime: LocalTime,
+        player: Player?
+    ): ReservationResp {
         val localDateTime = LocalDateTime.of(date, startTime)
         val start = localDateTime.inBoston().toInstant()
         return client.makeReservation(
@@ -73,9 +78,8 @@ class ReservationMaker(
         )
     }
 
-    private fun ReservationResp.Error.isFatal(): Boolean {
-        return message.contains("Player has already booked their maximum number of prime time reservations")
-    }
+    private fun ReservationResp.Error.isFatal(): Boolean =
+        message.contains("Player has already booked their maximum number of prime time reservations")
 
     class Options(
         val hostPlayer: Player,

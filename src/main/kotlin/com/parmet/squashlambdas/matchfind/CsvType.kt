@@ -10,7 +10,9 @@ private const val LAST_NAME = "lastName"
 private const val EMAIL = "email"
 private const val TENNIS_HCAP = "rtoSinglesHcap"
 
-enum class CsvType(private val columnName: String) {
+enum class CsvType(
+    private val columnName: String
+) {
     SQUASH(RATING),
     TENNIS(TENNIS_HCAP);
 

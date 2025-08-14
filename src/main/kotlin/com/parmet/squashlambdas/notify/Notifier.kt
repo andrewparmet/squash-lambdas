@@ -52,15 +52,14 @@ class Notifier(
         )
     }
 
-    private fun successfulParseMsg(summary: ChangeSummary): String {
-        return """
+    private fun successfulParseMsg(summary: ChangeSummary): String =
+        """
             |Successfully processed change:
             |${print(summary)}
             |
             |Context:
             |${print(context)}
         """.trimMargin()
-    }
 
     fun publishFailedParse(t: Throwable) {
         sns.publish(
@@ -72,8 +71,8 @@ class Notifier(
         )
     }
 
-    private fun failedParseMsg(t: Throwable): String {
-        return """
+    private fun failedParseMsg(t: Throwable): String =
+        """
             |Encountered an error processing a Club Locker email:
             |
             |Context:
@@ -82,7 +81,6 @@ class Notifier(
             |Stack trace:
             |${print(t)}
         """.trimMargin()
-    }
 
     fun publishSuccessfulReservation(result: ReservationMaker.Result.Success) {
         sns.publish(
@@ -94,15 +92,14 @@ class Notifier(
         )
     }
 
-    private fun successfulParseMsg(result: ReservationMaker.Result.Success): String {
-        return """
+    private fun successfulParseMsg(result: ReservationMaker.Result.Success): String =
+        """
             |Successfully made a reservation:
             |${print(result)}
             |
             |Context:
             |${print(context)}
         """.trimMargin()
-    }
 
     fun publishFailedReservation(t: Throwable) {
         sns.publish(
@@ -114,8 +111,8 @@ class Notifier(
         )
     }
 
-    private fun failedReservationMsg(t: Throwable): String {
-        return """
+    private fun failedReservationMsg(t: Throwable): String =
+        """
             |Encountered an error making a reservation:
             |
             |Context:
@@ -124,7 +121,6 @@ class Notifier(
             |Stack trace:
             |${print(t)}
         """.trimMargin()
-    }
 
     fun publishFoundOpenSlot(result: List<Slot>) {
         sns.publish(
@@ -136,12 +132,11 @@ class Notifier(
         )
     }
 
-    private fun foundOpenSlotMsg(result: List<Slot>): String {
-        return """
+    private fun foundOpenSlotMsg(result: List<Slot>): String =
+        """
             |Found open slots:
             |${result.joinToString("\n") { prettyPrint(it) }}
         """.trimMargin()
-    }
 
     private fun properNoun(name: String) =
         CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.UPPER_CAMEL).convert(name)
@@ -165,8 +160,8 @@ class Notifier(
         )
     }
 
-    private fun failedSlotMonitoringMsg(failure: Throwable): String {
-        return """
+    private fun failedSlotMonitoringMsg(failure: Throwable): String =
+        """
             |Could not monitor slots.
             |
             |Context:
@@ -175,7 +170,6 @@ class Notifier(
             |Stack trace:
             |${print(failure)}
         """.trimMargin()
-    }
 
     fun publishFailedMatchFind(t: Throwable) {
         sns.publish(
@@ -187,8 +181,8 @@ class Notifier(
         )
     }
 
-    private fun failedMatchFindMsg(t: Throwable): String {
-        return """
+    private fun failedMatchFindMsg(t: Throwable): String =
+        """
             |Encountered an error processing a MatchFind request:
             |
             |Context:
@@ -197,5 +191,4 @@ class Notifier(
             |Stack trace:
             |${print(t)}
         """.trimMargin()
-    }
 }

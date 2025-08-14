@@ -43,7 +43,8 @@ import java.time.LocalDate
 
 internal class ClubLockerClientImpl(
     private val user: ClubLockerUser
-) : ClubLockerClient, AbstractIdleService() {
+) : AbstractIdleService(),
+    ClubLockerClient {
     private val logger = KotlinLogging.logger { }
 
     private val httpClient = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NEVER).build()
@@ -89,10 +90,7 @@ internal class ClubLockerClientImpl(
     override fun slotsTaken(from: LocalDate, to: LocalDate): List<Slot> =
         get("$clubResource/slots_taken/from/$from/to/$to")
 
-    private fun responseBody(
-        builder: HttpRequest.Builder,
-        requestBody: String? = null
-    ): String {
+    private fun responseBody(builder: HttpRequest.Builder, requestBody: String? = null): String {
         val response = response(builder, requestBody)
         val code = response.statusCode()
         val respBody = response.body()
@@ -108,10 +106,7 @@ internal class ClubLockerClientImpl(
         return respBody
     }
 
-    private fun response(
-        builder: HttpRequest.Builder,
-        requestBody: String? = null
-    ): HttpResponse<String> {
+    private fun response(builder: HttpRequest.Builder, requestBody: String? = null): HttpResponse<String> {
         val request =
             builder
                 .apply {
@@ -158,8 +153,8 @@ internal class ClubLockerClientImpl(
         }
     }
 
-    private fun Match.toReservationRequest(): ReservationReq {
-        return ReservationReq(
+    private fun Match.toReservationRequest(): ReservationReq =
+        ReservationReq(
             tennisAndRacquetClubId,
             court.clubLockerId,
             start.inBoston().toLocalDate(),
@@ -177,7 +172,6 @@ internal class ClubLockerClientImpl(
                 }
             },
         )
-    }
 
     private val Court.clubLockerId: Int
         get() = COURTS_BY_ID.inverse().getValue(this)
@@ -189,7 +183,8 @@ internal class ClubLockerClientImpl(
     private fun checkRunning() =
         check(isRunning)
 
-    override fun shutDown() = Unit
+    override fun shutDown() =
+        Unit
 }
 
 data class ClubLockerUser(
@@ -238,7 +233,8 @@ data class ReservationReq(
     private val paymentCard = null
     private val payingForAll = false
 
-    fun toJson() = GSON.toJson(this)
+    fun toJson() =
+        GSON.toJson(this)
 
     companion object {
         private val GSON =
@@ -256,9 +252,11 @@ class Player(
     val guestName: String?
 ) {
     companion object {
-        fun member(id: Any) = Player("member", id, null)
+        fun member(id: Any) =
+            Player("member", id, null)
 
-        fun guest(name: String) = Player("guest", null, name)
+        fun guest(name: String) =
+            Player("guest", null, name)
 
         internal val SERIALIZER =
             object : JsonSerializer<Player> {

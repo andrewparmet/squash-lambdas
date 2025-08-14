@@ -53,7 +53,8 @@ fun configureNotifier(topicArn: String) =
         context
     )
 
-fun configureDynamoDb() = AmazonDynamoDBClientBuilder.defaultClient()
+fun configureDynamoDb() =
+    AmazonDynamoDBClientBuilder.defaultClient()
 
 fun configureCalendar(config: Configuration, s3: AmazonS3) =
     Calendar.Builder(
@@ -72,10 +73,7 @@ fun configureSes() =
 private fun loadCredentials(config: Configuration, s3: AmazonS3) =
     GoogleCredentials.fromStream(loadFile(config, "google.cal.creds", s3).byteInputStream(UTF_8))
 
-fun configureClubLockerClient(
-    config: Configuration,
-    s3: AmazonS3
-): Pair<ClubLockerClient, Player> {
+fun configureClubLockerClient(config: Configuration, s3: AmazonS3): Pair<ClubLockerClient, Player> {
     val creds: Map<String, String> = Gson().fromJson(loadFile(config, "clubLocker.creds", s3))
 
     val hostPlayer =
