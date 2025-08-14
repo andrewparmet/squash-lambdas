@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.io.ByteArrayOutputStream
 
 plugins {
     alias(libs.plugins.kotlin)
@@ -42,6 +41,8 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.reflections)
     testImplementation(libs.truth)
+
+    testRuntimeOnly(libs.junit.platformLauncher)
 }
 
 spotless {
@@ -62,11 +63,21 @@ spotless {
     }
 }
 
-tasks.withType<KotlinCompile>().all {
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
+
+kotlin {
     compilerOptions {
+        jvmToolchain(11)
         jvmTarget.set(JvmTarget.JVM_11)
         allWarningsAsErrors.set(true)
     }
+}
+
+tasks.withType<KotlinCompile>().all {
     dependsOn("generateGitShaConstant")
 }
 
@@ -93,11 +104,7 @@ tasks.register("generateGitShaConstant") {
     }
 }
 
-fun getGitSha(): String {
-    val stdout = ByteArrayOutputStream()
-    exec {
+fun getGitSha(): String =
+    providers.exec {
         commandLine("git", "rev-parse", "--short", "HEAD")
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
-}
+    }.standardOutput.asText.get().trim()
