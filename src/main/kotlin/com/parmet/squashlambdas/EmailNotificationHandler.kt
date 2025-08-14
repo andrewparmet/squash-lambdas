@@ -9,13 +9,15 @@ import com.parmet.squashlambdas.email.EmailRetriever
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.s3.S3CreateObjectInfo
 import com.parmet.squashlambdas.s3.S3EmailNotification
+import mu.KotlinLogging
 import org.apache.commons.configuration2.Configuration
+
+private val logger = KotlinLogging.logger { }
 
 class EmailNotificationHandler : RequestHandler<Any, Any> {
     private val config: Configuration
     private val retriever: EmailRetriever
     private val myLambdaUser: LambdaUser
-    private val secondaryLambdaUser: LambdaUser
 
     init {
         config = loadConfiguration(System.getenv("CONFIG_NAME") + ".xml")
@@ -28,12 +30,6 @@ class EmailNotificationHandler : RequestHandler<Any, Any> {
                 configureNotifier(config.getString("aws.sns.myTopicArn")),
                 EventManagerImpl(calendar, config.getString("google.cal.calendarId"))
             )
-
-        secondaryLambdaUser =
-            SingleLambdaUser(
-                configureNotifier(config.getString("aws.sns.secondaryTopicArn")),
-                EventManagerImpl(calendar, config.getString("google.cal.secondaryCalendarId"))
-            )
     }
 
     override fun handleRequest(input: Any, ignore: Context) =
@@ -45,7 +41,7 @@ class EmailNotificationHandler : RequestHandler<Any, Any> {
                 if (config.getString("parse.primaryRecipient") in email.recipients) {
                     myLambdaUser.handleEmail(it)
                 } else {
-                    secondaryLambdaUser.handleEmail(it)
+                    logger.info { "Not notifying for info: $info" }
                 }
             }
         }

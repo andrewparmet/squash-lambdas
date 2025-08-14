@@ -45,7 +45,6 @@
     <sns>
       <myTopicArn>${env:MY_TOPIC_ARN}</myTopicArn>
       <publicTopicArn>${env:PUBLIC_TOPIC_ARN}</publicTopicArn>
-      <secondaryTopicArn>${env:SECONDARY_TOPIC_ARN}</secondaryTopicArn>
     </sns>
 
     <dynamo>
@@ -78,6 +77,5 @@
 
   <parse>
     <primaryRecipient>${env:PARSE_PRIMARY_RECIPIENT}</primaryRecipient>
-    <secondaryRecipient>${env:PARSE_SECONDARY_RECIPIENT}</secondaryRecipient>
   </parse>
 </configuration>
