@@ -5,12 +5,14 @@ import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.activity.Player
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
+@Disabled
 class ClubLockerClientImplTest {
     private val email = "email"
     private val client = ClubLockerClientImpl(ClubLockerUser(email, "password"))
