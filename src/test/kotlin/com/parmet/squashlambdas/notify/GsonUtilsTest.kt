@@ -10,7 +10,7 @@ import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.activity.Sport
 import com.parmet.squashlambdas.cal.Action
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.junit.jupiter.api.Test
 import org.reflections.Reflections
 import java.lang.reflect.Modifier

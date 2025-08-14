@@ -2,7 +2,7 @@ package com.parmet.squashlambdas.cal
 
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.model.AclRule
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger { }
 

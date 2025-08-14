@@ -12,7 +12,7 @@ import com.parmet.squashlambdas.reserve.InputParser
 import com.parmet.squashlambdas.reserve.ReservationMaker
 import com.parmet.squashlambdas.reserve.ReservationMaker.Result
 import com.parmet.squashlambdas.reserve.TimeFilter
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.apache.commons.configuration2.Configuration
 import java.time.LocalDate
 

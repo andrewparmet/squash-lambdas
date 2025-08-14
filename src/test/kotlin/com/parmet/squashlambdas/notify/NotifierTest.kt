@@ -10,7 +10,7 @@ import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.cal.Action
 import com.parmet.squashlambdas.cal.ChangeSummary
 import com.parmet.squashlambdas.clublocker.Slot
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.time.ZoneOffset

@@ -1,6 +1,6 @@
 package com.parmet.squashlambdas
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.concurrent.ConcurrentSkipListMap
 
 object Context {

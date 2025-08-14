@@ -29,7 +29,7 @@ import com.parmet.squashlambdas.reserve.slot
 import com.parmet.squashlambdas.reserve.startTime
 import com.parmet.squashlambdas.util.fromJson
 import com.parmet.squashlambdas.util.inBoston
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.apache.http.client.HttpResponseException
 import org.jsoup.Jsoup
 import java.lang.reflect.Type

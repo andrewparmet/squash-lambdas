@@ -9,7 +9,7 @@ import com.parmet.squashlambdas.email.EmailRetriever
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.s3.S3CreateObjectInfo
 import com.parmet.squashlambdas.s3.S3EmailNotification
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.apache.commons.configuration2.Configuration
 
 private val logger = KotlinLogging.logger { }
