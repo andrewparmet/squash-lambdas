@@ -26,6 +26,7 @@
       <location>local</location>
       <fileName>clublocker-creds.json</fileName>
     </creds>
+    <name>John Smith</name>
   </clubLocker>
 
   <matchfind>
