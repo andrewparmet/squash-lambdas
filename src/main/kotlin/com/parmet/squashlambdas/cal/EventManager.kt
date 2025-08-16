@@ -5,7 +5,7 @@ import com.google.common.collect.Iterables
 import com.parmet.squashlambdas.GoogleCalConfig
 import com.parmet.squashlambdas.activity.Activity
 import io.github.oshai.kotlinlogging.KotlinLogging
-import jakarta.inject.Inject
+import javax.inject.Inject
 
 class EventManager @Inject constructor(
     private val calendar: Calendar,

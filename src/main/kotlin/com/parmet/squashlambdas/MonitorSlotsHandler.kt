@@ -2,10 +2,6 @@ package com.parmet.squashlambdas
 
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
-import com.google.inject.Guice
-import com.google.inject.Inject
-import com.google.inject.Module
-import com.google.inject.name.Named
 import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.Context.withInput
 import com.parmet.squashlambdas.activity.Sport
@@ -23,34 +19,36 @@ import java.time.DayOfWeek.MONDAY
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
+import javax.inject.Inject
+import javax.inject.Named
 
 open class MonitorSlotsHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }
 
     @Inject
-    private lateinit var config: MonitorSlotsConfig
+    lateinit var config: MonitorSlotsConfig
 
     @Inject
     @Named("myNotifier")
-    private lateinit var myNotifier: Notifier
+    lateinit var myNotifier: Notifier
 
     @Inject
     @Named("publicNotifier")
-    private lateinit var publicNotifier: Notifier
+    lateinit var publicNotifier: Notifier
 
     @Inject
-    private lateinit var dynamoDb: DynamoDbClient
+    lateinit var dynamoDb: DynamoDbClient
 
     @Inject
-    private lateinit var client: ClubLockerClient
+    lateinit var client: ClubLockerClient
 
     private lateinit var slotsTracker: SlotsTracker
 
-    open val modules: List<Module> = listOf(MonitorSlotsModule(), AwsModule(), ClubLockerModule())
+    open fun buildComponent(): MonitorSlotsComponent =
+        DaggerMonitorSlotsComponent.create()
 
     fun init() {
-        val injector = Guice.createInjector(modules)
-        injector.injectMembers(this)
+        buildComponent().inject(this)
 
         try {
             client.init()
