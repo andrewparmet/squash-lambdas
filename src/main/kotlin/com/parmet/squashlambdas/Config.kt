@@ -27,7 +27,7 @@ data class GoogleCalConfig(
 
 data class SnsConfig(
     val myTopicArn: String,
-    val publicTopicArn: String
+    val publicTopicArn: String?
 )
 
 data class DynamoConfig(

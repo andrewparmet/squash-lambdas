@@ -7,7 +7,6 @@ googleCal:
 
 sns:
   myTopicArn: ${MY_TOPIC_ARN}
-  publicTopicArn: ""
 
 parse:
   primaryRecipient: ${PARSE_PRIMARY_RECIPIENT}

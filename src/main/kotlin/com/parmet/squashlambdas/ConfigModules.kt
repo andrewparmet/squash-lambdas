@@ -9,9 +9,12 @@ import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.notify.Notifier
 import dev.misfitlabs.kotlinguice4.KotlinModule
+import io.github.oshai.kotlinlogging.KotlinLogging
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.sns.SnsClient
+
+private val logger = KotlinLogging.logger { }
 
 class EmailNotificationModule : KotlinModule() {
     override fun configure() {
@@ -22,7 +25,8 @@ class EmailNotificationModule : KotlinModule() {
     @Provides
     @Singleton
     fun provideConfig(@Named("configName") configName: String): EmailNotificationConfig =
-        loadConfiguration(configName)
+        loadConfiguration<EmailNotificationConfig>(configName)
+            .apply { logger.info { "Finished building $this" } }
 
     @Provides
     @Singleton
@@ -38,6 +42,7 @@ class EmailNotificationModule : KotlinModule() {
     @Singleton
     fun provideCalendar(config: GoogleCalConfig, s3: S3Client): Calendar =
         configureCalendar(config, s3)
+            .apply { logger.info { "Finished building $this" } }
 }
 
 class MakeReservationModule : KotlinModule() {
@@ -89,28 +94,33 @@ class AwsModule : KotlinModule() {
     @Singleton
     fun provideS3(): S3Client =
         S3Client.create()
+            .apply { logger.info { "Finished building $this" } }
 
     @Provides
     @Singleton
     fun provideDynamoDb(): DynamoDbClient =
         DynamoDbClient.create()
+            .apply { logger.info { "Finished building $this" } }
 
     @Provides
     @Singleton
     fun provideSnsClient() =
         SnsClient.create()
+            .apply { logger.info { "Finished building $this" } }
 
     @Provides
     @Singleton
     @Named("myNotifier")
     fun provideMyNotifier(config: SnsConfig, snsClient: SnsClient): Notifier =
         configureNotifier(config.myTopicArn, snsClient)
+            .apply { logger.info { "Finished building $this" } }
 
     @Provides
     @Singleton
     @Named("publicNotifier")
     fun providePublicNotifier(config: SnsConfig, snsClient: SnsClient): Notifier =
-        configureNotifier(config.publicTopicArn, snsClient)
+        configureNotifier(config.publicTopicArn!!, snsClient)
+            .apply { logger.info { "Finished building $this" } }
 }
 
 class ClubLockerModule : KotlinModule() {

@@ -22,4 +22,3 @@ times:
 
 sns:
   myTopicArn: ${MY_TOPIC_ARN}
-  publicTopicArn: ""

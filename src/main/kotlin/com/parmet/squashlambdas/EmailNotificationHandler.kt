@@ -34,8 +34,14 @@ open class EmailNotificationHandler : RequestHandler<S3Event, Any> {
 
     open val modules: List<Module> = listOf(EmailNotificationModule(), AwsModule())
 
+    init {
+        logger.info { "Beginning handler instantiation" }
+    }
+
     final override fun handleRequest(input: S3Event, ignore: Context) {
+        logger.info { "Handling request: $input" }
         Guice.createInjector(modules).injectMembers(this)
+        logger.info { "Finished injecting" }
         val myLambdaUser = SingleLambdaUser(notifier, eventManager)
         myLambdaUser.withInput(Notifier::publishFailedParse, input) {
             val info = getS3Info(input)
