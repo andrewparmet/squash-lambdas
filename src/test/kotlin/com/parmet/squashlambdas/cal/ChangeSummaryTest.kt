@@ -1,4 +1,4 @@
-package com.parmet.squashlambdas.integration.emailnotification
+package com.parmet.squashlambdas.cal
 
 import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.activity.Activity
@@ -6,8 +6,6 @@ import com.parmet.squashlambdas.activity.Clinic
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.activity.Player
-import com.parmet.squashlambdas.cal.Action
-import com.parmet.squashlambdas.cal.ChangeSummary
 import com.parmet.squashlambdas.email.EmailRetriever
 import com.parmet.squashlambdas.testutil.EmailReturningS3
 import com.parmet.squashlambdas.testutil.getResourceAsString

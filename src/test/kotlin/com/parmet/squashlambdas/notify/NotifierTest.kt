@@ -9,11 +9,11 @@ import com.parmet.squashlambdas.cal.ChangeSummary
 import com.parmet.squashlambdas.clublocker.Slot
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.junit.jupiter.api.Test
-import java.time.Instant
-import java.time.ZoneOffset
 import software.amazon.awssdk.services.sns.SnsClient
 import software.amazon.awssdk.services.sns.model.PublishRequest
 import software.amazon.awssdk.services.sns.model.PublishResponse
+import java.time.Instant
+import java.time.ZoneOffset
 
 class NotifierTest {
     private val logger = KotlinLogging.logger { }
@@ -27,7 +27,8 @@ class NotifierTest {
                 return PublishResponse.builder().messageId("id").build()
             }
 
-            override fun serviceName(): String = "SNS"
+            override fun serviceName(): String =
+                "SNS"
             override fun close() {}
         }
 

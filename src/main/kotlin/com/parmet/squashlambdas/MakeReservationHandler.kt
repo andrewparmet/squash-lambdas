@@ -15,8 +15,8 @@ import com.parmet.squashlambdas.reserve.ReservationMaker
 import com.parmet.squashlambdas.reserve.ReservationMaker.Result
 import com.parmet.squashlambdas.reserve.TimeFilter
 import io.github.oshai.kotlinlogging.KotlinLogging
-import java.time.LocalDate
 import software.amazon.awssdk.services.s3.S3Client
+import java.time.LocalDate
 
 class MakeReservationHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }

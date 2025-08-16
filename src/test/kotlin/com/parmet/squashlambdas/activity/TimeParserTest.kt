@@ -1,7 +1,7 @@
 package com.parmet.squashlambdas.activity
 
 import com.google.common.truth.Truth.assertThat
-import com.parmet.squashlambdas.integration.emailnotification.emailFromBody
+import com.parmet.squashlambdas.cal.emailFromBody
 import org.junit.jupiter.api.Test
 import java.time.Instant
 

@@ -18,14 +18,22 @@ abstract class ConfiguredTest {
     @BeforeEach
     fun before() {
         config = loadConfiguration("test.yml")
-        calendar = configureCalendar(config, object : S3Client {
-            override fun serviceName(): String = "S3"
-            override fun close() {}
-        })
-        val clientAndEmail = configureClubLockerClient(config, object : S3Client {
-            override fun serviceName(): String = "S3"
-            override fun close() {}
-        })
+        calendar = configureCalendar(
+            config,
+            object : S3Client {
+                override fun serviceName(): String =
+                    "S3"
+                override fun close() {}
+            }
+        )
+        val clientAndEmail = configureClubLockerClient(
+            config,
+            object : S3Client {
+                override fun serviceName(): String =
+                    "S3"
+                override fun close() {}
+            }
+        )
         client = clientAndEmail.first
         email = clientAndEmail.second.email!!
     }

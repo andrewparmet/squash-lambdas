@@ -3,12 +3,12 @@ package com.parmet.squashlambdas.monitor
 import com.google.gson.Gson
 import com.parmet.squashlambdas.clublocker.Slot
 import io.github.oshai.kotlinlogging.KotlinLogging
-import java.time.Instant
-import java.time.LocalDate
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
+import java.time.Instant
+import java.time.LocalDate
 
 internal class SlotStorageManagerImpl(
     private val dynamoDb: DynamoDbClient,

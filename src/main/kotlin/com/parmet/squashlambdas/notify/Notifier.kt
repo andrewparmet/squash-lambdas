@@ -13,9 +13,9 @@ import com.parmet.squashlambdas.clublocker.Slot
 import com.parmet.squashlambdas.monitor.TimeFormatter
 import com.parmet.squashlambdas.reserve.ReservationMaker
 import com.parmet.squashlambdas.util.inBoston
-import java.time.Instant
 import software.amazon.awssdk.services.sns.SnsClient
 import software.amazon.awssdk.services.sns.model.PublishRequest
+import java.time.Instant
 
 class Notifier(
     private val sns: SnsClient,

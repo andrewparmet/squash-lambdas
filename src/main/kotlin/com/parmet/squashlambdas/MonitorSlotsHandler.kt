@@ -16,12 +16,12 @@ import com.parmet.squashlambdas.monitor.SlotsTracker
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.util.inBoston
 import io.github.oshai.kotlinlogging.KotlinLogging
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import java.time.DayOfWeek.FRIDAY
 import java.time.DayOfWeek.MONDAY
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 
 class MonitorSlotsHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }
