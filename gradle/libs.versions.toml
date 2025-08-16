@@ -10,6 +10,7 @@ gson = "2.13.1"
 gson-extras = "3.3.0"
 gson-javatime = "1.1.2"
 guava = "33.2.1-jre"
+guice = "7.0.0"
 hoplite = "2.9.0"
 jsoup = "1.21.1"
 junit = "5.13.4"
@@ -43,6 +44,7 @@ gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 gson-extras = { module = "org.danilopianini:gson-extras", version.ref = "gson-extras" }
 gson-javatime = { module = "com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers", version.ref = "gson-javatime" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
+guice = { module = "com.google.inject:guice", version.ref = "guice" }
 hoplite = { module = "com.sksamuel.hoplite:hoplite-yaml", version.ref = "hoplite" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }

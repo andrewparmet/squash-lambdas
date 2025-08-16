@@ -1,11 +1,16 @@
 package com.parmet.squashlambdas
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
+import com.google.inject.Guice
+import com.google.inject.Inject
+import com.google.inject.name.Named
 import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.Context.withInput
 import com.parmet.squashlambdas.activity.Sport
 import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
+import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.clublocker.Slot
 import com.parmet.squashlambdas.monitor.SlotStorageManagerImpl
 import com.parmet.squashlambdas.monitor.SlotsTracker
@@ -21,28 +26,36 @@ import java.time.LocalTime
 class MonitorSlotsHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }
 
-    private val config = loadConfiguration(System.getenv("CONFIG_NAME") + ".yml")
-    private val myNotifier: Notifier
-    private val publicNotifier: Notifier
-    private val slotsTracker: SlotsTracker
+    @Inject
+    private lateinit var config: AppConfig
+
+    @Inject
+    @Named("myNotifier")
+    private lateinit var myNotifier: Notifier
+
+    @Inject
+    @Named("publicNotifier")
+    private lateinit var publicNotifier: Notifier
+
+    @Inject
+    private lateinit var dynamoDb: AmazonDynamoDB
+
+    @Inject
+    private lateinit var client: ClubLockerClient
+    private lateinit var slotsTracker: SlotsTracker
 
     init {
-        val s3 = configureS3()
-        val dynamoDb = configureDynamoDb()
-        myNotifier = configureNotifier(config.aws.sns.myTopicArn)
-        publicNotifier = configureNotifier(config.aws.sns.publicTopicArn)
+        val injector = Guice.createInjector(ConfigModule())
+        injector.injectMembers(this)
 
-        val client =
-            try {
-                val (client, _) = configureClubLockerClient(config, s3)
-                client.apply { startAsync().awaitRunning() }
-            } catch (t: Throwable) {
-                myNotifier.publishFailedSlotMonitoring(t)
-                throw t
-            }
+        try {
+            client.startAsync().awaitRunning()
+        } catch (t: Throwable) {
+            myNotifier.publishFailedSlotMonitoring(t)
+            throw t
+        }
 
-        slotsTracker =
-            SlotsTracker(client, SlotStorageManagerImpl(dynamoDb, config.aws.dynamo.squashSlotsTableName))
+        slotsTracker = SlotsTracker(client, SlotStorageManagerImpl(dynamoDb, config.aws.dynamo.squashSlotsTableName))
     }
 
     override fun handleRequest(input: Any, context: Context) =

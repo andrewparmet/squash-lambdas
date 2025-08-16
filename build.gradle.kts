@@ -29,6 +29,7 @@ dependencies {
     implementation(libs.gson.extras)
     implementation(libs.gson.javatime)
     implementation(libs.guava)
+    implementation(libs.guice)
     implementation(libs.hoplite)
     implementation(libs.jsoup)
     implementation(libs.kotlinLogging)
