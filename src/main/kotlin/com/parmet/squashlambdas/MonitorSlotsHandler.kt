@@ -88,7 +88,7 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
         addToContext("foundSlots", slots)
         slots
             .filter { it.startTime in 1701..2099 }
-            .filter { COURTS_BY_ID.getValue(it.court).sport == Sport.Squash }
+            .filter { COURTS_BY_ID.getValue(it.court).sport in setOf(Sport.Squash, Sport.Tennis) }
             .let {
                 addToContext("filteredSlots", it)
                 if (it.isNotEmpty()) {
