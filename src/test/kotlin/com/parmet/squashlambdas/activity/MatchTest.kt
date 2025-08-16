@@ -3,16 +3,14 @@ package com.parmet.squashlambdas.activity
 import com.google.api.client.util.DateTime
 import com.google.api.services.calendar.model.EventDateTime
 import com.google.common.truth.Truth.assertThat
-import com.google.gson.Gson
+import com.parmet.squashlambdas.json.Json
 import org.junit.jupiter.api.Test
 import java.time.Instant
 
 class MatchTest {
-    private val gson = Gson()
-
     @Test
     fun `match can be serialized`() {
-        gson.toJson(
+        Json.mapper.writeValueAsString(
             Match(
                 Court.Court2,
                 Instant.now(),

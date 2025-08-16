@@ -1,21 +1,17 @@
 package com.parmet.squashlambdas.reserve
 
-import com.fatboyindustrial.gsonjavatime.InstantConverter
-import com.google.gson.GsonBuilder
-import com.google.gson.annotations.SerializedName
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.parmet.squashlambdas.json.Json
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.util.UUID
 
 internal object InputParser {
-    private val gson =
-        GsonBuilder()
-            .registerTypeAdapter(Instant::class.java, InstantConverter())
-            .create()
+    private val mapper = Json.mapper
 
     fun parseRequestDate(input: Any) =
-        parseRequestDate(gson.fromJson(gson.toJsonTree(input), Input::class.java))
+        parseRequestDate(mapper.convertValue(input, Input::class.java))
 
     internal fun parseRequestDate(input: Input): LocalDate =
         input.time
@@ -26,7 +22,7 @@ internal object InputParser {
     internal data class Input(
         val version: String,
         val id: UUID,
-        @SerializedName("detail-type")
+        @param:JsonProperty("detail-type")
         val detailType: String,
         val source: String,
         val account: String,

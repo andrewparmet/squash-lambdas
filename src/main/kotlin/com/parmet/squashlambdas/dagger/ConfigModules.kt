@@ -132,8 +132,7 @@ object CalendarModule {
     @Provides
     @Singleton
     fun provideCalendar(config: GoogleCalConfig, s3: S3Client): Calendar =
-        configureCalendar(config, s3)
-            .apply { logger.info { "Finished building $this" } }
+        withTiming { configureCalendar(config, s3) }
 }
 
 private inline fun <reified T> withTiming(block: () -> T): T {

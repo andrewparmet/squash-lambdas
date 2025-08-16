@@ -1,8 +1,7 @@
 package com.parmet.squashlambdas.notify
 
+import com.fasterxml.jackson.databind.module.SimpleModule
 import com.google.common.truth.Truth.assertThat
-import com.google.gson.GsonBuilder
-import com.google.gson.TypeAdapterFactory
 import com.parmet.squashlambdas.activity.Activity
 import com.parmet.squashlambdas.activity.Clinic
 import com.parmet.squashlambdas.activity.Court
@@ -10,6 +9,7 @@ import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.activity.Sport
 import com.parmet.squashlambdas.cal.Action
+import com.parmet.squashlambdas.json.Json
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.junit.jupiter.api.Test
 import org.reflections.Reflections
@@ -37,6 +37,12 @@ class GsonUtilsTest {
             ""
         )
 
+    private val module =
+        SimpleModule()
+            .addSerializer(Sport::class.java, SportSerializer)
+            .addSerializer(Court::class.java, CourtSerializer)
+            .addSerializer(Action::class.java, ActionSerializer)
+
     @Test
     fun `activity adapter works for all subclasses`() {
         val instances: Map<KClass<*>, *> =
@@ -47,7 +53,12 @@ class GsonUtilsTest {
 
         assertHasAnExampleOfEachConcreteSubclass(Activity::class, instances)
 
-        assertSerializedFormContainsTypeTag(instances, Activity::class, ACTIVITY_ADAPTER_FACTORY)
+        // With Jackson annotations on Activity, writing as base type includes "type"
+        instances.forEach { (kclass, instance) ->
+            val serialized = Json.mapper.writeValueAsString(instance as Activity)
+            logger.info { "Checking serialized form for $instance of type ${kclass.simpleName}: $serialized" }
+            assertThat(serialized).contains("\"type\":\"${kclass.simpleName}\"")
+        }
     }
 
     @Test
@@ -58,7 +69,7 @@ class GsonUtilsTest {
 
         assertHasAnExampleOfEachConcreteSubclass(Sport::class, instances)
 
-        assertSerializedFormContainsTypeString(instances, Sport::class, SportSerializer)
+        assertSerializedFormContainsTypeString(instances, Sport::class)
     }
 
     @Test
@@ -71,7 +82,7 @@ class GsonUtilsTest {
 
         assertHasAnExampleOfEachConcreteSubclass(Court::class, instances)
 
-        assertSerializedFormContainsTypeString(instances, Court::class, CourtSerializer)
+        assertSerializedFormContainsTypeString(instances, Court::class)
     }
 
     @Test
@@ -82,7 +93,7 @@ class GsonUtilsTest {
 
         assertHasAnExampleOfEachConcreteSubclass(Action::class, instances)
 
-        assertSerializedFormContainsTypeString(instances, Action::class, ActionSerializer)
+        assertSerializedFormContainsTypeString(instances, Action::class)
     }
 
     private fun assertHasAnExampleOfEachConcreteSubclass(kclass: KClass<*>, instances: Map<KClass<*>, *>) {
@@ -99,32 +110,11 @@ class GsonUtilsTest {
     private fun Class<*>.isConcrete() =
         !Modifier.isAbstract(modifiers)
 
-    private fun assertSerializedFormContainsTypeTag(
-        instances: Map<KClass<*>, *>,
-        klass: KClass<*>,
-        adapter: TypeAdapterFactory
-    ) {
+    private fun assertSerializedFormContainsTypeString(instances: Map<KClass<*>, *>, klass: KClass<*>) {
+        val mapper = Json.mapper.copy().registerModule(module)
         instances.forEach { (kclass, instance) ->
-            val serialized =
-                GsonBuilder()
-                    .registerTypeAdapterFactory(adapter)
-                    .create()
-                    .toJson(instance, klass.java)
+            val serialized = mapper.writeValueAsString(instance)
             logger.info { "Checking serialized form for $instance of type ${kclass.simpleName}: $serialized" }
-
-            assertThat(serialized).contains("\"type\":\"${kclass.simpleName}\"")
-        }
-    }
-
-    private fun assertSerializedFormContainsTypeString(instances: Map<KClass<*>, *>, klass: KClass<*>, adapter: Any) {
-        instances.forEach { (kclass, instance) ->
-            val serialized =
-                GsonBuilder()
-                    .registerTypeHierarchyAdapter(klass.java, adapter)
-                    .create()
-                    .toJson(instance)
-            logger.info { "Checking serialized form for $instance of type ${kclass.simpleName}: $serialized" }
-
             assertThat(serialized).contains(instance.toString())
         }
     }

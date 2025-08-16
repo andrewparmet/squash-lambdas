@@ -27,9 +27,9 @@ dependencies {
     implementation(libs.commons.email)
     implementation(libs.google.calendar)
     implementation(libs.google.oauth2.http)
-    implementation(libs.gson)
-    implementation(libs.gson.extras)
-    implementation(libs.gson.javatime)
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2")
     implementation(libs.guava)
     implementation(libs.hoplite)
     implementation(libs.jsoup)
@@ -74,14 +74,14 @@ spotless {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
 kotlin {
     compilerOptions {
-        jvmToolchain(11)
-        jvmTarget.set(JvmTarget.JVM_11)
+        jvmToolchain(17)
+        jvmTarget.set(JvmTarget.JVM_17)
         allWarningsAsErrors.set(true)
     }
 }

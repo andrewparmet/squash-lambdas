@@ -1,9 +1,7 @@
 package com.parmet.squashlambdas.reserve
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.common.truth.Truth.assertThat
-import com.google.gson.Gson
-import com.google.gson.JsonParser
-import com.google.gson.reflect.TypeToken
 import com.parmet.squashlambdas.clublocker.Affiliation
 import com.parmet.squashlambdas.clublocker.CourtResp
 import com.parmet.squashlambdas.clublocker.Player
@@ -11,18 +9,17 @@ import com.parmet.squashlambdas.clublocker.ReservationReq
 import com.parmet.squashlambdas.clublocker.Slot
 import com.parmet.squashlambdas.clublocker.User
 import com.parmet.squashlambdas.clublocker.UserResp
+import com.parmet.squashlambdas.json.Json
 import com.parmet.squashlambdas.testutil.getResourceAsString
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalTime
 
 class SerializationTests {
-    private val gson = Gson()
-
     @Test
     fun `test court parsing`() {
         val courts: List<CourtResp> =
-            gson.fromJson(getResourceAsString("courts.json"), object : TypeToken<List<CourtResp>>() {}.type)
+            Json.mapper.readValue(getResourceAsString("courts.json"))
 
         assertThat(courts).containsExactly(
             CourtResp(1690, "Court Tennis", 60),
@@ -47,16 +44,15 @@ class SerializationTests {
                 listOf(Player.member(167759), Player.member("open"))
             )
 
-        assertThat(JsonParser.parseString(req.toJson()).asJsonObject.entrySet())
-            .containsExactlyElementsIn(
-                JsonParser.parseString(getResourceAsString("reservation-request.json")).asJsonObject.entrySet()
-            )
+        val actual = Json.mapper.readTree(req.toJson())
+        val expected = Json.mapper.readTree(getResourceAsString("reservation-request.json"))
+        assertThat(actual).isEqualTo(expected)
     }
 
     @Test
     fun `test slots taken parsing`() {
         val taken: List<Slot> =
-            gson.fromJson(getResourceAsString("slots-taken.json"), object : TypeToken<List<Slot>>() {}.type)
+            Json.mapper.readValue(getResourceAsString("slots-taken.json"))
 
         assertThat(taken.subList(0, 2)).containsExactly(
             Slot(
@@ -80,7 +76,7 @@ class SerializationTests {
 
     @Test
     fun `test user parsing`() {
-        assertThat(gson.fromJson(getResourceAsString("user.json"), UserResp::class.java))
+        assertThat(Json.mapper.readValue<UserResp>(getResourceAsString("user.json")))
             .isEqualTo(
                 UserResp(
                     167759,
@@ -93,7 +89,7 @@ class SerializationTests {
     @Test
     fun `test directory parsing`() {
         val directory: List<User> =
-            gson.fromJson(getResourceAsString("directory.json"), object : TypeToken<List<User>>() {}.type)
+            Json.mapper.readValue(getResourceAsString("directory.json"))
 
         assertThat(directory).containsExactly(
             User(167759, "Parmet, Andrew")

@@ -1,5 +1,8 @@
 package com.parmet.squashlambdas.clublocker
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.common.base.Joiner
 import com.google.common.collect.ImmutableBiMap
 import com.google.common.net.HttpHeaders.ACCEPT
@@ -8,10 +11,6 @@ import com.google.common.net.HttpHeaders.CONTENT_TYPE
 import com.google.common.net.MediaType.FORM_DATA
 import com.google.common.net.MediaType.JSON_UTF_8
 import com.google.common.net.UrlEscapers
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonSerializationContext
-import com.google.gson.JsonSerializer
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Court.Court1
 import com.parmet.squashlambdas.activity.Court.Court2
@@ -23,13 +22,12 @@ import com.parmet.squashlambdas.activity.Court.FitnessClasses
 import com.parmet.squashlambdas.activity.Court.RacquetsCourt
 import com.parmet.squashlambdas.activity.Court.TennisCourt
 import com.parmet.squashlambdas.activity.Match
+import com.parmet.squashlambdas.json.Json
 import com.parmet.squashlambdas.reserve.slot
-import com.parmet.squashlambdas.util.fromJson
 import com.parmet.squashlambdas.util.inBoston
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.apache.http.client.HttpResponseException
 import org.jsoup.Jsoup
-import java.lang.reflect.Type
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -44,7 +42,7 @@ internal class ClubLockerClientImpl(
     private val logger = KotlinLogging.logger { }
 
     private val httpClient = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NEVER).build()
-    private val gson = Gson()
+    private val mapper = Json.mapper
 
     private val baseUrl = "https://api.ussquash.com"
     private val tennisAndRacquetClubId = 1413
@@ -116,7 +114,7 @@ internal class ClubLockerClientImpl(
     }
 
     private inline fun <reified T> get(resource: String): T =
-        gson.fromJson(responseBody(HttpRequest.newBuilder(URI(resource)).authorized()))
+        mapper.readValue(responseBody(HttpRequest.newBuilder(URI(resource)).authorized()))
 
     override fun makeReservation(match: Match): ReservationResp {
         try {
@@ -130,7 +128,7 @@ internal class ClubLockerClientImpl(
                 )
 
             val code = response.statusCode()
-            val body: Map<String, Any> = gson.fromJson(response.body())
+            val body: Map<String, Any> = mapper.readValue(response.body())
             return if (code == 200) {
                 if (body.containsKey("createDenied")) {
                     ReservationResp.Error(code, body["reason"] as String, match)
@@ -196,32 +194,25 @@ val COURTS_BY_ID =
 data class ReservationReq(
     val clubId: Int,
     val courtId: Int,
-    @Transient
+    @JsonIgnore
     val localDate: LocalDate,
-    @Transient
+    @JsonIgnore
     val timeSlot: com.parmet.squashlambdas.reserve.Slot,
     val players: List<Player>
 ) {
-    private val date = localDate.toString()
-    private val slot = timeSlot.slot
-    private val type = "match"
-    private val isPrivate = false
-    private val notes = listOf<Any>()
-    private val applyUserRestrictionsForAdmin = false
-    private val payingForAll = false
+    val date = localDate.toString()
+    val slot = timeSlot.slot
+    val type = "match"
+    val isPrivate = false
+    val notes = listOf<Any>()
+    val applyUserRestrictionsForAdmin = false
+    val payingForAll = false
 
     fun toJson() =
-        GSON.toJson(this)
-
-    companion object {
-        private val GSON =
-            GsonBuilder()
-                .serializeNulls()
-                .registerTypeAdapter(Player::class.java, Player.SERIALIZER)
-                .create()
-    }
+        Json.mapper.writeValueAsString(this)
 }
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 class Player(
     val type: String,
     val id: Any?,
@@ -234,14 +225,5 @@ class Player(
 
         fun guest(name: String) =
             Player("guest", null, name)
-
-        internal val SERIALIZER =
-            object : JsonSerializer<Player> {
-                // Don't serialize nulls
-                private val gson = Gson()
-
-                override fun serialize(src: Player, typeOfSrc: Type, context: JsonSerializationContext) =
-                    gson.toJsonTree(src)
-            }
     }
 }
