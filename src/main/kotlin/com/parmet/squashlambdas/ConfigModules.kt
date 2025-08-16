@@ -10,12 +10,18 @@ import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.notify.Notifier
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.s3.S3Client
+import software.amazon.awssdk.services.sns.SnsClient
 
 class EmailNotificationModule : AbstractModule() {
     @Provides
+    @Named("configName")
+    fun provideConfigName() =
+        "production-email-notification-handler.yml"
+
+    @Provides
     @Singleton
-    fun provideEmailNotificationConfig(): EmailNotificationConfig =
-        loadConfiguration(System.getenv("CONFIG_NAME") + ".yml")
+    fun provideConfig(@Named("configName") configName: String): EmailNotificationConfig =
+        loadConfiguration(configName)
 
     @Provides
     @Singleton
@@ -26,13 +32,23 @@ class EmailNotificationModule : AbstractModule() {
     @Singleton
     fun provideNotifierConfig(config: EmailNotificationConfig) =
         config.sns
+
+    @Provides
+    @Singleton
+    fun provideCalendar(config: GoogleCalConfig, s3: S3Client): Calendar =
+        configureCalendar(config, s3)
 }
 
 class MakeReservationModule : AbstractModule() {
     @Provides
+    @Named("configName")
+    fun provideConfigName() =
+        "production-make-reservation-handler.yml"
+
+    @Provides
     @Singleton
-    fun provideMakeReservationConfig(): MakeReservationConfig =
-        loadConfiguration(System.getenv("CONFIG_NAME") + ".yml")
+    fun provideConfig(@Named("configName") configName: String): MakeReservationConfig =
+        loadConfiguration(configName)
 
     @Provides
     @Singleton
@@ -47,9 +63,14 @@ class MakeReservationModule : AbstractModule() {
 
 class MonitorSlotsModule : AbstractModule() {
     @Provides
+    @Named("configName")
+    fun provideConfigName() =
+        "production-monitor-slots-handler.yml"
+
+    @Provides
     @Singleton
-    fun provideMonitorSlotsConfig(): MonitorSlotsConfig =
-        loadConfiguration(System.getenv("CONFIG_NAME") + ".yml")
+    fun provideConfig(@Named("configName") configName: String): MonitorSlotsConfig =
+        loadConfiguration(configName)
 
     @Provides
     @Singleton
@@ -62,22 +83,36 @@ class MonitorSlotsModule : AbstractModule() {
         config.sns
 }
 
-class ConfigModule : AbstractModule() {
+class AwsModule : AbstractModule() {
     @Provides
     @Singleton
     fun provideS3(): S3Client =
-        configureS3()
+        S3Client.create()
 
     @Provides
     @Singleton
     fun provideDynamoDb(): DynamoDbClient =
-        configureDynamoDb()
+        DynamoDbClient.create()
 
     @Provides
     @Singleton
-    fun provideCalendar(config: GoogleCalConfig, s3: S3Client): Calendar =
-        configureCalendar(config, s3)
+    fun provideSnsClient() =
+        SnsClient.create()
 
+    @Provides
+    @Singleton
+    @Named("myNotifier")
+    fun provideMyNotifier(config: SnsConfig, snsClient: SnsClient): Notifier =
+        configureNotifier(config.myTopicArn, snsClient)
+
+    @Provides
+    @Singleton
+    @Named("publicNotifier")
+    fun providePublicNotifier(config: SnsConfig, snsClient: SnsClient): Notifier =
+        configureNotifier(config.publicTopicArn, snsClient)
+}
+
+class ClubLockerModule : AbstractModule() {
     @Provides
     @Singleton
     fun provideClubLockerClient(config: ClubLockerConfig, s3: S3Client): ClubLockerClient =
@@ -87,16 +122,4 @@ class ConfigModule : AbstractModule() {
     @Singleton
     fun provideHostPlayer(config: ClubLockerConfig, s3: S3Client): Player =
         configureClubLockerClient(config, s3).second
-
-    @Provides
-    @Singleton
-    @Named("myNotifier")
-    fun provideMyNotifier(config: SnsConfig): Notifier =
-        configureNotifier(config.myTopicArn)
-
-    @Provides
-    @Singleton
-    @Named("publicNotifier")
-    fun providePublicNotifier(config: SnsConfig): Notifier =
-        configureNotifier(config.publicTopicArn)
 }

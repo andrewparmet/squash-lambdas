@@ -22,16 +22,7 @@ data class MonitorSlotsConfig(
 
 data class GoogleCalConfig(
     val calendarId: String,
-    val fileConfig: FileConfig
-)
-
-data class AwsClubLockerConfig(
-    val creds: AwsFileConfig
-)
-
-data class AwsFileConfig(
-    val bucket: String,
-    val key: String
+    val creds: FileConfig
 )
 
 data class SnsConfig(

@@ -12,7 +12,7 @@ import com.parmet.squashlambdas.testutil.getResourceAsString
 import org.junit.jupiter.api.Test
 import java.time.Instant
 
-class IntegrationTests {
+class ChangeSummaryTest {
     @Test
     fun `reservation created`() {
         assertThat(getSummary("reservationCreated"))

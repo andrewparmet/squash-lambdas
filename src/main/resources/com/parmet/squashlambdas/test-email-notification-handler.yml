@@ -9,4 +9,4 @@ sns:
   publicTopicArn: fake-arn-2
 
 parse:
-  primaryRecipient: ""
+  primaryRecipient: "joecool@peanuts.com"

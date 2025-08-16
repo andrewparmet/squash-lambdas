@@ -18,7 +18,8 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation(libs.aws2.sdk.core)
     implementation(libs.aws2.dynamodb)
-    implementation(libs.aws.lambda)
+    implementation(libs.aws.lambda.core)
+    implementation(libs.aws.lambda.events)
     implementation(libs.aws2.s3)
     implementation(libs.aws2.sns)
     implementation(libs.biweekly)
@@ -40,7 +41,10 @@ dependencies {
     runtimeOnly(libs.log4j.slf4jImpl)
 
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
     testImplementation(libs.reflections)
+    testImplementation(libs.testcontainers.junit)
+    testImplementation(libs.testcontainers.localstack)
     testImplementation(libs.truth)
 
     testRuntimeOnly(libs.junit.platformLauncher)

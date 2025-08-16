@@ -20,7 +20,6 @@ import com.parmet.squashlambdas.reserve.mapNonEmptyLines
 import com.parmet.squashlambdas.util.fromJson
 import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.addResourceSource
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
 import software.amazon.awssdk.services.sns.SnsClient
@@ -33,25 +32,19 @@ inline fun <reified T : Any> loadConfiguration(file: String): T =
         .build()
         .loadConfigOrThrow<T>()
 
-fun configureS3(): S3Client =
-    S3Client.create()
-
-fun configureNotifier(topicArn: String) =
+fun configureNotifier(topicArn: String, snsClient: SnsClient) =
     Notifier(
-        SnsClient.create(),
+        snsClient,
         topicArn,
         context
     )
-
-fun configureDynamoDb(): DynamoDbClient =
-    DynamoDbClient.create()
 
 fun configureCalendar(config: GoogleCalConfig, s3: S3Client) =
     Calendar.Builder(
         GoogleNetHttpTransport.newTrustedTransport(),
         GsonFactory(),
         HttpCredentialsAdapter(
-            loadCredentials(config.fileConfig, s3).createScoped(listOf(CalendarScopes.CALENDAR))
+            loadCredentials(config.creds, s3).createScoped(listOf(CalendarScopes.CALENDAR))
         )
     )
         .setApplicationName("PARMET_SQUASH_LAMBDAS")

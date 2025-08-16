@@ -2,9 +2,11 @@ package com.parmet.squashlambdas
 
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
+import com.amazonaws.services.lambda.runtime.events.S3Event
 import com.google.api.services.calendar.Calendar
 import com.google.inject.Guice
 import com.google.inject.Inject
+import com.google.inject.Module
 import com.google.inject.name.Named
 import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.cal.ChangeSummary
@@ -18,7 +20,7 @@ import software.amazon.awssdk.services.s3.S3Client
 
 private val logger = KotlinLogging.logger { }
 
-class EmailNotificationHandler : RequestHandler<Any, Any> {
+open class EmailNotificationHandler : RequestHandler<S3Event, Any> {
     @Inject
     private lateinit var config: EmailNotificationConfig
 
@@ -32,11 +34,13 @@ class EmailNotificationHandler : RequestHandler<Any, Any> {
     @Named("myNotifier")
     private lateinit var notifier: Notifier
 
-    private val retriever: EmailRetriever
-    private val myLambdaUser: LambdaUser
+    private lateinit var retriever: EmailRetriever
+    private lateinit var myLambdaUser: LambdaUser
 
-    init {
-        val injector = Guice.createInjector(ConfigModule(), EmailNotificationModule())
+    open val modules: List<Module> = listOf(EmailNotificationModule(), AwsModule())
+
+    fun init() {
+        val injector = Guice.createInjector(modules)
         injector.injectMembers(this)
 
         retriever = EmailRetriever(s3)
@@ -44,7 +48,8 @@ class EmailNotificationHandler : RequestHandler<Any, Any> {
         myLambdaUser = SingleLambdaUser(notifier, eventManager)
     }
 
-    override fun handleRequest(input: Any, ignore: Context) =
+    final override fun handleRequest(input: S3Event, ignore: Context) {
+        init()
         myLambdaUser.withInput(Notifier::publishFailedParse, input) {
             val info = getS3Info(input)
             val email = getEmail(info)
@@ -57,8 +62,9 @@ class EmailNotificationHandler : RequestHandler<Any, Any> {
                 }
             }
         }
+    }
 
-    private fun getS3Info(input: Any) =
+    private fun getS3Info(input: S3Event) =
         S3EmailNotification.fromInputObject(input).s3ObjectInfo.also {
             addToContext("s3CreateObjectInfo", it)
         }

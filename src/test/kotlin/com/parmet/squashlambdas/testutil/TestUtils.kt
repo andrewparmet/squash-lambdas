@@ -2,6 +2,7 @@ package com.parmet.squashlambdas.testutil
 
 import com.google.gson.JsonParser
 import java.nio.charset.StandardCharsets.UTF_8
+import kotlin.reflect.KClass
 
 fun removeJsonWhitespace(string: String) =
     JsonParser.parseString(string).toString()
@@ -11,6 +12,9 @@ fun getJsonResourceAsString(resourceName: String) =
 
 fun getResourceAsString(resourceName: String) =
     getResourceAsString(getCallerCallerClass(), resourceName)
+
+fun getResourceAsString(owner: KClass<*>, resourceName: String) =
+    getResourceAsString(owner.java, resourceName)
 
 fun getResourceAsString(owner: Class<*>, resourceName: String) =
     owner.getResourceAsStream(resourceName)

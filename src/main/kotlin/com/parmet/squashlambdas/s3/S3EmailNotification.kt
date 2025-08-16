@@ -1,7 +1,6 @@
 package com.parmet.squashlambdas.s3
 
-import com.fatboyindustrial.gsonjavatime.InstantConverter
-import com.google.gson.GsonBuilder
+import com.amazonaws.services.lambda.runtime.events.S3Event
 import com.google.gson.annotations.SerializedName
 import java.time.Instant
 
@@ -15,15 +14,29 @@ internal data class S3EmailNotification(
     val s3ObjectInfo: S3CreateObjectInfo
 ) {
     companion object {
-        private val GSON =
-            GsonBuilder()
-                .registerTypeAdapter(Instant::class.java, InstantConverter())
-                .create()
-
-        fun fromInputObject(input: Any) =
-            GSON.fromJson(
-                GSON.toJsonTree(input).asJsonObject.getAsJsonArray("Records").get(0),
-                S3EmailNotification::class.java
-            )
+        fun fromInputObject(input: S3Event) =
+            input.records.first().run {
+                S3EmailNotification(
+                    eventVersion,
+                    eventSource,
+                    awsRegion,
+                    Instant.parse(eventTime.toInstant().toString()),
+                    eventName,
+                    s3.run {
+                        S3CreateObjectInfo(
+                            bucket.run {
+                                BucketInfo(
+                                    name
+                                )
+                            },
+                            `object`.run {
+                                S3ObjectInfo(
+                                    key
+                                )
+                            }
+                        )
+                    }
+                )
+            }
     }
 }
