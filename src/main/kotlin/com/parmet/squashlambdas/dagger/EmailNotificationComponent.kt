@@ -1,5 +1,6 @@
-package com.parmet.squashlambdas
+package com.parmet.squashlambdas.dagger
 
+import com.parmet.squashlambdas.EmailNotificationHandler
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Named
@@ -8,18 +9,19 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [
-        MakeReservationModule::class,
+        EmailNotificationModule::class,
+        CalendarModule::class,
         AwsModule::class,
-        ClubLockerModule::class,
     ]
 )
-interface MakeReservationComponent {
-    fun inject(target: MakeReservationHandler)
+interface EmailNotificationComponent {
+    fun inject(target: EmailNotificationHandler)
 
     @Component.Builder
     interface Builder {
         @BindsInstance
         fun configName(@Named("configName") configName: String): Builder
-        fun build(): MakeReservationComponent
+
+        fun build(): EmailNotificationComponent
     }
 }

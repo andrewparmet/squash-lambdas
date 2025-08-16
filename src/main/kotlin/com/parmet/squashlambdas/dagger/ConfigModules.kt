@@ -1,8 +1,17 @@
-package com.parmet.squashlambdas
+package com.parmet.squashlambdas.dagger
 
 import com.google.api.services.calendar.Calendar
-import com.parmet.squashlambdas.activity.Player
-import com.parmet.squashlambdas.clublocker.ClubLockerClient
+import com.parmet.squashlambdas.ClubLockerConfig
+import com.parmet.squashlambdas.ClubLockerResources
+import com.parmet.squashlambdas.EmailNotificationConfig
+import com.parmet.squashlambdas.GoogleCalConfig
+import com.parmet.squashlambdas.MakeReservationConfig
+import com.parmet.squashlambdas.MonitorSlotsConfig
+import com.parmet.squashlambdas.SnsConfig
+import com.parmet.squashlambdas.configureCalendar
+import com.parmet.squashlambdas.configureClubLockerResources
+import com.parmet.squashlambdas.configureNotifier
+import com.parmet.squashlambdas.loadConfiguration
 import com.parmet.squashlambdas.notify.Notifier
 import dagger.Module
 import dagger.Provides
@@ -12,6 +21,7 @@ import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.sns.SnsClient
 import javax.inject.Named
 import javax.inject.Singleton
+import kotlin.time.measureTime
 
 private val logger = KotlinLogging.logger { }
 
@@ -20,8 +30,7 @@ object EmailNotificationModule {
     @Provides
     @Singleton
     fun provideConfig(@Named("configName") configName: String): EmailNotificationConfig =
-        loadConfiguration<EmailNotificationConfig>(configName)
-            .apply { logger.info { "Finished building $this" } }
+        withTiming { loadConfiguration(configName) }
 
     @Provides
     @Singleton
@@ -39,7 +48,7 @@ object MakeReservationModule {
     @Provides
     @Singleton
     fun provideConfig(@Named("configName") configName: String): MakeReservationConfig =
-        loadConfiguration(configName)
+        withTiming { loadConfiguration(configName) }
 
     @Provides
     @Singleton
@@ -57,7 +66,7 @@ object MonitorSlotsModule {
     @Provides
     @Singleton
     fun provideConfig(@Named("configName") configName: String): MonitorSlotsConfig =
-        loadConfiguration(configName)
+        withTiming { loadConfiguration(configName) }
 
     @Provides
     @Singleton
@@ -75,47 +84,47 @@ object AwsModule {
     @Provides
     @Singleton
     fun provideS3(): S3Client =
-        S3Client.create()
-            .apply { logger.info { "Finished building $this" } }
+        withTiming { S3Client.create() }
 
     @Provides
     @Singleton
     fun provideDynamoDb(): DynamoDbClient =
-        DynamoDbClient.create()
-            .apply { logger.info { "Finished building $this" } }
+        withTiming { DynamoDbClient.create() }
 
     @Provides
     @Singleton
     fun provideSnsClient(): SnsClient =
-        SnsClient.create()
-            .apply { logger.info { "Finished building $this" } }
+        withTiming { SnsClient.create() }
 
     @Provides
     @Singleton
     @Named("myNotifier")
     fun provideMyNotifier(config: SnsConfig, snsClient: SnsClient): Notifier =
-        configureNotifier(config.myTopicArn, snsClient)
-            .apply { logger.info { "Finished building $this" } }
+        withTiming { configureNotifier(config.myTopicArn, snsClient) }
 
     @Provides
     @Singleton
     @Named("publicNotifier")
     fun providePublicNotifier(config: SnsConfig, snsClient: SnsClient): Notifier =
-        configureNotifier(config.publicTopicArn!!, snsClient)
-            .apply { logger.info { "Finished building $this" } }
+        withTiming { configureNotifier(config.publicTopicArn!!, snsClient) }
 }
 
 @Module
 object ClubLockerModule {
     @Provides
     @Singleton
-    fun provideClubLockerClient(config: ClubLockerConfig, s3: S3Client): ClubLockerClient =
-        configureClubLockerClient(config, s3).first
+    fun provideClubLockerResources(config: ClubLockerConfig, s3: S3Client) =
+        withTiming { configureClubLockerResources(config, s3) }
 
     @Provides
     @Singleton
-    fun provideHostPlayer(config: ClubLockerConfig, s3: S3Client): Player =
-        configureClubLockerClient(config, s3).second
+    fun provideClubLockerClient(resources: ClubLockerResources) =
+        resources.client
+
+    @Provides
+    @Singleton
+    fun provideHostPlayer(resources: ClubLockerResources) =
+        resources.player
 }
 
 @Module
@@ -125,4 +134,11 @@ object CalendarModule {
     fun provideCalendar(config: GoogleCalConfig, s3: S3Client): Calendar =
         configureCalendar(config, s3)
             .apply { logger.info { "Finished building $this" } }
+}
+
+private inline fun <reified T> withTiming(block: () -> T): T {
+    val result: T
+    val time = measureTime { result = block() }
+    logger.info { "Finished building $result in $time" }
+    return result
 }

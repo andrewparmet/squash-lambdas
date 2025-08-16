@@ -6,6 +6,8 @@ import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.Context.withInput
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
+import com.parmet.squashlambdas.dagger.DaggerMakeReservationComponent
+import com.parmet.squashlambdas.dagger.MakeReservationComponent
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.reserve.InputParser
 import com.parmet.squashlambdas.reserve.ReservationMaker

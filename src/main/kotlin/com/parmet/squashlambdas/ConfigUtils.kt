@@ -53,7 +53,12 @@ fun configureCalendar(config: GoogleCalConfig, s3: S3Client) =
 private fun loadCredentials(config: FileConfig, s3: S3Client) =
     GoogleCredentials.fromStream(loadFile(config, s3).byteInputStream())
 
-fun configureClubLockerClient(config: ClubLockerConfig, s3: S3Client): Pair<ClubLockerClient, Player> {
+data class ClubLockerResources(
+    val client: ClubLockerClient,
+    val player: Player
+)
+
+fun configureClubLockerResources(config: ClubLockerConfig, s3: S3Client): ClubLockerResources {
     val creds: Map<String, String> = Gson().fromJson(loadFile(config.creds, s3))
 
     val hostPlayer =
@@ -62,7 +67,7 @@ fun configureClubLockerClient(config: ClubLockerConfig, s3: S3Client): Pair<Club
             name = config.name
         )
 
-    return Pair(
+    return ClubLockerResources(
         ClubLockerClientImpl(
             ClubLockerUser(
                 hostPlayer.email!!,
