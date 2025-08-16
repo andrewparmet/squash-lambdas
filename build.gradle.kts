@@ -13,18 +13,19 @@ repositories {
 }
 
 dependencies {
-    implementation(platform(libs.aws2.bom))
+    implementation(platform(libs.aws.bom))
     implementation(platform(libs.log4j.bom))
 
     implementation(kotlin("reflect"))
-    implementation(libs.aws2.sdk.core)
-    implementation(libs.aws2.dynamodb)
+    implementation(libs.aws.dynamodb)
     implementation(libs.aws.lambda.core)
     implementation(libs.aws.lambda.events)
-    implementation(libs.aws2.s3)
-    implementation(libs.aws2.sns)
+    implementation(libs.aws.s3)
+    implementation(libs.aws.sdk.core)
+    implementation(libs.aws.sns)
     implementation(libs.biweekly)
     implementation(libs.commons.email)
+    implementation(libs.dagger)
     implementation(libs.google.calendar)
     implementation(libs.google.oauth2.http)
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
@@ -37,7 +38,6 @@ dependencies {
     implementation(libs.log4j.core)
     implementation(libs.opencsv)
 
-    implementation(libs.dagger)
     ksp(libs.dagger.compiler)
 
     runtimeOnly(libs.log4j.jcl)
