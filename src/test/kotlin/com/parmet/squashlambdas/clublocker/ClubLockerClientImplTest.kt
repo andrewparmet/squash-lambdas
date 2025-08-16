@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
-import java.util.concurrent.TimeUnit
 
 @Disabled
 class ClubLockerClientImplTest {
@@ -19,7 +18,7 @@ class ClubLockerClientImplTest {
 
     @BeforeEach
     fun startClient() {
-        client.startAsync().awaitRunning(3, TimeUnit.SECONDS)
+        client.init()
     }
 
     @Test

@@ -1,0 +1,22 @@
+clubLocker:
+  creds:
+    location: local
+    fileName: clublocker-creds.json
+  name: John Smith
+
+schedule:
+  location: local
+  fileName: ""
+
+courts:
+  location: local
+  fileName: ""
+
+times:
+  location: local
+  fileName: ""
+
+
+sns:
+  myTopicArn: fake-arn
+  publicTopicArn: fake-arn-2

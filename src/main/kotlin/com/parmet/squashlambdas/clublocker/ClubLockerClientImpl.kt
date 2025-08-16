@@ -8,7 +8,6 @@ import com.google.common.net.HttpHeaders.CONTENT_TYPE
 import com.google.common.net.MediaType.FORM_DATA
 import com.google.common.net.MediaType.JSON_UTF_8
 import com.google.common.net.UrlEscapers
-import com.google.common.util.concurrent.AbstractIdleService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSerializationContext
@@ -41,8 +40,7 @@ import java.time.LocalDate
 
 internal class ClubLockerClientImpl(
     private val user: ClubLockerUser
-) : AbstractIdleService(),
-    ClubLockerClient {
+) : ClubLockerClient {
     private val logger = KotlinLogging.logger { }
 
     private val httpClient = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NEVER).build()
@@ -56,7 +54,7 @@ internal class ClubLockerClientImpl(
     private lateinit var accessToken: String
     private lateinit var directory: Directory
 
-    override fun startUp() {
+    override fun init() {
         accessToken = authenticate()
         directory = Directory(this)
     }
@@ -117,14 +115,11 @@ internal class ClubLockerClientImpl(
         return httpClient.send(request, BodyHandlers.ofString())
     }
 
-    private inline fun <reified T> get(resource: String): T {
-        checkRunning()
-        return gson.fromJson(responseBody(HttpRequest.newBuilder(URI(resource)).authorized()))
-    }
+    private inline fun <reified T> get(resource: String): T =
+        gson.fromJson(responseBody(HttpRequest.newBuilder(URI(resource)).authorized()))
 
     override fun makeReservation(match: Match): ReservationResp {
         try {
-            checkRunning()
             val response =
                 response(
                     HttpRequest.newBuilder()
@@ -177,12 +172,6 @@ internal class ClubLockerClientImpl(
     private fun HttpRequest.Builder.authorized() =
         header(AUTHORIZATION, "Bearer $accessToken")
             .header(ACCEPT, JSON_UTF_8.toString())
-
-    private fun checkRunning() =
-        check(isRunning)
-
-    override fun shutDown() =
-        Unit
 }
 
 data class ClubLockerUser(

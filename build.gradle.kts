@@ -80,6 +80,7 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    environment("TEST_LOAD_FROM_ENV", "test-value")
 }
 
 buildConfig {

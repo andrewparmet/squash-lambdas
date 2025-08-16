@@ -10,12 +10,12 @@ class SlotStorageManagerImplTest : ConfiguredTest() {
     @Test
     @Disabled
     fun `test writing slots`() {
-        client.startAsync().awaitRunning()
+        client.init()
         val slots = client.slotsTaken(LocalDate.now(), LocalDate.now())
 
         SlotStorageManagerImpl(
             configureDynamoDb(),
-            config.aws.dynamo.squashSlotsTableName
+            monitorSlotsConfig.dynamoDb.squashSlotsTableName
         ).save(LocalDate.now(), slots)
     }
 }

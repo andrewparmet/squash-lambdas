@@ -22,7 +22,7 @@ class MakeReservationHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }
 
     @Inject
-    private lateinit var config: AppConfig
+    private lateinit var config: MakeReservationConfig
 
     @Inject
     private lateinit var s3: S3Client
@@ -38,10 +38,10 @@ class MakeReservationHandler : RequestHandler<Any, Any> {
     private lateinit var hostPlayer: Player
 
     init {
-        val injector = Guice.createInjector(ConfigModule())
+        val injector = Guice.createInjector(ConfigModule(), MakeReservationModule())
         injector.injectMembers(this)
         try {
-            client.startAsync().awaitRunning()
+            client.init()
         } catch (t: Throwable) {
             notifier.publishFailedReservation(t)
             throw t
@@ -67,7 +67,7 @@ class MakeReservationHandler : RequestHandler<Any, Any> {
     }
 
     private fun processSchedule(requestDate: LocalDate): Any {
-        val schedule = getSchedule(config, s3)
+        val schedule = getSchedule(config.schedule, s3)
         return if (schedule.shouldMakeReservation(requestDate)) {
             makeReservation(requestDate)
         } else {
@@ -84,8 +84,8 @@ class MakeReservationHandler : RequestHandler<Any, Any> {
                 client,
                 ReservationMaker.Options(
                     hostPlayer,
-                    getPreferredCourts(config, s3),
-                    getPreferredTimes(config, s3),
+                    getPreferredCourts(config.courts, s3),
+                    getPreferredTimes(config.times, s3),
                 )
             ).makeReservation(requestDate)
 
