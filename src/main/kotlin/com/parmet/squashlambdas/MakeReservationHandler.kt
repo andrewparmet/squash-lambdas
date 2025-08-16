@@ -3,6 +3,9 @@ package com.parmet.squashlambdas
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.amazonaws.services.s3.AmazonS3
+import com.google.inject.Guice
+import com.google.inject.Inject
+import com.google.inject.name.Named
 import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.Context.withInput
 import com.parmet.squashlambdas.activity.Player
@@ -18,20 +21,27 @@ import java.time.LocalDate
 class MakeReservationHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }
 
-    private val config: AppConfig
-    private val s3: AmazonS3
-    private val notifier: Notifier
-    private val client: ClubLockerClient
-    private val hostPlayer: Player
+    @Inject
+    private lateinit var config: AppConfig
+
+    @Inject
+    private lateinit var s3: AmazonS3
+
+    @Inject
+    @Named("myNotifier")
+    private lateinit var notifier: Notifier
+
+    @Inject
+    private lateinit var client: ClubLockerClient
+
+    @Inject
+    private lateinit var hostPlayer: Player
 
     init {
-        config = loadConfiguration(System.getenv("CONFIG_NAME") + ".yml")
-        s3 = configureS3()
-        notifier = configureNotifier(config.aws.sns.myTopicArn)
+        val injector = Guice.createInjector(ConfigModule())
+        injector.injectMembers(this)
         try {
-            val clientAndPlayer = configureClubLockerClient(config, s3)
-            client = clientAndPlayer.first.apply { startAsync().awaitRunning() }
-            hostPlayer = clientAndPlayer.second
+            client.startAsync().awaitRunning()
         } catch (t: Throwable) {
             notifier.publishFailedReservation(t)
             throw t
