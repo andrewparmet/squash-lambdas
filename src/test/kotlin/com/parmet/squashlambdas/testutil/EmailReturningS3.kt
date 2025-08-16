@@ -11,6 +11,7 @@ class EmailReturningS3(
     override fun getObjectAsBytes(getObjectRequest: GetObjectRequest): ResponseBytes<GetObjectResponse> =
         ResponseBytes.fromByteArray(GetObjectResponse.builder().build(), obj.toByteArray())
 
-    override fun serviceName(): String = "S3"
+    override fun serviceName(): String =
+        "S3"
     override fun close() {}
 }
