@@ -2,22 +2,22 @@ package com.parmet.squashlambdas.testutil
 
 import com.amazonaws.services.s3.AbstractAmazonS3
 import com.google.api.services.calendar.Calendar
+import com.parmet.squashlambdas.AppConfig
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.configureCalendar
 import com.parmet.squashlambdas.configureClubLockerClient
 import com.parmet.squashlambdas.loadConfiguration
-import org.apache.commons.configuration2.Configuration
 import org.junit.jupiter.api.BeforeEach
 
 abstract class ConfiguredTest {
-    lateinit var config: Configuration
+    lateinit var config: AppConfig
     lateinit var calendar: Calendar
     internal lateinit var client: ClubLockerClient
     lateinit var email: String
 
     @BeforeEach
     fun before() {
-        config = loadConfiguration("test.xml")
+        config = loadConfiguration("test.yml")
         calendar = configureCalendar(config, object : AbstractAmazonS3() {})
         val clientAndEmail = configureClubLockerClient(config, object : AbstractAmazonS3() {})
         client = clientAndEmail.first

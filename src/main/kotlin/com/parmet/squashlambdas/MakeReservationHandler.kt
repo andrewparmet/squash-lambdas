@@ -13,22 +13,21 @@ import com.parmet.squashlambdas.reserve.ReservationMaker
 import com.parmet.squashlambdas.reserve.ReservationMaker.Result
 import com.parmet.squashlambdas.reserve.TimeFilter
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.apache.commons.configuration2.Configuration
 import java.time.LocalDate
 
 class MakeReservationHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }
 
-    private val config: Configuration
+    private val config: AppConfig
     private val s3: AmazonS3
     private val notifier: Notifier
     private val client: ClubLockerClient
     private val hostPlayer: Player
 
     init {
-        config = loadConfiguration(System.getenv("CONFIG_NAME") + ".xml")
+        config = loadConfiguration(System.getenv("CONFIG_NAME") + ".yml")
         s3 = configureS3()
-        notifier = configureNotifier(config.getString("aws.sns.myTopicArn"))
+        notifier = configureNotifier(config.aws.sns.myTopicArn)
         try {
             val clientAndPlayer = configureClubLockerClient(config, s3)
             client = clientAndPlayer.first.apply { startAsync().awaitRunning() }

@@ -21,7 +21,7 @@ import java.time.LocalTime
 class MonitorSlotsHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }
 
-    private val config = loadConfiguration(System.getenv("CONFIG_NAME") + ".xml")
+    private val config = loadConfiguration(System.getenv("CONFIG_NAME") + ".yml")
     private val myNotifier: Notifier
     private val publicNotifier: Notifier
     private val slotsTracker: SlotsTracker
@@ -29,8 +29,8 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
     init {
         val s3 = configureS3()
         val dynamoDb = configureDynamoDb()
-        myNotifier = configureNotifier(config.getString("aws.sns.myTopicArn"))
-        publicNotifier = configureNotifier(config.getString("aws.sns.publicTopicArn"))
+        myNotifier = configureNotifier(config.aws.sns.myTopicArn)
+        publicNotifier = configureNotifier(config.aws.sns.publicTopicArn)
 
         val client =
             try {
@@ -42,7 +42,7 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
             }
 
         slotsTracker =
-            SlotsTracker(client, SlotStorageManagerImpl(dynamoDb, config.getString("aws.dynamo.squashSlotsTableName")))
+            SlotsTracker(client, SlotStorageManagerImpl(dynamoDb, config.aws.dynamo.squashSlotsTableName))
     }
 
     override fun handleRequest(input: Any, context: Context) =

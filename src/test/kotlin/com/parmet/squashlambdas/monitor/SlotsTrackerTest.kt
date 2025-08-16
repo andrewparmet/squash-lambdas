@@ -15,7 +15,7 @@ class SlotsTrackerTest : ConfiguredTest() {
         val dynamoClient =
             SlotStorageManagerImpl(
                 configureDynamoDb(),
-                config.getString("aws.dynamo.squashSlotsTableName")
+                config.aws.dynamo.squashSlotsTableName
             )
 
         println(SlotsTracker(client, dynamoClient).findNewlyOpen(LocalDate.now()))
