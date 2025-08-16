@@ -74,14 +74,14 @@ spotless {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
 kotlin {
     compilerOptions {
-        jvmToolchain(17)
-        jvmTarget.set(JvmTarget.JVM_17)
+        jvmToolchain(21)
+        jvmTarget.set(JvmTarget.JVM_21)
         allWarningsAsErrors.set(true)
     }
 }
