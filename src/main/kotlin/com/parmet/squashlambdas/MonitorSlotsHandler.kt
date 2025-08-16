@@ -45,7 +45,10 @@ open class MonitorSlotsHandler : RequestHandler<Any, Any> {
     private lateinit var slotsTracker: SlotsTracker
 
     open fun buildComponent(): MonitorSlotsComponent =
-        DaggerMonitorSlotsComponent.create()
+        DaggerMonitorSlotsComponent
+            .builder()
+            .configName("production-monitor-slots-handler.yml")
+            .build()
 
     fun init() {
         buildComponent().inject(this)

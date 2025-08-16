@@ -37,7 +37,10 @@ open class MakeReservationHandler : RequestHandler<Any, Any> {
     lateinit var hostPlayer: Player
 
     open fun buildComponent(): MakeReservationComponent =
-        DaggerMakeReservationComponent.create()
+        DaggerMakeReservationComponent
+            .builder()
+            .configName("production-make-reservation-handler.yml")
+            .build()
 
     fun init() {
         buildComponent().inject(this)
