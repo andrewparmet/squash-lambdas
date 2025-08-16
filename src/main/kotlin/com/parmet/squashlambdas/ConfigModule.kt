@@ -1,7 +1,5 @@
 package com.parmet.squashlambdas
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
-import com.amazonaws.services.s3.AmazonS3
 import com.google.api.services.calendar.Calendar
 import com.google.inject.AbstractModule
 import com.google.inject.Provides
@@ -10,6 +8,8 @@ import com.google.inject.name.Named
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.notify.Notifier
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.s3.S3Client
 
 class ConfigModule : AbstractModule() {
     @Provides
@@ -19,27 +19,27 @@ class ConfigModule : AbstractModule() {
 
     @Provides
     @Singleton
-    fun provideS3(): AmazonS3 =
+    fun provideS3(): S3Client =
         configureS3()
 
     @Provides
     @Singleton
-    fun provideDynamoDb(): AmazonDynamoDB =
+    fun provideDynamoDb(): DynamoDbClient =
         configureDynamoDb()
 
     @Provides
     @Singleton
-    fun provideCalendar(config: AppConfig, s3: AmazonS3): Calendar =
+    fun provideCalendar(config: AppConfig, s3: S3Client): Calendar =
         configureCalendar(config, s3)
 
     @Provides
     @Singleton
-    fun provideClubLockerClient(config: AppConfig, s3: AmazonS3): ClubLockerClient =
+    fun provideClubLockerClient(config: AppConfig, s3: S3Client): ClubLockerClient =
         configureClubLockerClient(config, s3).first
 
     @Provides
     @Singleton
-    fun provideHostPlayer(config: AppConfig, s3: AmazonS3): Player =
+    fun provideHostPlayer(config: AppConfig, s3: S3Client): Player =
         configureClubLockerClient(config, s3).second
 
     @Provides

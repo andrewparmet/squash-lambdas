@@ -1,9 +1,5 @@
 package com.parmet.squashlambdas
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder
-import com.amazonaws.services.s3.AmazonS3
-import com.amazonaws.services.s3.AmazonS3ClientBuilder
-import com.amazonaws.services.sns.AmazonSNSClientBuilder
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.calendar.Calendar
@@ -25,6 +21,10 @@ import com.parmet.squashlambdas.reserve.mapNonEmptyLines
 import com.parmet.squashlambdas.util.fromJson
 import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.addResourceSource
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.s3.S3Client
+import software.amazon.awssdk.services.s3.model.GetObjectRequest
+import software.amazon.awssdk.services.sns.SnsClient
 import java.io.File
 import java.nio.charset.StandardCharsets.UTF_8
 import java.time.LocalTime
@@ -35,20 +35,20 @@ fun loadConfiguration(file: String): AppConfig =
         .build()
         .loadConfigOrThrow<AppConfig>()
 
-fun configureS3() =
-    AmazonS3ClientBuilder.defaultClient()
+fun configureS3(): S3Client =
+    S3Client.create()
 
 fun configureNotifier(topicArn: String) =
     Notifier(
-        AmazonSNSClientBuilder.defaultClient(),
+        SnsClient.create(),
         topicArn,
         context
     )
 
-fun configureDynamoDb() =
-    AmazonDynamoDBClientBuilder.defaultClient()
+fun configureDynamoDb(): DynamoDbClient =
+    DynamoDbClient.create()
 
-fun configureCalendar(config: AppConfig, s3: AmazonS3) =
+fun configureCalendar(config: AppConfig, s3: S3Client) =
     Calendar.Builder(
         GoogleNetHttpTransport.newTrustedTransport(),
         GsonFactory(),
@@ -59,10 +59,10 @@ fun configureCalendar(config: AppConfig, s3: AmazonS3) =
         .setApplicationName("PARMET_SQUASH_LAMBDAS")
         .build()
 
-private fun loadCredentials(config: AppConfig, s3: AmazonS3) =
+private fun loadCredentials(config: AppConfig, s3: S3Client) =
     GoogleCredentials.fromStream(loadFile(config, "google.cal.creds", s3).byteInputStream(UTF_8))
 
-fun configureClubLockerClient(config: AppConfig, s3: AmazonS3): Pair<ClubLockerClient, Player> {
+fun configureClubLockerClient(config: AppConfig, s3: S3Client): Pair<ClubLockerClient, Player> {
     val creds: Map<String, String> = Gson().fromJson(loadFile(config, "clubLocker.creds", s3))
 
     val hostPlayer =
@@ -82,29 +82,34 @@ fun configureClubLockerClient(config: AppConfig, s3: AmazonS3): Pair<ClubLockerC
     )
 }
 
-fun getSchedule(config: AppConfig, s3: AmazonS3) =
+fun getSchedule(config: AppConfig, s3: S3Client) =
     Schedule.fromString(loadFile(config, "schedule", s3))
 
-fun getPreferredCourts(config: AppConfig, s3: AmazonS3) =
+fun getPreferredCourts(config: AppConfig, s3: S3Client) =
     getPreferredCourts(loadFile(config, "courts", s3))
 
 fun getPreferredCourts(s: String) =
     s.mapNonEmptyLines { Court.valueOf(it) }
 
-fun getPreferredTimes(config: AppConfig, s3: AmazonS3) =
+fun getPreferredTimes(config: AppConfig, s3: S3Client) =
     getPreferredTimes(loadFile(config, "times", s3))
 
 fun getPreferredTimes(s: String) =
     s.mapNonEmptyLines { LocalTime.parse(it) }
 
-private fun loadFile(config: AppConfig, configKey: String, s3: AmazonS3): String {
+private fun loadFile(config: AppConfig, configKey: String, s3: S3Client): String {
     val fileConfig = getFileConfig(config, configKey)
     return if (fileConfig.location == "local") {
         Files.asCharSource(File(fileConfig.fileName), UTF_8).read()
     } else {
         check("s3" == fileConfig.location)
         val awsFileConfig = getAwsFileConfig(config, configKey)
-        s3.getObjectAsString(awsFileConfig.bucket, awsFileConfig.key)
+        s3.getObjectAsBytes(
+            GetObjectRequest.builder()
+                .bucket(awsFileConfig.bucket)
+                .key(awsFileConfig.key)
+                .build()
+        ).asUtf8String()
     }
 }
 

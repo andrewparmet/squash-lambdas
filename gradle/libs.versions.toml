@@ -1,5 +1,5 @@
 [versions]
-aws = "1.12.788"
+aws2 = "2.32.23"
 aws-lambda = "1.3.0"
 biweekly = "0.6.8"
 buildConfig = "5.6.5"
@@ -30,12 +30,12 @@ shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 [libraries]
-aws-bom = { module = "com.amazonaws:aws-java-sdk-bom", version.ref = "aws" }
-aws-dynamodb = { module = "com.amazonaws:aws-java-sdk-dynamodb" }
+aws2-bom = { module = "software.amazon.awssdk:bom", version.ref = "aws2" }
+aws2-sdk-core = { module = "software.amazon.awssdk:sdk-core" }
+aws2-dynamodb = { module = "software.amazon.awssdk:dynamodb" }
 aws-lambda = { module = "com.amazonaws:aws-lambda-java-core", version.ref = "aws-lambda" }
-aws-s3 = { module = "com.amazonaws:aws-java-sdk-s3" }
-aws-ses = { module = "com.amazonaws:aws-java-sdk-ses" }
-aws-sns = { module = "com.amazonaws:aws-java-sdk-sns" }
+aws2-s3 = { module = "software.amazon.awssdk:s3" }
+aws2-sns = { module = "software.amazon.awssdk:sns" }
 biweekly = { module = "net.sf.biweekly:biweekly", version.ref = "biweekly" }
 commons-email = { module = "org.apache.commons:commons-email", version.ref = "commons-email" }
 google-calendar = { module = "com.google.apis:google-api-services-calendar", version.ref = "google-calendar" }

@@ -1,13 +1,16 @@
 package com.parmet.squashlambdas.email
 
-import com.amazonaws.services.s3.AmazonS3
+import software.amazon.awssdk.services.s3.S3Client
+import software.amazon.awssdk.services.s3.model.GetObjectRequest
 import javax.mail.internet.MimeMessage
 
 class EmailRetriever(
-    private val s3: AmazonS3
+    private val s3: S3Client
 ) {
     fun retrieveEmail(bucket: String, key: String) =
-        s3.getObjectAsString(bucket, key).byteInputStream().use { stream ->
+        s3.getObjectAsBytes(
+            GetObjectRequest.builder().bucket(bucket).key(key).build()
+        ).asUtf8String().byteInputStream().use { stream ->
             val message = MimeMessage(null, stream)
             EmailData(
                 message.allRecipients.map { it.toString() },
