@@ -17,7 +17,7 @@ data class MakeReservationConfig(
 data class MonitorSlotsConfig(
     val clubLocker: ClubLockerConfig,
     val sns: SnsConfig,
-    val dynamoDb: DynamoConfig
+    val dynamoDb: DynamoDbConfig
 )
 
 data class GoogleCalConfig(
@@ -30,7 +30,7 @@ data class SnsConfig(
     val publicTopicArn: String?
 )
 
-data class DynamoConfig(
+data class DynamoDbConfig(
     val squashSlotsTableName: String
 )
 
