@@ -1,9 +1,9 @@
 package com.parmet.squashlambdas.monitor
 
-import com.parmet.squashlambdas.configureDynamoDb
 import com.parmet.squashlambdas.testutil.ConfiguredTest
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import java.time.LocalDate
 
 class SlotStorageManagerImplTest : ConfiguredTest() {
@@ -14,7 +14,7 @@ class SlotStorageManagerImplTest : ConfiguredTest() {
         val slots = client.slotsTaken(LocalDate.now(), LocalDate.now())
 
         SlotStorageManagerImpl(
-            configureDynamoDb(),
+            DynamoDbClient.create(),
             monitorSlotsConfig.dynamoDb.squashSlotsTableName
         ).save(LocalDate.now(), slots)
     }

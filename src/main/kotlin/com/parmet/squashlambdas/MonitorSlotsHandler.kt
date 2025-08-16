@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.google.inject.Guice
 import com.google.inject.Inject
+import com.google.inject.Module
 import com.google.inject.name.Named
 import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.Context.withInput
@@ -23,7 +24,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 
-class MonitorSlotsHandler : RequestHandler<Any, Any> {
+open class MonitorSlotsHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }
 
     @Inject
@@ -43,10 +44,12 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
     @Inject
     private lateinit var client: ClubLockerClient
 
-    private val slotsTracker: SlotsTracker
+    private lateinit var slotsTracker: SlotsTracker
 
-    init {
-        val injector = Guice.createInjector(ConfigModule(), MonitorSlotsModule())
+    open val modules: List<Module> = listOf(MonitorSlotsModule(), AwsModule(), ClubLockerModule())
+
+    fun init() {
+        val injector = Guice.createInjector(modules)
         injector.injectMembers(this)
 
         try {
@@ -59,8 +62,10 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
         slotsTracker = SlotsTracker(client, SlotStorageManagerImpl(dynamoDb, config.dynamoDb.squashSlotsTableName))
     }
 
-    override fun handleRequest(input: Any, context: Context) =
+    override fun handleRequest(input: Any, context: Context) {
+        init()
         withInput(myNotifier::publishFailedSlotMonitoring, input) { doHandleRequest() }
+    }
 
     private fun doHandleRequest() {
         val now = Instant.now().inBoston()

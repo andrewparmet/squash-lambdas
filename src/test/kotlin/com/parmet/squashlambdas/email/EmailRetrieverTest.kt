@@ -4,7 +4,7 @@ import biweekly.component.VEvent
 import biweekly.property.Attendee
 import biweekly.property.Organizer
 import com.google.common.truth.Truth.assertThat
-import com.parmet.squashlambdas.cal.IntegrationTests
+import com.parmet.squashlambdas.cal.ChangeSummaryTest
 import com.parmet.squashlambdas.testutil.EmailReturningS3
 import com.parmet.squashlambdas.testutil.getResourceAsString
 import org.junit.jupiter.api.Test
@@ -16,7 +16,7 @@ class EmailRetrieverTest {
     fun `retrieveEmail properly deserializes S3 object`() {
         val s3 =
             EmailReturningS3(
-                getResourceAsString(IntegrationTests::class.java, "reservationCreated2"),
+                getResourceAsString(ChangeSummaryTest::class.java, "reservationCreated2"),
             )
         val data = EmailRetriever(s3).retrieveEmail("", "some-object-key")
         assertThat(data).isEqualTo(emailData())

@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.google.inject.Guice
 import com.google.inject.Inject
+import com.google.inject.Module
 import com.google.inject.name.Named
 import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.Context.withInput
@@ -18,7 +19,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import software.amazon.awssdk.services.s3.S3Client
 import java.time.LocalDate
 
-class MakeReservationHandler : RequestHandler<Any, Any> {
+open class MakeReservationHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }
 
     @Inject
@@ -37,8 +38,10 @@ class MakeReservationHandler : RequestHandler<Any, Any> {
     @Inject
     private lateinit var hostPlayer: Player
 
-    init {
-        val injector = Guice.createInjector(ConfigModule(), MakeReservationModule())
+    open val modules: List<Module> = listOf(MakeReservationModule(), AwsModule(), ClubLockerModule())
+
+    fun init() {
+        val injector = Guice.createInjector(modules)
         injector.injectMembers(this)
         try {
             client.init()
@@ -48,10 +51,12 @@ class MakeReservationHandler : RequestHandler<Any, Any> {
         }
     }
 
-    override fun handleRequest(input: Any, context: Context) =
+    override fun handleRequest(input: Any, context: Context) {
+        init()
         withInput(notifier::publishFailedReservation, input) {
             doHandleRequest(input).also { logger.info { "Returning result: $it" } }
         }
+    }
 
     private fun doHandleRequest(input: Any) {
         val requestDate = InputParser.parseRequestDate(input)

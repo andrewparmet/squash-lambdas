@@ -1,4 +1,4 @@
-<Configuration status="INFO" shutdownHook="disable" packages="com.gemstone.gemfire.internal.logging.log4j,log4j.extensions">
+<Configuration status="INFO" shutdownHook="disable">
   <Appenders>
     <Console name="STDOUT" target="SYSTEM_OUT">
       <PatternLayout pattern="%d [%t] %-5p %c - %m%n"/>
