@@ -1,6 +1,5 @@
 package com.parmet.squashlambdas
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.google.inject.Guice
@@ -22,6 +21,7 @@ import java.time.DayOfWeek.MONDAY
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 
 class MonitorSlotsHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }
@@ -38,7 +38,7 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
     private lateinit var publicNotifier: Notifier
 
     @Inject
-    private lateinit var dynamoDb: AmazonDynamoDB
+    private lateinit var dynamoDb: DynamoDbClient
 
     @Inject
     private lateinit var client: ClubLockerClient

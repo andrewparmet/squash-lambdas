@@ -12,15 +12,15 @@ repositories {
 }
 
 dependencies {
-    implementation(platform(libs.aws.bom))
+    implementation(platform(libs.aws2.bom))
     implementation(platform(libs.log4j.bom))
 
     implementation(kotlin("reflect"))
-    implementation(libs.aws.dynamodb)
+    implementation(libs.aws2.sdk.core)
+    implementation(libs.aws2.dynamodb)
     implementation(libs.aws.lambda)
-    implementation(libs.aws.s3)
-    implementation(libs.aws.ses)
-    implementation(libs.aws.sns)
+    implementation(libs.aws2.s3)
+    implementation(libs.aws2.sns)
     implementation(libs.biweekly)
     implementation(libs.commons.email)
     implementation(libs.google.calendar)

@@ -2,7 +2,6 @@ package com.parmet.squashlambdas
 
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
-import com.amazonaws.services.s3.AmazonS3
 import com.google.api.services.calendar.Calendar
 import com.google.inject.Guice
 import com.google.inject.Inject
@@ -16,6 +15,7 @@ import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.s3.S3CreateObjectInfo
 import com.parmet.squashlambdas.s3.S3EmailNotification
 import io.github.oshai.kotlinlogging.KotlinLogging
+import software.amazon.awssdk.services.s3.S3Client
 
 private val logger = KotlinLogging.logger { }
 
@@ -24,7 +24,7 @@ class EmailNotificationHandler : RequestHandler<Any, Any> {
     private lateinit var config: AppConfig
 
     @Inject
-    private lateinit var s3: AmazonS3
+    private lateinit var s3: S3Client
 
     @Inject
     private lateinit var calendar: Calendar
