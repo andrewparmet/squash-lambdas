@@ -4,7 +4,6 @@ google:
       location: local
       fileName: google-squash-project.json
     calendarId: primary
-    secondaryCalendarId: ""
 
 aws:
   google:
