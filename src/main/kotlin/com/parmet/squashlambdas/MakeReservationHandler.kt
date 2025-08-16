@@ -2,10 +2,6 @@ package com.parmet.squashlambdas
 
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
-import com.google.inject.Guice
-import com.google.inject.Inject
-import com.google.inject.Module
-import com.google.inject.name.Named
 import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.Context.withInput
 import com.parmet.squashlambdas.activity.Player
@@ -18,31 +14,33 @@ import com.parmet.squashlambdas.reserve.TimeFilter
 import io.github.oshai.kotlinlogging.KotlinLogging
 import software.amazon.awssdk.services.s3.S3Client
 import java.time.LocalDate
+import javax.inject.Inject
+import javax.inject.Named
 
 open class MakeReservationHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }
 
     @Inject
-    private lateinit var config: MakeReservationConfig
+    lateinit var config: MakeReservationConfig
 
     @Inject
-    private lateinit var s3: S3Client
+    lateinit var s3: S3Client
 
     @Inject
     @Named("myNotifier")
-    private lateinit var notifier: Notifier
+    lateinit var notifier: Notifier
 
     @Inject
-    private lateinit var client: ClubLockerClient
+    lateinit var client: ClubLockerClient
 
     @Inject
-    private lateinit var hostPlayer: Player
+    lateinit var hostPlayer: Player
 
-    open val modules: List<Module> = listOf(MakeReservationModule(), AwsModule(), ClubLockerModule())
+    open fun buildComponent(): MakeReservationComponent =
+        DaggerMakeReservationComponent.create()
 
     fun init() {
-        val injector = Guice.createInjector(modules)
-        injector.injectMembers(this)
+        buildComponent().inject(this)
         try {
             client.init()
         } catch (t: Throwable) {

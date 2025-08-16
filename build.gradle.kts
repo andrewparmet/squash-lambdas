@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.buildConfig)
     alias(libs.plugins.kotlin)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.shadow)
     alias(libs.plugins.spotless)
 }
@@ -30,13 +31,14 @@ dependencies {
     implementation(libs.gson.extras)
     implementation(libs.gson.javatime)
     implementation(libs.guava)
-    implementation(libs.guice)
     implementation(libs.hoplite)
     implementation(libs.jsoup)
-    implementation(libs.kotlinGuice)
     implementation(libs.kotlinLogging)
     implementation(libs.log4j.core)
     implementation(libs.opencsv)
+
+    implementation(libs.dagger)
+    ksp(libs.dagger.compiler)
 
     runtimeOnly(libs.log4j.jcl)
     runtimeOnly(libs.log4j.slf4jImpl)
@@ -47,6 +49,7 @@ dependencies {
     testImplementation(libs.testcontainers.junit)
     testImplementation(libs.testcontainers.localstack)
     testImplementation(libs.truth)
+    kspTest(libs.dagger.compiler)
 
     testRuntimeOnly(libs.junit.platformLauncher)
 }

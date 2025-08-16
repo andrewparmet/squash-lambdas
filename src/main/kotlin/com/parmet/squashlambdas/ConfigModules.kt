@@ -1,26 +1,26 @@
 package com.parmet.squashlambdas
 
 import com.google.api.services.calendar.Calendar
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.google.inject.name.Named
-import com.google.inject.name.Names.named
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.notify.Notifier
-import dev.misfitlabs.kotlinguice4.KotlinModule
+import dagger.Module
+import dagger.Provides
 import io.github.oshai.kotlinlogging.KotlinLogging
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.sns.SnsClient
+import javax.inject.Named
+import javax.inject.Singleton
 
 private val logger = KotlinLogging.logger { }
 
-class EmailNotificationModule : KotlinModule() {
-    override fun configure() {
-        bind<String>().annotatedWith(named("configName"))
-            .toInstance("production-email-notification-handler.yml")
-    }
+@Module
+object EmailNotificationModule {
+    @Provides
+    @Named("configName")
+    fun configName(): String =
+        "production-email-notification-handler.yml"
 
     @Provides
     @Singleton
@@ -45,11 +45,12 @@ class EmailNotificationModule : KotlinModule() {
             .apply { logger.info { "Finished building $this" } }
 }
 
-class MakeReservationModule : KotlinModule() {
-    override fun configure() {
-        bind<String>().annotatedWith(named("configName"))
-            .toInstance("production-make-reservation-handler.yml")
-    }
+@Module
+object MakeReservationModule {
+    @Provides
+    @Named("configName")
+    fun configName(): String =
+        "production-make-reservation-handler.yml"
 
     @Provides
     @Singleton
@@ -67,11 +68,12 @@ class MakeReservationModule : KotlinModule() {
         config.sns
 }
 
-class MonitorSlotsModule : KotlinModule() {
-    override fun configure() {
-        bind<String>().annotatedWith(named("configName"))
-            .toInstance("production-monitor-slots-handler.yml")
-    }
+@Module
+object MonitorSlotsModule {
+    @Provides
+    @Named("configName")
+    fun configName(): String =
+        "production-monitor-slots-handler.yml"
 
     @Provides
     @Singleton
@@ -89,7 +91,8 @@ class MonitorSlotsModule : KotlinModule() {
         config.sns
 }
 
-class AwsModule : KotlinModule() {
+@Module
+object AwsModule {
     @Provides
     @Singleton
     fun provideS3(): S3Client =
@@ -104,7 +107,7 @@ class AwsModule : KotlinModule() {
 
     @Provides
     @Singleton
-    fun provideSnsClient() =
+    fun provideSnsClient(): SnsClient =
         SnsClient.create()
             .apply { logger.info { "Finished building $this" } }
 
@@ -123,7 +126,8 @@ class AwsModule : KotlinModule() {
             .apply { logger.info { "Finished building $this" } }
 }
 
-class ClubLockerModule : KotlinModule() {
+@Module
+object ClubLockerModule {
     @Provides
     @Singleton
     fun provideClubLockerClient(config: ClubLockerConfig, s3: S3Client): ClubLockerClient =

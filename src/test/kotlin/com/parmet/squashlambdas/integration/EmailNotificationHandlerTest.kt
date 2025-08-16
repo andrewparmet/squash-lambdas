@@ -5,12 +5,20 @@ import com.amazonaws.services.s3.event.S3EventNotification
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.model.Event
 import com.google.common.truth.Truth.assertThat
-import com.google.inject.AbstractModule
-import com.google.inject.name.Names
-import com.google.inject.util.Modules
+import com.parmet.squashlambdas.EmailNotificationConfig
 import com.parmet.squashlambdas.EmailNotificationHandler
+import com.parmet.squashlambdas.GoogleCalConfig
+import com.parmet.squashlambdas.SnsConfig
 import com.parmet.squashlambdas.cal.ChangeSummaryTest
+import com.parmet.squashlambdas.cal.EventManager
+import com.parmet.squashlambdas.configureNotifier
+import com.parmet.squashlambdas.email.EmailRetriever
+import com.parmet.squashlambdas.loadConfiguration
+import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.testutil.getResourceAsString
+import dagger.Component
+import dagger.Module
+import dagger.Provides
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
@@ -32,6 +40,64 @@ import software.amazon.awssdk.services.s3.S3Configuration
 import software.amazon.awssdk.services.sns.SnsClient
 import software.amazon.awssdk.services.sns.model.PublishRequest
 import java.time.Instant
+import javax.inject.Named
+
+@Module
+class EmailNotificationTestModule(
+    private val calendar: Calendar,
+    private val s3: S3Client,
+    private val sns: SnsClient,
+) {
+    @Provides
+    fun calendar(): Calendar =
+        calendar
+
+    @Provides
+    fun s3Client(): S3Client =
+        s3
+
+    @Provides
+    fun snsClient(): SnsClient =
+        sns
+
+    @Provides
+    fun googleCalConfig(config: EmailNotificationConfig): GoogleCalConfig =
+        config.googleCal
+
+    @Provides
+    fun snsConfig(config: EmailNotificationConfig): SnsConfig =
+        config.sns
+
+    @Provides
+    @Named("configName")
+    fun configName(): String =
+        "test-email-notification-handler.yml"
+
+    @Provides
+    fun eventManager(calendar: Calendar, config: GoogleCalConfig): EventManager =
+        EventManager(calendar, config)
+
+    @Provides
+    fun emailNotificationConfig(@Named("configName") configName: String): EmailNotificationConfig =
+        loadConfiguration(configName)
+
+    @Provides
+    @Named("myNotifier")
+    fun myNotifier(config: SnsConfig, sns: SnsClient): Notifier =
+        configureNotifier(config.myTopicArn, sns)
+}
+
+@Component(modules = [EmailNotificationTestModule::class])
+interface EmailNotificationTestComponent : com.parmet.squashlambdas.EmailNotificationComponent {
+    override fun inject(target: EmailNotificationHandler)
+
+    @Component.Builder
+    interface Builder {
+        fun emailNotificationTestModule(module: EmailNotificationTestModule): Builder
+
+        fun build(): EmailNotificationTestComponent
+    }
+}
 
 @Testcontainers
 class EmailNotificationHandlerTest {
@@ -146,23 +212,13 @@ class EmailNotificationHandlerTest {
         )
 
     private fun configureHandler(): EmailNotificationHandler {
-        val testConfigModule =
-            object : AbstractModule() {
-                override fun configure() {
-                    bind(
-                        String::class.java
-                    ).annotatedWith(Names.named("configName")).toInstance("test-email-notification-handler.yml")
-                    bind(Calendar::class.java).toInstance(calender)
-                    bind(SnsClient::class.java).toInstance(snsClient)
-                    bind(S3Client::class.java).toInstance(s3Client)
-                }
-            }
-
-        val handler =
-            object : EmailNotificationHandler() {
-                override val modules =
-                    listOf(Modules.override(super.modules).with(testConfigModule))
-            }
+        val handler = object : EmailNotificationHandler() {
+            override fun buildComponent() =
+                DaggerEmailNotificationTestComponent
+                    .builder()
+                    .emailNotificationTestModule(EmailNotificationTestModule(calender, s3Client, snsClient))
+                    .build()
+        }
 
         return handler
     }

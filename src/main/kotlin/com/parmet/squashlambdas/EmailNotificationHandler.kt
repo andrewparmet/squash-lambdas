@@ -3,10 +3,6 @@ package com.parmet.squashlambdas
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.amazonaws.services.lambda.runtime.events.S3Event
-import com.google.inject.Guice
-import com.google.inject.Inject
-import com.google.inject.Module
-import com.google.inject.name.Named
 import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.cal.ChangeSummary
 import com.parmet.squashlambdas.cal.EventManager
@@ -15,24 +11,27 @@ import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.s3.S3CreateObjectInfo
 import com.parmet.squashlambdas.s3.S3EmailNotification
 import io.github.oshai.kotlinlogging.KotlinLogging
+import javax.inject.Inject
+import javax.inject.Named
 
 private val logger = KotlinLogging.logger { }
 
 open class EmailNotificationHandler : RequestHandler<S3Event, Any> {
     @Inject
-    private lateinit var config: EmailNotificationConfig
+    lateinit var config: EmailNotificationConfig
 
     @Inject
     @Named("myNotifier")
-    private lateinit var notifier: Notifier
+    lateinit var notifier: Notifier
 
     @Inject
-    private lateinit var retriever: EmailRetriever
+    lateinit var retriever: EmailRetriever
 
     @Inject
-    private lateinit var eventManager: EventManager
+    lateinit var eventManager: EventManager
 
-    open val modules: List<Module> = listOf(EmailNotificationModule(), AwsModule())
+    open fun buildComponent(): EmailNotificationComponent =
+        DaggerEmailNotificationComponent.create()
 
     init {
         logger.info { "Beginning handler instantiation" }
@@ -40,7 +39,7 @@ open class EmailNotificationHandler : RequestHandler<S3Event, Any> {
 
     final override fun handleRequest(input: S3Event, ignore: Context) {
         logger.info { "Handling request: $input" }
-        Guice.createInjector(modules).injectMembers(this)
+        buildComponent().inject(this)
         logger.info { "Finished injecting" }
         val myLambdaUser = SingleLambdaUser(notifier, eventManager)
         myLambdaUser.withInput(Notifier::publishFailedParse, input) {

@@ -1,8 +1,8 @@
 package com.parmet.squashlambdas.email
 
-import jakarta.inject.Inject
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
+import javax.inject.Inject
 import javax.mail.internet.MimeMessage
 
 class EmailRetriever @Inject constructor(
