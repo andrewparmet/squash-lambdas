@@ -1,7 +1,8 @@
 package com.parmet.squashlambdas.monitor
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.parmet.squashlambdas.clublocker.Slot
+import com.parmet.squashlambdas.json.Json
 import io.github.oshai.kotlinlogging.KotlinLogging
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
@@ -15,8 +16,6 @@ internal class SlotStorageManagerImpl(
     private val tableName: String
 ) : SlotStorageManager {
     private val logger = KotlinLogging.logger { }
-    private val gson = Gson()
-
     private val primaryKey = "filename"
     private val entriesKey = "entries"
     private val modifiedTimeKey = "modifiedTime"
@@ -24,7 +23,7 @@ internal class SlotStorageManagerImpl(
     override fun save(date: LocalDate, slots: List<Slot>) {
         val item: MutableMap<String, AttributeValue> = mutableMapOf()
         item[primaryKey] = AttributeValue.builder().s("$date/taken").build()
-        item[entriesKey] = AttributeValue.builder().ss(slots.map(gson::toJson)).build()
+        item[entriesKey] = AttributeValue.builder().ss(slots.map { Json.mapper.writeValueAsString(it) }).build()
         item[modifiedTimeKey] = AttributeValue.builder().s(Instant.now().toString()).build()
 
         dynamoDb.putItem(
@@ -50,7 +49,7 @@ internal class SlotStorageManagerImpl(
             emptyList()
         } else {
             val jsonEntries: List<String> = response.item()[entriesKey]?.ss() ?: emptyList()
-            jsonEntries.map { json -> gson.fromJson(json, Slot::class.java) }
+            jsonEntries.map { json -> Json.mapper.readValue<Slot>(json) }
                 .also { logger.info { "Loaded latest snapshot of taken slots: $it" } }
         }
     }

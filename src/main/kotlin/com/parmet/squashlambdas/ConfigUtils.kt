@@ -1,12 +1,12 @@
 package com.parmet.squashlambdas
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.CalendarScopes
 import com.google.auth.http.HttpCredentialsAdapter
 import com.google.auth.oauth2.GoogleCredentials
-import com.google.gson.Gson
 import com.parmet.squashlambdas.Context.context
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Player
@@ -14,10 +14,10 @@ import com.parmet.squashlambdas.activity.valueOf
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.clublocker.ClubLockerClientImpl
 import com.parmet.squashlambdas.clublocker.ClubLockerUser
+import com.parmet.squashlambdas.json.Json
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.reserve.Schedule
 import com.parmet.squashlambdas.reserve.mapNonEmptyLines
-import com.parmet.squashlambdas.util.fromJson
 import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.addResourceSource
 import software.amazon.awssdk.services.s3.S3Client
@@ -59,7 +59,7 @@ data class ClubLockerResources(
 )
 
 fun configureClubLockerResources(config: ClubLockerConfig, s3: S3Client): ClubLockerResources {
-    val creds: Map<String, String> = Gson().fromJson(loadFile(config.creds, s3))
+    val creds: Map<String, String> = Json.mapper.readValue(loadFile(config.creds, s3))
 
     val hostPlayer =
         Player(

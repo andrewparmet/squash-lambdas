@@ -1,10 +1,9 @@
 package com.parmet.squashlambdas.s3
-
-import com.google.gson.annotations.SerializedName
+import com.fasterxml.jackson.annotation.JsonProperty
 
 internal data class S3CreateObjectInfo(
     private val bucket: BucketInfo,
-    @SerializedName("object")
+    @param:JsonProperty("object")
     private val objectInfo: S3ObjectInfo
 ) {
     val bucketName

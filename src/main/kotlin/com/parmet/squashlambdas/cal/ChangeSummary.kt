@@ -4,8 +4,8 @@ import com.parmet.squashlambdas.activity.Activity
 import com.parmet.squashlambdas.email.EmailData
 
 data class ChangeSummary(
-    private val action: Action,
-    private val activity: Activity
+    val action: Action,
+    val activity: Activity
 ) {
     fun process(eventManager: EventManager) =
         action.handle(activity, eventManager)

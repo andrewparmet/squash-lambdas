@@ -1,14 +1,12 @@
 package com.parmet.squashlambdas.activity
 
-import com.google.gson.Gson
+import com.parmet.squashlambdas.json.Json
 import org.junit.jupiter.api.Test
 import java.time.Instant
 
 class ClinicTest {
-    private val gson = Gson()
-
     @Test
     fun `match can be serialized`() {
-        gson.toJson(Clinic(Court.Court2, Instant.now(), Instant.now(), "foo"))
+        Json.mapper.writeValueAsString(Clinic(Court.Court2, Instant.now(), Instant.now(), "foo"))
     }
 }

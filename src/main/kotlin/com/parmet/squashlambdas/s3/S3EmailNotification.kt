@@ -1,7 +1,7 @@
 package com.parmet.squashlambdas.s3
 
 import com.amazonaws.services.lambda.runtime.events.S3Event
-import com.google.gson.annotations.SerializedName
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.Instant
 
 internal data class S3EmailNotification(
@@ -10,7 +10,7 @@ internal data class S3EmailNotification(
     private val awsRegion: String,
     private val eventTime: Instant,
     private val eventName: String,
-    @SerializedName("s3")
+    @param:JsonProperty("s3")
     val s3ObjectInfo: S3CreateObjectInfo
 ) {
     companion object {

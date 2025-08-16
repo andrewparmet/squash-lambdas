@@ -1,8 +1,15 @@
 package com.parmet.squashlambdas.activity
 
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.google.api.services.calendar.model.Event
 import com.parmet.squashlambdas.email.EmailData
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes(
+    JsonSubTypes.Type(value = Match::class, name = "Match"),
+    JsonSubTypes.Type(value = Clinic::class, name = "Clinic")
+)
 interface Activity {
     fun toEvent(): Event
 
