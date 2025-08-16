@@ -18,7 +18,6 @@ data class GoogleConfig(
 data class CalendarConfig(
     val creds: FileConfig,
     val calendarId: String,
-    val secondaryCalendarId: String
 )
 
 data class AwsConfig(
