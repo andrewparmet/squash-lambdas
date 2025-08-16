@@ -7,6 +7,7 @@ import com.google.api.services.calendar.model.Event
 import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.EmailNotificationConfig
 import com.parmet.squashlambdas.EmailNotificationHandler
+import com.parmet.squashlambdas.EmailNotificationModule
 import com.parmet.squashlambdas.GoogleCalConfig
 import com.parmet.squashlambdas.SnsConfig
 import com.parmet.squashlambdas.cal.ChangeSummaryTest
@@ -16,6 +17,7 @@ import com.parmet.squashlambdas.email.EmailRetriever
 import com.parmet.squashlambdas.loadConfiguration
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.testutil.getResourceAsString
+import dagger.BindsInstance
 import dagger.Component
 import dagger.Module
 import dagger.Provides
@@ -46,7 +48,7 @@ import javax.inject.Named
 class EmailNotificationTestModule(
     private val calendar: Calendar,
     private val s3: S3Client,
-    private val sns: SnsClient,
+    private val sns: SnsClient
 ) {
     @Provides
     fun calendar(): Calendar =
@@ -61,38 +63,20 @@ class EmailNotificationTestModule(
         sns
 
     @Provides
-    fun googleCalConfig(config: EmailNotificationConfig): GoogleCalConfig =
-        config.googleCal
-
-    @Provides
-    fun snsConfig(config: EmailNotificationConfig): SnsConfig =
-        config.sns
-
-    @Provides
-    @Named("configName")
-    fun configName(): String =
-        "test-email-notification-handler.yml"
-
-    @Provides
-    fun eventManager(calendar: Calendar, config: GoogleCalConfig): EventManager =
-        EventManager(calendar, config)
-
-    @Provides
-    fun emailNotificationConfig(@Named("configName") configName: String): EmailNotificationConfig =
-        loadConfiguration(configName)
-
-    @Provides
     @Named("myNotifier")
     fun myNotifier(config: SnsConfig, sns: SnsClient): Notifier =
         configureNotifier(config.myTopicArn, sns)
 }
 
-@Component(modules = [EmailNotificationTestModule::class])
+@Component(modules = [EmailNotificationTestModule::class, EmailNotificationModule::class])
 interface EmailNotificationTestComponent : com.parmet.squashlambdas.EmailNotificationComponent {
     override fun inject(target: EmailNotificationHandler)
 
     @Component.Builder
     interface Builder {
+        @BindsInstance
+        fun configName(@Named("configName") configName: String): Builder
+
         fun emailNotificationTestModule(module: EmailNotificationTestModule): Builder
 
         fun build(): EmailNotificationTestComponent
@@ -216,6 +200,7 @@ class EmailNotificationHandlerTest {
             override fun buildComponent() =
                 DaggerEmailNotificationTestComponent
                     .builder()
+                    .configName("test-email-notification-handler.yml")
                     .emailNotificationTestModule(EmailNotificationTestModule(calender, s3Client, snsClient))
                     .build()
         }

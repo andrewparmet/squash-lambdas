@@ -18,11 +18,6 @@ private val logger = KotlinLogging.logger { }
 @Module
 object EmailNotificationModule {
     @Provides
-    @Named("configName")
-    fun configName(): String =
-        "production-email-notification-handler.yml"
-
-    @Provides
     @Singleton
     fun provideConfig(@Named("configName") configName: String): EmailNotificationConfig =
         loadConfiguration<EmailNotificationConfig>(configName)
@@ -37,21 +32,10 @@ object EmailNotificationModule {
     @Singleton
     fun provideNotifierConfig(config: EmailNotificationConfig) =
         config.sns
-
-    @Provides
-    @Singleton
-    fun provideCalendar(config: GoogleCalConfig, s3: S3Client): Calendar =
-        configureCalendar(config, s3)
-            .apply { logger.info { "Finished building $this" } }
 }
 
 @Module
 object MakeReservationModule {
-    @Provides
-    @Named("configName")
-    fun configName(): String =
-        "production-make-reservation-handler.yml"
-
     @Provides
     @Singleton
     fun provideConfig(@Named("configName") configName: String): MakeReservationConfig =
@@ -70,11 +54,6 @@ object MakeReservationModule {
 
 @Module
 object MonitorSlotsModule {
-    @Provides
-    @Named("configName")
-    fun configName(): String =
-        "production-monitor-slots-handler.yml"
-
     @Provides
     @Singleton
     fun provideConfig(@Named("configName") configName: String): MonitorSlotsConfig =
@@ -137,4 +116,13 @@ object ClubLockerModule {
     @Singleton
     fun provideHostPlayer(config: ClubLockerConfig, s3: S3Client): Player =
         configureClubLockerClient(config, s3).second
+}
+
+@Module
+object CalendarModule {
+    @Provides
+    @Singleton
+    fun provideCalendar(config: GoogleCalConfig, s3: S3Client): Calendar =
+        configureCalendar(config, s3)
+            .apply { logger.info { "Finished building $this" } }
 }

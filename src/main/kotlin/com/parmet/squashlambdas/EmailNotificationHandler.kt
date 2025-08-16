@@ -31,7 +31,10 @@ open class EmailNotificationHandler : RequestHandler<S3Event, Any> {
     lateinit var eventManager: EventManager
 
     open fun buildComponent(): EmailNotificationComponent =
-        DaggerEmailNotificationComponent.create()
+        DaggerEmailNotificationComponent
+            .builder()
+            .configName("production-email-notification-handler.yml")
+            .build()
 
     init {
         logger.info { "Beginning handler instantiation" }
