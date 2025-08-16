@@ -1,0 +1,56 @@
+google:
+  cal:
+    creds:
+      location: local
+      fileName: google-squash-project.json
+    calendarId: primary
+    secondaryCalendarId: ""
+
+aws:
+  google:
+    cal:
+      creds:
+        bucket: ""
+        key: ""
+  clubLocker:
+    creds:
+      bucket: ""
+      key: ""
+  schedule:
+    bucket: ""
+    key: ""
+  courts:
+    bucket: ""
+    key: ""
+  times:
+    bucket: ""
+    key: ""
+  sns:
+    myTopicArn: fake-arn
+    publicTopicArn: fake-arn-2
+  dynamo:
+    squashSlotsTableName: squash-slots-test
+
+clubLocker:
+  creds:
+    location: local
+    fileName: clublocker-creds.json
+  name: John Smith
+
+schedule:
+  location: local
+  fileName: ""
+
+courts:
+  location: local
+  fileName: ""
+
+times:
+  location: local
+  fileName: ""
+
+matchfind:
+  recipient: foo@bar.com
+
+parse:
+  primaryRecipient: ""

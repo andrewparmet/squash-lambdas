@@ -1,0 +1,56 @@
+google:
+  cal:
+    creds:
+      location: s3
+      fileName: ""
+    calendarId: primary
+    secondaryCalendarId: 03c1043ad5803cc98aefb8971bd42c77a6616e656e7305ef1f410a260cdda558@group.calendar.google.com
+
+aws:
+  google:
+    cal:
+      creds:
+        bucket: ${GOOGLE_CAL_CREDS_BUCKET}
+        key: ${GOOGLE_CAL_CREDS_KEY}
+  clubLocker:
+    creds:
+      bucket: ${CLUB_LOCKER_CREDS_BUCKET}
+      key: ${CLUB_LOCKER_CREDS_KEY}
+  schedule:
+    bucket: ${RESERVATION_BUCKET}
+    key: ${RESERVATION_SCHEDULE_KEY}
+  courts:
+    bucket: ${RESERVATION_BUCKET}
+    key: ${RESERVATION_COURTS_KEY}
+  times:
+    bucket: ${RESERVATION_BUCKET}
+    key: ${RESERVATION_TIMES_KEY}
+  sns:
+    myTopicArn: ${MY_TOPIC_ARN}
+    publicTopicArn: ${PUBLIC_TOPIC_ARN}
+  dynamo:
+    squashSlotsTableName: ${SLOTS_MONITORING_TABLE}
+
+clubLocker:
+  creds:
+    location: s3
+    fileName: ""
+  name: ${CLUB_LOCKER_NAME}
+
+schedule:
+  location: s3
+  fileName: ""
+
+courts:
+  location: s3
+  fileName: ""
+
+times:
+  location: s3
+  fileName: ""
+
+matchfind:
+  recipient: ${MATCH_FIND_RECIPIENT}
+
+parse:
+  primaryRecipient: ${PARSE_PRIMARY_RECIPIENT}

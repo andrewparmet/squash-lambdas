@@ -8,8 +8,8 @@ class CalUtilsTest : ConfiguredTest() {
     @Test
     @Disabled
     fun `give a new user ownership of the config's calendarId`() {
-        printAcl(calendar, config.getString("google.calendarId"))
-        giveUserOwnership(calendar, config.getString("google.calendarId"), "")
-        printAcl(calendar, config.getString("google.calendarId"))
+        printAcl(calendar, config.google.cal.calendarId)
+        giveUserOwnership(calendar, config.google.cal.calendarId, "")
+        printAcl(calendar, config.google.cal.calendarId)
     }
 }
