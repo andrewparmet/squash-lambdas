@@ -50,9 +50,6 @@ class EmailNotificationHandlerTest {
                     AwsBasicCredentials.create(localstack.accessKey, localstack.secretKey)
                 )
             )
-            .serviceConfiguration(
-                S3Configuration.builder().pathStyleAccessEnabled(true).build()
-            )
             .build()
     }
 
