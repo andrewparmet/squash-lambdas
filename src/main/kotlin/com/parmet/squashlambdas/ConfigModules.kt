@@ -1,22 +1,23 @@
 package com.parmet.squashlambdas
 
 import com.google.api.services.calendar.Calendar
-import com.google.inject.AbstractModule
 import com.google.inject.Provides
 import com.google.inject.Singleton
 import com.google.inject.name.Named
+import com.google.inject.name.Names.named
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.notify.Notifier
+import dev.misfitlabs.kotlinguice4.KotlinModule
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.sns.SnsClient
 
-class EmailNotificationModule : AbstractModule() {
-    @Provides
-    @Named("configName")
-    fun provideConfigName() =
-        "production-email-notification-handler.yml"
+class EmailNotificationModule : KotlinModule() {
+    override fun configure() {
+        bind<String>().annotatedWith(named("configName"))
+            .toInstance("production-email-notification-handler.yml")
+    }
 
     @Provides
     @Singleton
@@ -39,11 +40,11 @@ class EmailNotificationModule : AbstractModule() {
         configureCalendar(config, s3)
 }
 
-class MakeReservationModule : AbstractModule() {
-    @Provides
-    @Named("configName")
-    fun provideConfigName() =
-        "production-make-reservation-handler.yml"
+class MakeReservationModule : KotlinModule() {
+    override fun configure() {
+        bind<String>().annotatedWith(named("configName"))
+            .toInstance("production-make-reservation-handler.yml")
+    }
 
     @Provides
     @Singleton
@@ -61,11 +62,11 @@ class MakeReservationModule : AbstractModule() {
         config.sns
 }
 
-class MonitorSlotsModule : AbstractModule() {
-    @Provides
-    @Named("configName")
-    fun provideConfigName() =
-        "production-monitor-slots-handler.yml"
+class MonitorSlotsModule : KotlinModule() {
+    override fun configure() {
+        bind<String>().annotatedWith(named("configName"))
+            .toInstance("production-monitor-slots-handler.yml")
+    }
 
     @Provides
     @Singleton
@@ -83,7 +84,7 @@ class MonitorSlotsModule : AbstractModule() {
         config.sns
 }
 
-class AwsModule : AbstractModule() {
+class AwsModule : KotlinModule() {
     @Provides
     @Singleton
     fun provideS3(): S3Client =
@@ -112,7 +113,7 @@ class AwsModule : AbstractModule() {
         configureNotifier(config.publicTopicArn, snsClient)
 }
 
-class ClubLockerModule : AbstractModule() {
+class ClubLockerModule : KotlinModule() {
     @Provides
     @Singleton
     fun provideClubLockerClient(config: ClubLockerConfig, s3: S3Client): ClubLockerClient =

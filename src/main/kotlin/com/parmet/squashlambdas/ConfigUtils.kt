@@ -54,7 +54,7 @@ private fun loadCredentials(config: FileConfig, s3: S3Client) =
     GoogleCredentials.fromStream(loadFile(config, s3).byteInputStream())
 
 fun configureClubLockerClient(config: ClubLockerConfig, s3: S3Client): Pair<ClubLockerClient, Player> {
-    val creds: Map<String, String> = Gson().fromJson(loadFile(config.fileConfig, s3))
+    val creds: Map<String, String> = Gson().fromJson(loadFile(config.creds, s3))
 
     val hostPlayer =
         Player(

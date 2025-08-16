@@ -3,20 +3,18 @@ package com.parmet.squashlambdas
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.amazonaws.services.lambda.runtime.events.S3Event
-import com.google.api.services.calendar.Calendar
 import com.google.inject.Guice
 import com.google.inject.Inject
 import com.google.inject.Module
 import com.google.inject.name.Named
 import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.cal.ChangeSummary
-import com.parmet.squashlambdas.cal.EventManagerImpl
+import com.parmet.squashlambdas.cal.EventManager
 import com.parmet.squashlambdas.email.EmailRetriever
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.s3.S3CreateObjectInfo
 import com.parmet.squashlambdas.s3.S3EmailNotification
 import io.github.oshai.kotlinlogging.KotlinLogging
-import software.amazon.awssdk.services.s3.S3Client
 
 private val logger = KotlinLogging.logger { }
 
@@ -25,31 +23,20 @@ open class EmailNotificationHandler : RequestHandler<S3Event, Any> {
     private lateinit var config: EmailNotificationConfig
 
     @Inject
-    private lateinit var s3: S3Client
-
-    @Inject
-    private lateinit var calendar: Calendar
-
-    @Inject
     @Named("myNotifier")
     private lateinit var notifier: Notifier
 
+    @Inject
     private lateinit var retriever: EmailRetriever
-    private lateinit var myLambdaUser: LambdaUser
+
+    @Inject
+    private lateinit var eventManager: EventManager
 
     open val modules: List<Module> = listOf(EmailNotificationModule(), AwsModule())
 
-    fun init() {
-        val injector = Guice.createInjector(modules)
-        injector.injectMembers(this)
-
-        retriever = EmailRetriever(s3)
-        val eventManager = EventManagerImpl(calendar, config.googleCal.calendarId)
-        myLambdaUser = SingleLambdaUser(notifier, eventManager)
-    }
-
     final override fun handleRequest(input: S3Event, ignore: Context) {
-        init()
+        Guice.createInjector(modules).injectMembers(this)
+        val myLambdaUser = SingleLambdaUser(notifier, eventManager)
         myLambdaUser.withInput(Notifier::publishFailedParse, input) {
             val info = getS3Info(input)
             val email = getEmail(info)

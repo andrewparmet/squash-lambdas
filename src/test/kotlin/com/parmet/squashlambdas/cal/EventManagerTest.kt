@@ -50,5 +50,5 @@ class EventManagerTest : ConfiguredTest() {
     }
 
     private fun manager() =
-        EventManagerImpl(calendar, emailNotificationConfig.googleCal.calendarId)
+        EventManager(calendar, emailNotificationConfig.googleCal)
 }
