@@ -43,8 +43,7 @@ gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 gson-extras = { module = "org.danilopianini:gson-extras", version.ref = "gson-extras" }
 gson-javatime = { module = "com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers", version.ref = "gson-javatime" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
-hopliteCore = { module = "com.sksamuel.hoplite:hoplite-core", version.ref = "hoplite" }
-hopliteYaml = { module = "com.sksamuel.hoplite:hoplite-yaml", version.ref = "hoplite" }
+hoplite = { module = "com.sksamuel.hoplite:hoplite-yaml", version.ref = "hoplite" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 junit-platformLauncher = { module = "org.junit.platform:junit-platform-launcher" }
