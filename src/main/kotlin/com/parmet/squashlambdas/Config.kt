@@ -35,7 +35,7 @@ data class DynamoConfig(
 )
 
 data class ClubLockerConfig(
-    val fileConfig: FileConfig,
+    val creds: FileConfig,
     val name: String?
 )
 

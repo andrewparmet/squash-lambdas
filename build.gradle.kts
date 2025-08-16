@@ -33,6 +33,7 @@ dependencies {
     implementation(libs.guice)
     implementation(libs.hoplite)
     implementation(libs.jsoup)
+    implementation(libs.kotlinGuice)
     implementation(libs.kotlinLogging)
     implementation(libs.log4j.core)
     implementation(libs.opencsv)
@@ -84,7 +85,19 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-    environment("TEST_LOAD_FROM_ENV", "test-value")
+    environment("GOOGLE_CAL_CREDS_BUCKET", "test-cal-creds-bucket")
+    environment("GOOGLE_CAL_CREDS_KEY", "test-cal-creds-key")
+    environment("MY_TOPIC_ARN", "test-my-topic-arn")
+    environment("PARSE_PRIMARY_RECIPIENT", "test-parse-primary-recipient")
+    environment("CLUB_LOCKER_CREDS_BUCKET", "test-club-locker-creds-bucket")
+    environment("CLUB_LOCKER_CREDS_KEY", "test-club-locker-creds-key")
+    environment("CLUB_LOCKER_NAME", "test-club-locker-name")
+    environment("RESERVATION_BUCKET", "test-reservation-bucket")
+    environment("RESERVATION_SCHEDULE_KEY", "test-reservation-schedule-key")
+    environment("RESERVATION_COURTS_KEY", "test-reservation-courts-key")
+    environment("RESERVATION_TIMES_KEY", "test-reservation-times-key")
+    environment("PUBLIC_TOPIC_ARN", "test-public-topic-arn")
+    environment("SLOTS_MONITORING_TABLE", "test-slots-monitoring-table")
 }
 
 buildConfig {

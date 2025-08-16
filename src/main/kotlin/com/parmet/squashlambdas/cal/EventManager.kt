@@ -2,29 +2,24 @@ package com.parmet.squashlambdas.cal
 
 import com.google.api.services.calendar.Calendar
 import com.google.common.collect.Iterables
+import com.parmet.squashlambdas.GoogleCalConfig
 import com.parmet.squashlambdas.activity.Activity
 import io.github.oshai.kotlinlogging.KotlinLogging
+import jakarta.inject.Inject
 
-interface EventManager {
-    fun create(activity: Activity)
-
-    fun update(activity: Activity)
-
-    fun delete(activity: Activity)
-}
-
-class EventManagerImpl(
+class EventManager @Inject constructor(
     private val calendar: Calendar,
-    private val calendarId: String
-) : EventManager {
+    config: GoogleCalConfig
+) {
     private val logger = KotlinLogging.logger { }
+    private val calendarId = config.calendarId
 
-    override fun create(activity: Activity) {
+    fun create(activity: Activity) {
         logger.info { "Creating activity $activity" }
         calendar.events().insert(calendarId, activity.toEvent()).execute()
     }
 
-    override fun update(activity: Activity) {
+    fun update(activity: Activity) {
         logger.info { "Updating activity $activity" }
 
         val events = findEvents(activity)
@@ -42,7 +37,7 @@ class EventManagerImpl(
         }
     }
 
-    override fun delete(activity: Activity) {
+    fun delete(activity: Activity) {
         logger.info { "Deleting activity $activity" }
         findEvents(activity).forEach {
             logger.info { "Deleting event $it" }
