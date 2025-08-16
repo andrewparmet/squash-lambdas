@@ -174,25 +174,4 @@ class Notifier(
             |Stack trace:
             |${print(failure)}
         """.trimMargin()
-
-    fun publishFailedMatchFind(t: Throwable) {
-        sns.publish(
-            PublishRequest.builder()
-                .topicArn(topicArn)
-                .message(failedMatchFindMsg(t))
-                .subject("Failed to Process Club Locker Email")
-                .build()
-        )
-    }
-
-    private fun failedMatchFindMsg(t: Throwable): String =
-        """
-            |Encountered an error processing a MatchFind request:
-            |
-            |Context:
-            |${print(context)}
-            |
-            |Stack trace:
-            |${print(t)}
-        """.trimMargin()
 }
