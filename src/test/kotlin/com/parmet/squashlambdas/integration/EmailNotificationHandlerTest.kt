@@ -5,16 +5,11 @@ import com.amazonaws.services.s3.event.S3EventNotification
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.model.Event
 import com.google.common.truth.Truth.assertThat
-import com.parmet.squashlambdas.EmailNotificationConfig
 import com.parmet.squashlambdas.EmailNotificationHandler
 import com.parmet.squashlambdas.EmailNotificationModule
-import com.parmet.squashlambdas.GoogleCalConfig
 import com.parmet.squashlambdas.SnsConfig
 import com.parmet.squashlambdas.cal.ChangeSummaryTest
-import com.parmet.squashlambdas.cal.EventManager
 import com.parmet.squashlambdas.configureNotifier
-import com.parmet.squashlambdas.email.EmailRetriever
-import com.parmet.squashlambdas.loadConfiguration
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.testutil.getResourceAsString
 import dagger.BindsInstance
@@ -43,6 +38,7 @@ import software.amazon.awssdk.services.sns.SnsClient
 import software.amazon.awssdk.services.sns.model.PublishRequest
 import java.time.Instant
 import javax.inject.Named
+import javax.inject.Singleton
 
 @Module
 class EmailNotificationTestModule(
@@ -68,6 +64,7 @@ class EmailNotificationTestModule(
         configureNotifier(config.myTopicArn, sns)
 }
 
+@Singleton
 @Component(modules = [EmailNotificationTestModule::class, EmailNotificationModule::class])
 interface EmailNotificationTestComponent : com.parmet.squashlambdas.EmailNotificationComponent {
     override fun inject(target: EmailNotificationHandler)
