@@ -1,0 +1,13 @@
+googleCal:
+  creds:
+    location: s3
+    bucket: ${GOOGLE_CAL_CREDS_BUCKET}
+    key: ${GOOGLE_CAL_CREDS_KEY}
+  calendarId: primary
+
+sns:
+  myTopicArn: ${MY_TOPIC_ARN}
+  publicTopicArn: ""
+
+parse:
+  primaryRecipient: ${PARSE_PRIMARY_RECIPIENT}

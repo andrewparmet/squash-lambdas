@@ -27,7 +27,7 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
     private val logger = KotlinLogging.logger { }
 
     @Inject
-    private lateinit var config: AppConfig
+    private lateinit var config: MonitorSlotsConfig
 
     @Inject
     @Named("myNotifier")
@@ -42,20 +42,21 @@ class MonitorSlotsHandler : RequestHandler<Any, Any> {
 
     @Inject
     private lateinit var client: ClubLockerClient
-    private lateinit var slotsTracker: SlotsTracker
+
+    private val slotsTracker: SlotsTracker
 
     init {
-        val injector = Guice.createInjector(ConfigModule())
+        val injector = Guice.createInjector(ConfigModule(), MonitorSlotsModule())
         injector.injectMembers(this)
 
         try {
-            client.startAsync().awaitRunning()
+            client.init()
         } catch (t: Throwable) {
             myNotifier.publishFailedSlotMonitoring(t)
             throw t
         }
 
-        slotsTracker = SlotsTracker(client, SlotStorageManagerImpl(dynamoDb, config.aws.dynamo.squashSlotsTableName))
+        slotsTracker = SlotsTracker(client, SlotStorageManagerImpl(dynamoDb, config.dynamoDb.squashSlotsTableName))
     }
 
     override fun handleRequest(input: Any, context: Context) =

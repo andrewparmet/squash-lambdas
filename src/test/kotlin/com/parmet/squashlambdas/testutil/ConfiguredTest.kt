@@ -1,7 +1,9 @@
 package com.parmet.squashlambdas.testutil
 
 import com.google.api.services.calendar.Calendar
-import com.parmet.squashlambdas.AppConfig
+import com.parmet.squashlambdas.EmailNotificationConfig
+import com.parmet.squashlambdas.MakeReservationConfig
+import com.parmet.squashlambdas.MonitorSlotsConfig
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.configureCalendar
 import com.parmet.squashlambdas.configureClubLockerClient
@@ -10,16 +12,19 @@ import org.junit.jupiter.api.BeforeEach
 import software.amazon.awssdk.services.s3.S3Client
 
 abstract class ConfiguredTest {
-    lateinit var config: AppConfig
+    lateinit var emailNotificationConfig: EmailNotificationConfig
+    lateinit var makeReservationConfig: MakeReservationConfig
+    lateinit var monitorSlotsConfig: MonitorSlotsConfig
     lateinit var calendar: Calendar
     internal lateinit var client: ClubLockerClient
-    lateinit var email: String
 
     @BeforeEach
     fun before() {
-        config = loadConfiguration("test.yml")
+        emailNotificationConfig = loadConfiguration("test-email-notification-handler.yml")
+        makeReservationConfig = loadConfiguration("test-make-reservation-handler.yml")
+        monitorSlotsConfig = loadConfiguration("test-monitor-slots-handler.yml")
         calendar = configureCalendar(
-            config,
+            emailNotificationConfig.googleCal,
             object : S3Client {
                 override fun serviceName(): String =
                     "S3"
@@ -27,7 +32,7 @@ abstract class ConfiguredTest {
             }
         )
         val clientAndEmail = configureClubLockerClient(
-            config,
+            makeReservationConfig.clubLocker,
             object : S3Client {
                 override fun serviceName(): String =
                     "S3"
@@ -35,6 +40,5 @@ abstract class ConfiguredTest {
             }
         )
         client = clientAndEmail.first
-        email = clientAndEmail.second.email!!
     }
 }

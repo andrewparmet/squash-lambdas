@@ -1,0 +1,12 @@
+googleCal:
+  creds:
+    location: local
+    fileName: google-squash-project.json
+  calendarId: primary
+
+sns:
+  myTopicArn: fake-arn
+  publicTopicArn: fake-arn-2
+
+parse:
+  primaryRecipient: ""

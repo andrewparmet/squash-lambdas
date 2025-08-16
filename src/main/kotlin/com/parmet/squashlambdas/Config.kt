@@ -1,41 +1,28 @@
 package com.parmet.squashlambdas
 
-data class AppConfig(
-    val google: GoogleConfig,
-    val aws: AwsConfig,
+data class EmailNotificationConfig(
+    val googleCal: GoogleCalConfig,
+    val sns: SnsConfig,
+    val parse: ParseConfig
+)
+
+data class MakeReservationConfig(
     val clubLocker: ClubLockerConfig,
     val schedule: FileConfig,
     val courts: FileConfig,
     val times: FileConfig,
-    val matchfind: MatchFindConfig,
-    val parse: ParseConfig
+    val sns: SnsConfig
 )
 
-data class GoogleConfig(
-    val cal: CalendarConfig
-)
-
-data class CalendarConfig(
-    val creds: FileConfig,
-    val calendarId: String,
-)
-
-data class AwsConfig(
-    val google: AwsGoogleConfig,
-    val clubLocker: AwsClubLockerConfig,
-    val schedule: AwsFileConfig,
-    val courts: AwsFileConfig,
-    val times: AwsFileConfig,
+data class MonitorSlotsConfig(
+    val clubLocker: ClubLockerConfig,
     val sns: SnsConfig,
-    val dynamo: DynamoConfig
+    val dynamoDb: DynamoConfig
 )
 
-data class AwsGoogleConfig(
-    val cal: AwsCalendarConfig
-)
-
-data class AwsCalendarConfig(
-    val creds: AwsFileConfig
+data class GoogleCalConfig(
+    val calendarId: String,
+    val fileConfig: FileConfig
 )
 
 data class AwsClubLockerConfig(
@@ -57,17 +44,15 @@ data class DynamoConfig(
 )
 
 data class ClubLockerConfig(
-    val creds: FileConfig,
-    val name: String
+    val fileConfig: FileConfig,
+    val name: String?
 )
 
 data class FileConfig(
     val location: String,
-    val fileName: String
-)
-
-data class MatchFindConfig(
-    val recipient: String
+    val bucket: String?,
+    val key: String?,
+    val fileName: String?
 )
 
 data class ParseConfig(

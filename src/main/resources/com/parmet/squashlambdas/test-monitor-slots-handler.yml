@@ -1,0 +1,12 @@
+clubLocker:
+  creds:
+    location: local
+    fileName: clublocker-creds.json
+  name: John Smith
+
+sns:
+  myTopicArn: fake-arn
+  publicTopicArn: fake-arn-2
+
+dynamoDb:
+  squashSlotsTableName: squash-slots-test

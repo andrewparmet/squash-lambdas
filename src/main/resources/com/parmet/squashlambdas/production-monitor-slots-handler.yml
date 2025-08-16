@@ -1,0 +1,12 @@
+clubLocker:
+  creds:
+    location: s3
+    bucket: ${CLUB_LOCKER_CREDS_BUCKET}
+    key: ${CLUB_LOCKER_CREDS_KEY}
+
+sns:
+  myTopicArn: ${MY_TOPIC_ARN}
+  publicTopicArn: ${PUBLIC_TOPIC_ARN}
+
+dynamoDb:
+  squashSlotsTableName: ${SLOTS_MONITORING_TABLE}

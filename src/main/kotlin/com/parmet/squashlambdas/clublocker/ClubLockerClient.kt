@@ -1,10 +1,11 @@
 package com.parmet.squashlambdas.clublocker
 
-import com.google.common.util.concurrent.Service
 import com.parmet.squashlambdas.activity.Match
 import java.time.LocalDate
 
-interface ClubLockerClient : Service {
+interface ClubLockerClient {
+    fun init()
+
     fun user(): UserResp
 
     fun courts(): List<CourtResp>

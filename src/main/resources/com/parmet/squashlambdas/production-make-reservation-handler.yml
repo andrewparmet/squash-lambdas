@@ -1,0 +1,25 @@
+clubLocker:
+  creds:
+    location: s3
+    bucket: ${CLUB_LOCKER_CREDS_BUCKET}
+    key: ${CLUB_LOCKER_CREDS_KEY}
+  name: ${CLUB_LOCKER_NAME}
+
+schedule:
+  location: s3
+  bucket: ${RESERVATION_BUCKET}
+  key: ${RESERVATION_SCHEDULE_KEY}
+
+courts:
+  location: s3
+  bucket: ${RESERVATION_BUCKET}
+  key: ${RESERVATION_COURTS_KEY}
+
+times:
+  location: s3
+  bucket: ${RESERVATION_BUCKET}
+  key: ${RESERVATION_TIMES_KEY}
+
+sns:
+  myTopicArn: ${MY_TOPIC_ARN}
+  publicTopicArn: ""
