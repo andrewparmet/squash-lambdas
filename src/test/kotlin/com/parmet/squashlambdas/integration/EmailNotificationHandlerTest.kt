@@ -6,10 +6,11 @@ import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.model.Event
 import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.EmailNotificationHandler
-import com.parmet.squashlambdas.EmailNotificationModule
 import com.parmet.squashlambdas.SnsConfig
 import com.parmet.squashlambdas.cal.ChangeSummaryTest
 import com.parmet.squashlambdas.configureNotifier
+import com.parmet.squashlambdas.dagger.EmailNotificationComponent
+import com.parmet.squashlambdas.dagger.EmailNotificationModule
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.testutil.getResourceAsString
 import dagger.BindsInstance
@@ -66,7 +67,7 @@ class EmailNotificationTestModule(
 
 @Singleton
 @Component(modules = [EmailNotificationTestModule::class, EmailNotificationModule::class])
-interface EmailNotificationTestComponent : com.parmet.squashlambdas.EmailNotificationComponent {
+interface EmailNotificationTestComponent : EmailNotificationComponent {
     override fun inject(target: EmailNotificationHandler)
 
     @Component.Builder

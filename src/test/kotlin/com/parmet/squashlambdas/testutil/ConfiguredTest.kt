@@ -6,10 +6,10 @@ import com.parmet.squashlambdas.MakeReservationConfig
 import com.parmet.squashlambdas.MonitorSlotsConfig
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.configureCalendar
-import com.parmet.squashlambdas.configureClubLockerClient
+import com.parmet.squashlambdas.configureClubLockerResources
 import com.parmet.squashlambdas.loadConfiguration
+import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
-import software.amazon.awssdk.services.s3.S3Client
 
 abstract class ConfiguredTest {
     lateinit var emailNotificationConfig: EmailNotificationConfig
@@ -23,22 +23,8 @@ abstract class ConfiguredTest {
         emailNotificationConfig = loadConfiguration("test-email-notification-handler.yml")
         makeReservationConfig = loadConfiguration("test-make-reservation-handler.yml")
         monitorSlotsConfig = loadConfiguration("test-monitor-slots-handler.yml")
-        calendar = configureCalendar(
-            emailNotificationConfig.googleCal,
-            object : S3Client {
-                override fun serviceName(): String =
-                    "S3"
-                override fun close() {}
-            }
-        )
-        val clientAndEmail = configureClubLockerClient(
-            makeReservationConfig.clubLocker,
-            object : S3Client {
-                override fun serviceName(): String =
-                    "S3"
-                override fun close() {}
-            }
-        )
-        client = clientAndEmail.first
+        calendar = configureCalendar(emailNotificationConfig.googleCal, mockk())
+        val clubLockerResources = configureClubLockerResources(makeReservationConfig.clubLocker, mockk())
+        client = clubLockerResources.client
     }
 }

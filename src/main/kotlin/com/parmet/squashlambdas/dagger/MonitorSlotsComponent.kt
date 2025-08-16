@@ -1,5 +1,6 @@
-package com.parmet.squashlambdas
+package com.parmet.squashlambdas.dagger
 
+import com.parmet.squashlambdas.MonitorSlotsHandler
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Named
@@ -20,6 +21,7 @@ interface MonitorSlotsComponent {
     interface Builder {
         @BindsInstance
         fun configName(@Named("configName") configName: String): Builder
+
         fun build(): MonitorSlotsComponent
     }
 }

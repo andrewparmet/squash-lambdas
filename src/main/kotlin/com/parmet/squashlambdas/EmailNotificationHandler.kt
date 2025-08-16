@@ -6,6 +6,8 @@ import com.amazonaws.services.lambda.runtime.events.S3Event
 import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.cal.ChangeSummary
 import com.parmet.squashlambdas.cal.EventManager
+import com.parmet.squashlambdas.dagger.DaggerEmailNotificationComponent
+import com.parmet.squashlambdas.dagger.EmailNotificationComponent
 import com.parmet.squashlambdas.email.EmailRetriever
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.s3.S3CreateObjectInfo
