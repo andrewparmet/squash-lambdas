@@ -1,7 +1,6 @@
 package com.parmet.squashlambdas
 
 import com.amazonaws.services.lambda.runtime.Context
-import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.Context.withInput
 import com.parmet.squashlambdas.activity.Player
@@ -19,8 +18,8 @@ import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Named
 
-open class MakeReservationHandler : RequestHandler<Any, Any> {
-    private val logger = KotlinLogging.logger { }
+open class MakeReservationHandler : AbstractRequestHandler<Any>() {
+    override val logger = KotlinLogging.logger { }
 
     @Inject
     lateinit var config: MakeReservationConfig
@@ -44,18 +43,15 @@ open class MakeReservationHandler : RequestHandler<Any, Any> {
             .configName("production-make-reservation-handler.yml")
             .build()
 
-    fun init() {
-        buildComponent().inject(this)
-        try {
-            client.init()
-        } catch (t: Throwable) {
+    override fun publishFailure(t: Throwable) =
+        if (::notifier.isInitialized) {
             notifier.publishFailedReservation(t)
-            throw t
+        } else {
+            null
         }
-    }
 
-    override fun handleRequest(input: Any, context: Context) {
-        init()
+    final override fun doHandleRequest(input: Any, context: Context) {
+        buildComponent().inject(this)
         withInput(notifier::publishFailedReservation, input) {
             doHandleRequest(input).also { logger.info { "Returning result: $it" } }
         }

@@ -13,9 +13,9 @@ class SlotStorageManagerImplTest : ConfiguredTest() {
         client.init()
         val slots = client.slotsTaken(LocalDate.now(), LocalDate.now())
 
-        SlotStorageManagerImpl(
+        SlotStorageManager(
             DynamoDbClient.create(),
-            monitorSlotsConfig.dynamoDb.squashSlotsTableName
+            monitorSlotsConfig.dynamoDb
         ).save(LocalDate.now(), slots)
     }
 }

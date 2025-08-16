@@ -77,6 +77,11 @@ object MonitorSlotsModule {
     @Singleton
     fun provideNotifierConfig(config: MonitorSlotsConfig) =
         config.sns
+
+    @Provides
+    @Singleton
+    fun provideDynamoDbConfig(config: MonitorSlotsConfig) =
+        config.dynamoDb
 }
 
 @Module
@@ -119,7 +124,7 @@ object ClubLockerModule {
     @Provides
     @Singleton
     fun provideClubLockerClient(resources: ClubLockerResources) =
-        resources.client
+        withTiming { resources.client.apply { init() } }
 
     @Provides
     @Singleton

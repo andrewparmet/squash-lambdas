@@ -1,7 +1,6 @@
 package com.parmet.squashlambdas
 
 import com.amazonaws.services.lambda.runtime.Context
-import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.amazonaws.services.lambda.runtime.events.S3Event
 import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.cal.ChangeSummary
@@ -16,9 +15,11 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import javax.inject.Inject
 import javax.inject.Named
 
-private val logger = KotlinLogging.logger { }
+private val fileLogger = KotlinLogging.logger { }
 
-open class EmailNotificationHandler : RequestHandler<S3Event, Any> {
+open class EmailNotificationHandler : AbstractRequestHandler<S3Event>() {
+    override val logger = fileLogger
+
     @Inject
     lateinit var config: EmailNotificationConfig
 
@@ -38,14 +39,15 @@ open class EmailNotificationHandler : RequestHandler<S3Event, Any> {
             .configName("production-email-notification-handler.yml")
             .build()
 
-    init {
-        logger.info { "Beginning handler instantiation" }
-    }
+    override fun publishFailure(t: Throwable) =
+        if (::notifier.isInitialized) {
+            notifier.publishFailedParse(t)
+        } else {
+            null
+        }
 
-    final override fun handleRequest(input: S3Event, ignore: Context) {
-        logger.info { "Handling request: $input" }
+    final override fun doHandleRequest(input: S3Event, context: Context) {
         buildComponent().inject(this)
-        logger.info { "Finished injecting" }
         val myLambdaUser = SingleLambdaUser(notifier, eventManager)
         myLambdaUser.withInput(Notifier::publishFailedParse, input) {
             val info = getS3Info(input)

@@ -3,8 +3,9 @@ package com.parmet.squashlambdas.monitor
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.clublocker.Slot
 import java.time.LocalDate
+import javax.inject.Inject
 
-internal class SlotsTracker(
+class SlotsTracker @Inject constructor(
     private val client: ClubLockerClient,
     private val slotStorageManager: SlotStorageManager
 ) {
