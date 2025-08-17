@@ -17,9 +17,7 @@ class EmailRetriever @Inject constructor(
                 message.allRecipients.map { it.toString() },
                 message.subject,
                 BodyExtractor.extract(message).toString(),
-                CalendarExtractor.extract(message).flatMap { it.events }.firstOrNull(),
                 key,
-                CsvExtractor.extract(message).toString().takeIf { it.isNotEmpty() }
             )
         }
 }
