@@ -15,7 +15,6 @@ dependencies {
     implementation(platform(libs.jackson.bom))
     implementation(platform(libs.log4j.bom))
 
-    implementation(kotlin("reflect"))
     implementation(libs.aws.dynamodb)
     implementation(libs.aws.lambda.core)
     implementation(libs.aws.lambda.events)
