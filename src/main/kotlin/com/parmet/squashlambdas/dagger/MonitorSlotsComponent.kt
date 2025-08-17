@@ -12,6 +12,7 @@ import javax.inject.Singleton
         MonitorSlotsModule::class,
         AwsModule::class,
         ClubLockerModule::class,
+        NotifierModule::class
     ]
 )
 interface MonitorSlotsComponent {

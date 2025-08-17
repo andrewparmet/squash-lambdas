@@ -4,19 +4,25 @@ import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.amazonaws.services.lambda.runtime.events.ScheduledEvent
 import com.parmet.squashlambdas.Context.addToContext
+import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Player
+import com.parmet.squashlambdas.activity.valueOf
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.dagger.DaggerMakeReservationComponent
 import com.parmet.squashlambdas.dagger.MakeReservationComponent
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.reserve.ReservationMaker
 import com.parmet.squashlambdas.reserve.ReservationMaker.Result
+import com.parmet.squashlambdas.reserve.Schedule
 import com.parmet.squashlambdas.reserve.TimeFilter
+import com.parmet.squashlambdas.reserve.mapNonEmptyLines
+import com.parmet.squashlambdas.util.FileLoader
 import com.parmet.squashlambdas.util.HasNotifier
 import com.parmet.squashlambdas.util.withErrorHandling
 import io.github.oshai.kotlinlogging.KotlinLogging
-import software.amazon.awssdk.services.s3.S3Client
+import java.io.InputStream
 import java.time.LocalDate
+import java.time.LocalTime
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -30,7 +36,7 @@ open class MakeReservationHandler :
     lateinit var config: MakeReservationConfig
 
     @Inject
-    lateinit var s3: S3Client
+    lateinit var fileLoader: FileLoader
 
     @Inject
     @Named("myNotifier")
@@ -72,7 +78,7 @@ open class MakeReservationHandler :
     }
 
     private fun processSchedule(requestDate: LocalDate): Any {
-        val schedule = getSchedule(config.schedule, s3)
+        val schedule = getSchedule()
         return if (schedule.shouldMakeReservation(requestDate)) {
             makeReservation(requestDate)
         } else {
@@ -89,8 +95,8 @@ open class MakeReservationHandler :
                 client,
                 ReservationMaker.Options(
                     hostPlayer,
-                    getPreferredCourts(config.courts, s3),
-                    getPreferredTimes(config.times, s3),
+                    getPreferredCourts(),
+                    getPreferredTimes(),
                 )
             ).makeReservation(requestDate)
 
@@ -103,4 +109,19 @@ open class MakeReservationHandler :
 
         return result
     }
+
+    fun getSchedule() =
+        Schedule.fromStream(fileLoader.streamFile(config.schedule))
+
+    fun getPreferredCourts() =
+        getPreferredCourts(fileLoader.streamFile(config.courts))
+
+    fun getPreferredTimes() =
+        getPreferredTimes(fileLoader.streamFile(config.times))
 }
+
+fun getPreferredCourts(stream: InputStream) =
+    stream.mapNonEmptyLines { Court.valueOf(it) }
+
+fun getPreferredTimes(stream: InputStream) =
+    stream.mapNonEmptyLines { LocalTime.parse(it) }

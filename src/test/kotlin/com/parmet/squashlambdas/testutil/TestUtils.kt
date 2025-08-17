@@ -1,14 +1,7 @@
 package com.parmet.squashlambdas.testutil
 
-import com.parmet.squashlambdas.json.Json
 import java.nio.charset.StandardCharsets.UTF_8
 import kotlin.reflect.KClass
-
-fun removeJsonWhitespace(string: String) =
-    Json.mapper.readTree(string).toString()
-
-fun getJsonResourceAsString(resourceName: String) =
-    removeJsonWhitespace(getResourceAsString(getCallerCallerClass(), resourceName))
 
 fun getResourceAsString(resourceName: String) =
     getResourceAsString(getCallerCallerClass(), resourceName)
