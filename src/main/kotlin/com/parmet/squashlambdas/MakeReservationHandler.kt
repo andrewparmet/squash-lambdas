@@ -2,13 +2,13 @@ package com.parmet.squashlambdas
 
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
+import com.amazonaws.services.lambda.runtime.events.ScheduledEvent
 import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.dagger.DaggerMakeReservationComponent
 import com.parmet.squashlambdas.dagger.MakeReservationComponent
 import com.parmet.squashlambdas.notify.Notifier
-import com.parmet.squashlambdas.reserve.InputParser
 import com.parmet.squashlambdas.reserve.ReservationMaker
 import com.parmet.squashlambdas.reserve.ReservationMaker.Result
 import com.parmet.squashlambdas.reserve.TimeFilter
@@ -23,7 +23,7 @@ import javax.inject.Named
 private val logger = KotlinLogging.logger { }
 
 open class MakeReservationHandler :
-    RequestHandler<Any, Any>,
+    RequestHandler<ScheduledEvent, Any>,
     HasNotifier {
 
     @Inject
@@ -48,21 +48,24 @@ open class MakeReservationHandler :
             .configName("production-make-reservation-handler.yml")
             .build()
 
-    final override fun handleRequest(input: Any, context: Context) {
+    final override fun handleRequest(input: ScheduledEvent, context: Context) {
         withErrorHandling(input) {
             buildComponent().inject(this)
             doHandleRequest(input).also { logger.info { "Returning result: $it" } }
         }
     }
 
-    private fun doHandleRequest(input: Any) {
-        val requestDate = InputParser.parseRequestDate(input)
+    private fun doHandleRequest(input: ScheduledEvent) {
+        val timeFilter = TimeFilter(input.time)
+        val requestDate = timeFilter.requestDate
+
+        addToContext("input", input)
         addToContext("requestDate", requestDate)
 
-        val timeFiltered = TimeFilter(requestDate).filterBasedOnBostonTime()
-        if (!timeFiltered.shouldMakeReservation()) {
-            logger.info { "Not making a reservation: ${timeFiltered.reason}" }
-            timeFiltered.reason!!
+        val reservationTimeFiltered = timeFilter.filterBasedOnBostonTime()
+        if (!reservationTimeFiltered.shouldMakeReservation()) {
+            logger.info { "Not making a reservation: ${reservationTimeFiltered.reason}" }
+            reservationTimeFiltered.reason!!
         } else {
             processSchedule(requestDate)
         }
