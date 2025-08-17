@@ -1,15 +1,10 @@
 package com.parmet.squashlambdas.email
 
-import biweekly.component.VEvent
-import biweekly.property.Attendee
-import biweekly.property.Organizer
 import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.cal.ChangeSummaryTest
 import com.parmet.squashlambdas.testutil.EmailReturningS3
 import com.parmet.squashlambdas.testutil.getResourceAsString
 import org.junit.jupiter.api.Test
-import java.sql.Date
-import java.time.Instant
 
 class EmailRetrieverTest {
     @Test
@@ -23,23 +18,6 @@ class EmailRetrieverTest {
     }
 }
 
-fun event() =
-    VEvent().apply {
-        setDateTimeStamp(Date.from(Instant.parse("2018-03-26T00:27:36Z")))
-        setUid("741228ef-faa3-4e59-9b1e-ce8b2aefca5a")
-        setDateStart(Date.from(Instant.parse("2018-03-29T01:00:00Z")))
-        setDateEnd(Date.from(Instant.parse("2018-03-29T01:45:00Z")))
-        setSummary("Reservation for Hardball")
-        setOrganizer(Organizer("Tennis & Racquet Club", "no-reply@ussquash.com"))
-        setLocation("Tennis & Racquet Club / Court: Court #7")
-        addAttendee(attendee())
-    }
-
-fun attendee() =
-    Attendee("Andrew Parmet", "joecool@peanuts.com").apply {
-        addParameter("CUTYPE", "INDIVIDUAL")
-    }
-
 fun emailData() =
     EmailData(
         listOf("joecool@peanuts.com"),
@@ -51,7 +29,5 @@ fun emailData() =
             or the whole reservation please log into Club Locker and use the My Reservations
             area.
         """.trimIndent().replace("\n", " "),
-        event(),
         "some-object-key",
-        null
     )

@@ -19,14 +19,11 @@ dependencies {
     implementation(libs.aws.lambda.core)
     implementation(libs.aws.lambda.events)
     implementation(libs.aws.s3)
-    implementation(libs.aws.sdk.core)
     implementation(libs.aws.sns)
-    implementation(libs.biweekly)
     implementation(libs.commons.email)
     implementation(libs.dagger)
     implementation(libs.google.calendar)
     implementation(libs.google.oauth2.http)
-    implementation(libs.jackson.databind)
     implementation(libs.jackson.jsr310)
     implementation(libs.jackson.kotlin)
     implementation(libs.guava)
@@ -34,7 +31,6 @@ dependencies {
     implementation(libs.jsoup)
     implementation(libs.kotlinLogging)
     implementation(libs.log4j.core)
-    implementation(libs.opencsv)
 
     ksp(libs.dagger.compiler)
 
