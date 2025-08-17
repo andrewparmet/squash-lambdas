@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.buildConfig)
     alias(libs.plugins.kotlin)
@@ -14,6 +12,7 @@ repositories {
 
 dependencies {
     implementation(platform(libs.aws.bom))
+    implementation(platform(libs.jackson.bom))
     implementation(platform(libs.log4j.bom))
 
     implementation(kotlin("reflect"))
@@ -28,9 +27,9 @@ dependencies {
     implementation(libs.dagger)
     implementation(libs.google.calendar)
     implementation(libs.google.oauth2.http)
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2")
+    implementation(libs.jackson.databind)
+    implementation(libs.jackson.jsr310)
+    implementation(libs.jackson.kotlin)
     implementation(libs.guava)
     implementation(libs.hoplite)
     implementation(libs.jsoup)
@@ -74,14 +73,12 @@ spotless {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion.set(JavaLanguageVersion.of(libs.versions.jvmTarget.get().toString()))
     }
 }
 
 kotlin {
     compilerOptions {
-        jvmToolchain(21)
-        jvmTarget.set(JvmTarget.JVM_21)
         allWarningsAsErrors.set(true)
     }
 }
