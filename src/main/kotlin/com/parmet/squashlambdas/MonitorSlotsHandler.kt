@@ -2,6 +2,7 @@ package com.parmet.squashlambdas
 
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
+import com.amazonaws.services.lambda.runtime.events.ScheduledEvent
 import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.activity.Sport
 import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
@@ -25,7 +26,7 @@ import javax.inject.Named
 private val logger = KotlinLogging.logger { }
 
 open class MonitorSlotsHandler :
-    RequestHandler<Any, Any>,
+    RequestHandler<ScheduledEvent, Any>,
     HasNotifier {
 
     @Inject
@@ -45,7 +46,7 @@ open class MonitorSlotsHandler :
             .configName("production-monitor-slots-handler.yml")
             .build()
 
-    final override fun handleRequest(input: Any, context: Context) {
+    final override fun handleRequest(input: ScheduledEvent, context: Context) {
         withErrorHandling(input) {
             buildComponent().inject(this)
             doHandleRequest()
