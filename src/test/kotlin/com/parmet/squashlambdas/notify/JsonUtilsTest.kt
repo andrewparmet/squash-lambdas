@@ -17,7 +17,7 @@ import java.lang.reflect.Modifier
 import java.time.Instant
 import kotlin.reflect.KClass
 
-class GsonUtilsTest {
+class JsonUtilsTest {
     private val logger = KotlinLogging.logger { }
 
     private val match =
