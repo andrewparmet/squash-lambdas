@@ -12,7 +12,7 @@ abstract class AbstractRequestHandler<T> : RequestHandler<T, Any> {
             logger.info { "Beginning handling" }
             doHandleRequest(input, context)
         } catch (ex: Exception) {
-            publishFailure(ex) ?: logger.error(ex) { "Error while monitoring slots" }
+            publishFailure(ex) ?: logger.error(ex) { "Error while handling request" }
         }
     }
 
