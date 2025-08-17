@@ -8,19 +8,16 @@ object Context {
 
     val context = ConcurrentSkipListMap<String, Any>()
 
-    init {
-        addToContext("git sha", GIT_SHA)
-    }
-
-    fun addToContext(key: String, value: Any?) {
-        context[key] = value ?: "Value for key $key was null!"
+    fun addToContext(key: String, value: Any) {
+        context[key] = value
     }
 
     fun <T> withInput(notifier: (Throwable) -> Unit, input: Any, action: () -> T) {
-        logger.info { "Starting handling of $input" }
+        addToContext("git sha", GIT_SHA)
         addToContext("input", input)
 
         try {
+            logger.info { "Starting handling of $input" }
             action()
         } catch (ex: Exception) {
             notifier.invoke(ex)

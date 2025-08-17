@@ -1,7 +1,7 @@
 package com.parmet.squashlambdas.integration
 
 import com.amazonaws.services.lambda.runtime.events.S3Event
-import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification
+import com.amazonaws.services.s3.event.S3EventNotification
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.model.Event
 import com.google.common.truth.Truth.assertThat
@@ -131,7 +131,6 @@ class EmailNotificationHandlerTest {
                     2319L,
                     "eTag",
                     "versionId",
-                    "sequencer"
                 ),
                 "s3SchemaVersion"
             ),
