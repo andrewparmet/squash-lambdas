@@ -1,5 +1,6 @@
 package com.parmet.squashlambdas.reserve
 
+import java.io.InputStream
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -10,11 +11,11 @@ class Schedule(
         days.contains(date.dayOfWeek)
 
     companion object {
-        fun fromString(schedule: String): Schedule =
+        fun fromStream(stream: InputStream): Schedule =
             Schedule(
-                schedule.mapNonEmptyLines {
+                stream.mapNonEmptyLines {
                     DayOfWeek.valueOf(it.uppercase())
-                }
+                }.toList()
             )
     }
 }

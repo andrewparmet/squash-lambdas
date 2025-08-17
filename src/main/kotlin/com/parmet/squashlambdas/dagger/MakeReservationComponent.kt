@@ -12,6 +12,7 @@ import javax.inject.Singleton
         MakeReservationModule::class,
         AwsModule::class,
         ClubLockerModule::class,
+        NotifierModule::class
     ]
 )
 interface MakeReservationComponent {

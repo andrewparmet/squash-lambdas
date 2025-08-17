@@ -13,6 +13,7 @@ import com.parmet.squashlambdas.configureClubLockerResources
 import com.parmet.squashlambdas.configureNotifier
 import com.parmet.squashlambdas.loadConfiguration
 import com.parmet.squashlambdas.notify.Notifier
+import com.parmet.squashlambdas.util.FileLoader
 import dagger.Module
 import dagger.Provides
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -100,7 +101,10 @@ object AwsModule {
     @Singleton
     fun provideSnsClient(): SnsClient =
         withTiming { SnsClient.create() }
+}
 
+@Module
+object NotifierModule {
     @Provides
     @Singleton
     @Named("myNotifier")
@@ -118,8 +122,8 @@ object AwsModule {
 object ClubLockerModule {
     @Provides
     @Singleton
-    fun provideClubLockerResources(config: ClubLockerConfig, s3: S3Client) =
-        withTiming { configureClubLockerResources(config, s3) }
+    fun provideClubLockerResources(config: ClubLockerConfig, fileLoader: FileLoader) =
+        withTiming { configureClubLockerResources(config, fileLoader) }
 
     @Provides
     @Singleton
@@ -136,8 +140,8 @@ object ClubLockerModule {
 object CalendarModule {
     @Provides
     @Singleton
-    fun provideCalendar(config: GoogleCalConfig, s3: S3Client): Calendar =
-        withTiming { configureCalendar(config, s3) }
+    fun provideCalendar(config: GoogleCalConfig, fileLoader: FileLoader): Calendar =
+        withTiming { configureCalendar(config, fileLoader) }
 }
 
 private inline fun <reified T> withTiming(block: () -> T): T {

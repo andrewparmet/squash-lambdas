@@ -2,11 +2,9 @@ package com.parmet.squashlambdas.integration
 
 import com.google.api.services.calendar.Calendar
 import com.parmet.squashlambdas.EmailNotificationHandler
-import com.parmet.squashlambdas.SnsConfig
-import com.parmet.squashlambdas.configureNotifier
 import com.parmet.squashlambdas.dagger.EmailNotificationComponent
 import com.parmet.squashlambdas.dagger.EmailNotificationModule
-import com.parmet.squashlambdas.notify.Notifier
+import com.parmet.squashlambdas.dagger.NotifierModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Module
@@ -33,15 +31,10 @@ class EmailNotificationTestModule(
     @Provides
     fun snsClient(): SnsClient =
         sns
-
-    @Provides
-    @Named("myNotifier")
-    fun myNotifier(config: SnsConfig, sns: SnsClient): Notifier =
-        configureNotifier(config.myTopicArn, sns)
 }
 
 @Singleton
-@Component(modules = [EmailNotificationTestModule::class, EmailNotificationModule::class])
+@Component(modules = [EmailNotificationTestModule::class, EmailNotificationModule::class, NotifierModule::class])
 interface EmailNotificationTestComponent : EmailNotificationComponent {
     override fun inject(target: EmailNotificationHandler)
 

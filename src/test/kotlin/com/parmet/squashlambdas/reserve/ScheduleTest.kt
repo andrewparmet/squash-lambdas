@@ -8,7 +8,7 @@ import java.time.LocalDate
 class ScheduleTest {
     @Test
     fun `schedule is parsed and interpreted correctly`() {
-        val schedule = Schedule.fromString(getResourceAsString("schedule.txt"))
+        val schedule = Schedule.fromStream(getResourceAsString("schedule.txt").byteInputStream())
 
         assertThat(schedule.shouldMakeReservation(LocalDate.parse("2019-02-04"))).isTrue()
         assertThat(schedule.shouldMakeReservation(LocalDate.parse("2019-02-05"))).isTrue()

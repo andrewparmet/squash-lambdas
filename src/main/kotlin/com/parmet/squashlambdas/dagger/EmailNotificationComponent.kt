@@ -12,6 +12,7 @@ import javax.inject.Singleton
         EmailNotificationModule::class,
         CalendarModule::class,
         AwsModule::class,
+        NotifierModule::class
     ]
 )
 interface EmailNotificationComponent {

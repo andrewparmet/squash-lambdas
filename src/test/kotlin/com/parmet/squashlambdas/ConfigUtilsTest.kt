@@ -16,7 +16,7 @@ class ConfigUtilsTest {
                     Court 1
                     Court 2
                     Court 3
-                """.trimIndent(),
+                """.trimIndent().byteInputStream(),
             )
         ).containsExactly(Court1, Court2, Court3).inOrder()
     }
@@ -29,7 +29,7 @@ class ConfigUtilsTest {
                     18:00
                     18:45
                     19:30
-                """.trimIndent(),
+                """.trimIndent().byteInputStream(),
             )
         ).containsExactly(
             LocalTime.of(18, 0),
