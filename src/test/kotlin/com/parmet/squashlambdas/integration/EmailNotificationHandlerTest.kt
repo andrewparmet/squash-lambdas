@@ -131,9 +131,14 @@ class EmailNotificationHandlerTest {
                     2319L,
                     "eTag",
                     "versionId",
+                    "sequencer"
                 ),
                 "s3SchemaVersion"
             ),
+            mockk(),
+            mockk(),
+            mockk(),
+            mockk(),
             mockk()
         )
 

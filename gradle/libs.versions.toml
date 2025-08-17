@@ -1,8 +1,8 @@
 [versions]
-aws-sdk = "2.32.23"
+aws-v1 = "1.12.788"
+aws-v2 = "2.32.23"
 aws-lambda-core = "1.3.0"
-aws-lambda-events = "3.16.1"
-biweekly = "0.6.8"
+aws-lambda-events = "2.2.9"
 buildConfig = "5.6.5"
 commons-email = "1.6.0"
 dagger = "2.57"
@@ -33,12 +33,13 @@ shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 [libraries]
-aws-bom = { module = "software.amazon.awssdk:bom", version.ref = "aws-sdk" }
+aws-bom = { module = "software.amazon.awssdk:bom", version.ref = "aws-v2" }
 aws-dynamodb = { module = "software.amazon.awssdk:dynamodb" }
 aws-lambda-core = { module = "com.amazonaws:aws-lambda-java-core", version.ref = "aws-lambda-core" }
-aws-lambda-events = { module = "com.amazonaws:aws-lambda-java-events", version.ref = "aws-lambda-core" }
+aws-lambda-events = { module = "com.amazonaws:aws-lambda-java-events", version.ref = "aws-lambda-events" }
 aws-s3 = { module = "software.amazon.awssdk:s3" }
 aws-sns = { module = "software.amazon.awssdk:sns" }
+aws-v1-s3 = { module = "com.amazonaws:aws-java-sdk-s3", version.ref = "aws-v1" }
 commons-email = { module = "org.apache.commons:commons-email", version.ref = "commons-email" }
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }

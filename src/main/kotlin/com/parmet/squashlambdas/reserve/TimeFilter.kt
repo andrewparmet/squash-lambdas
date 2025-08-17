@@ -2,16 +2,23 @@ package com.parmet.squashlambdas.reserve
 
 import com.parmet.squashlambdas.util.inBoston
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.joda.time.DateTime
 import java.time.Clock
 import java.time.Instant
-import java.time.LocalDate
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 internal class TimeFilter(
-    private val requestDate: LocalDate,
+    time: DateTime,
     private val clock: Clock = Clock.systemUTC()
 ) {
     private val logger = KotlinLogging.logger { }
+
+    val requestDate =
+        time.millis.let(Instant::ofEpochMilli)
+            .atZone(ZoneOffset.UTC)
+            .toLocalDate()
+            .plusDays(7)
 
     fun filterBasedOnBostonTime(): Output {
         val time = Instant.now(clock).inBoston()

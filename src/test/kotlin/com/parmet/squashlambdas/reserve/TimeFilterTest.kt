@@ -1,19 +1,18 @@
 package com.parmet.squashlambdas.reserve
 
 import com.google.common.truth.Truth.assertThat
+import org.joda.time.DateTime
 import org.junit.jupiter.api.Test
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
-import java.util.UUID
 
 class TimeFilterTest {
     @Test
     fun `makes a reservation at 1201 am local EST`() {
-        val time = Instant.parse("2019-02-05T05:01:00Z")
-        val clock = Clock.fixed(time, ZoneOffset.UTC)
+        val time = DateTime.parse("2019-02-05T05:01:00Z")
         assertThat(
-            TimeFilter(InputParser.parseRequestDate(input(time)), clock)
+            TimeFilter(time, time.toFixedClock())
                 .filterBasedOnBostonTime()
                 .reason
         ).isNull()
@@ -21,10 +20,9 @@ class TimeFilterTest {
 
     @Test
     fun `does not make a reservation at 1101 pm local EST`() {
-        val time = Instant.parse("2019-02-05T04:01:00Z")
-        val clock = Clock.fixed(time, ZoneOffset.UTC)
+        val time = DateTime.parse("2019-02-05T04:01:00Z")
         assertThat(
-            TimeFilter(InputParser.parseRequestDate(input(time)), clock)
+            TimeFilter(time, time.toFixedClock())
                 .filterBasedOnBostonTime()
                 .reason
         ).isEqualTo(
@@ -34,10 +32,9 @@ class TimeFilterTest {
 
     @Test
     fun `makes a reservation at 1201 am local EDT`() {
-        val time = Instant.parse("2019-04-05T04:01:00Z")
-        val clock = Clock.fixed(time, ZoneOffset.UTC)
+        val time = DateTime.parse("2019-04-05T04:01:00Z")
         assertThat(
-            TimeFilter(InputParser.parseRequestDate(input(time)), clock)
+            TimeFilter(time, time.toFixedClock())
                 .filterBasedOnBostonTime()
                 .reason
         ).isNull()
@@ -45,10 +42,9 @@ class TimeFilterTest {
 
     @Test
     fun `does not make a reservation at 0101 am local EDT`() {
-        val time = Instant.parse("2019-04-05T05:01:00Z")
-        val clock = Clock.fixed(time, ZoneOffset.UTC)
+        val time = DateTime.parse("2019-04-05T05:01:00Z")
         assertThat(
-            TimeFilter(InputParser.parseRequestDate(input(time)), clock)
+            TimeFilter(time, time.toFixedClock())
                 .filterBasedOnBostonTime()
                 .reason
         ).isEqualTo(
@@ -57,6 +53,6 @@ class TimeFilterTest {
         )
     }
 
-    private fun input(instant: Instant) =
-        InputParser.Input("", UUID.randomUUID(), "", "", "", instant, "", listOf(), mapOf())
+    private fun DateTime.toFixedClock() =
+        Clock.fixed(Instant.ofEpochMilli(millis), ZoneOffset.UTC)
 }
