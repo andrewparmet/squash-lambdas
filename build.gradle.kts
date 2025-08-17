@@ -24,6 +24,7 @@ dependencies {
     implementation(libs.dagger)
     implementation(libs.google.calendar)
     implementation(libs.google.oauth2.http)
+    implementation(libs.jackson.joda)
     implementation(libs.jackson.jsr310)
     implementation(libs.jackson.kotlin)
     implementation(libs.guava)

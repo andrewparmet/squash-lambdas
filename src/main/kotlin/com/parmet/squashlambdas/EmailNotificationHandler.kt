@@ -23,6 +23,7 @@ private val logger = KotlinLogging.logger { }
 open class EmailNotificationHandler :
     RequestHandler<S3Event, Any>,
     HasNotifier {
+
     @Inject
     lateinit var config: EmailNotificationConfig
 

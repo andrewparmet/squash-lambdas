@@ -36,7 +36,7 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 aws-bom = { module = "software.amazon.awssdk:bom", version.ref = "aws-sdk" }
 aws-dynamodb = { module = "software.amazon.awssdk:dynamodb" }
 aws-lambda-core = { module = "com.amazonaws:aws-lambda-java-core", version.ref = "aws-lambda-core" }
-aws-lambda-events = { module = "com.amazonaws:aws-lambda-java-events", version.ref = "aws-lambda-events" }
+aws-lambda-events = { module = "com.amazonaws:aws-lambda-java-events", version.ref = "aws-lambda-core" }
 aws-s3 = { module = "software.amazon.awssdk:s3" }
 aws-sns = { module = "software.amazon.awssdk:sns" }
 commons-email = { module = "org.apache.commons:commons-email", version.ref = "commons-email" }
@@ -51,6 +51,7 @@ junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 junit-platformLauncher = { module = "org.junit.platform:junit-platform-launcher" }
 jackson-bom = { module = "com.fasterxml.jackson:jackson-bom", version.ref = "jackson" }
 jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin" }
+jackson-joda = { module = "com.fasterxml.jackson.datatype:jackson-datatype-joda" }
 jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" }
 kotlinLogging = { module = "io.github.oshai:kotlin-logging", version.ref = "kotlinLogging" }
 log4j-bom = { module = "org.apache.logging.log4j:log4j-bom", version.ref = "log4j" }
