@@ -1,7 +1,6 @@
 package com.parmet.squashlambdas.email
 
 import software.amazon.awssdk.services.s3.S3Client
-import software.amazon.awssdk.services.s3.model.GetObjectRequest
 import javax.inject.Inject
 import javax.mail.internet.MimeMessage
 
@@ -9,9 +8,10 @@ class EmailRetriever @Inject constructor(
     private val s3: S3Client
 ) {
     fun retrieveEmail(bucket: String, key: String) =
-        s3.getObjectAsBytes(
-            GetObjectRequest.builder().bucket(bucket).key(key).build()
-        ).asUtf8String().byteInputStream().use { stream ->
+        s3.getObject {
+            it.bucket(bucket)
+            it.key(key)
+        }.use { stream ->
             val message = MimeMessage(null, stream)
             EmailData(
                 message.allRecipients.map { it.toString() },
