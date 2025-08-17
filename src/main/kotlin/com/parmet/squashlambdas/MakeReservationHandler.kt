@@ -25,6 +25,7 @@ private val logger = KotlinLogging.logger { }
 open class MakeReservationHandler :
     RequestHandler<Any, Any>,
     HasNotifier {
+
     @Inject
     lateinit var config: MakeReservationConfig
 

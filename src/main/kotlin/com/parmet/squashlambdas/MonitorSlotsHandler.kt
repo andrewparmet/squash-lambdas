@@ -27,6 +27,7 @@ private val logger = KotlinLogging.logger { }
 open class MonitorSlotsHandler :
     RequestHandler<Any, Any>,
     HasNotifier {
+
     @Inject
     @Named("myNotifier")
     override lateinit var notifier: Notifier
