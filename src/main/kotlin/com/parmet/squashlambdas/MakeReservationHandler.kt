@@ -1,8 +1,8 @@
 package com.parmet.squashlambdas
 
 import com.amazonaws.services.lambda.runtime.Context
+import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.parmet.squashlambdas.Context.addToContext
-import com.parmet.squashlambdas.Context.withInput
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.dagger.DaggerMakeReservationComponent
@@ -12,15 +12,19 @@ import com.parmet.squashlambdas.reserve.InputParser
 import com.parmet.squashlambdas.reserve.ReservationMaker
 import com.parmet.squashlambdas.reserve.ReservationMaker.Result
 import com.parmet.squashlambdas.reserve.TimeFilter
+import com.parmet.squashlambdas.util.HasNotifier
+import com.parmet.squashlambdas.util.withErrorHandling
 import io.github.oshai.kotlinlogging.KotlinLogging
 import software.amazon.awssdk.services.s3.S3Client
 import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Named
 
-open class MakeReservationHandler : AbstractRequestHandler<Any>() {
-    override val logger = KotlinLogging.logger { }
+private val logger = KotlinLogging.logger { }
 
+open class MakeReservationHandler :
+    RequestHandler<Any, Any>,
+    HasNotifier {
     @Inject
     lateinit var config: MakeReservationConfig
 
@@ -29,7 +33,7 @@ open class MakeReservationHandler : AbstractRequestHandler<Any>() {
 
     @Inject
     @Named("myNotifier")
-    lateinit var notifier: Notifier
+    override lateinit var notifier: Notifier
 
     @Inject
     lateinit var client: ClubLockerClient
@@ -43,16 +47,9 @@ open class MakeReservationHandler : AbstractRequestHandler<Any>() {
             .configName("production-make-reservation-handler.yml")
             .build()
 
-    override fun publishFailure(t: Throwable) =
-        if (::notifier.isInitialized) {
-            notifier.publishFailedReservation(t)
-        } else {
-            null
-        }
-
-    final override fun doHandleRequest(input: Any, context: Context) {
-        buildComponent().inject(this)
-        withInput(notifier::publishFailedReservation, input) {
+    final override fun handleRequest(input: Any, context: Context) {
+        withErrorHandling(input) {
+            buildComponent().inject(this)
             doHandleRequest(input).also { logger.info { "Returning result: $it" } }
         }
     }

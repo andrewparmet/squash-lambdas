@@ -67,27 +67,6 @@ class Notifier(
             |${print(context)}
         """.trimMargin()
 
-    fun publishFailedParse(t: Throwable) {
-        sns.publish(
-            PublishRequest.builder()
-                .topicArn(topicArn)
-                .message(failedParseMsg(t))
-                .subject("Failed to Process Club Locker Email")
-                .build()
-        )
-    }
-
-    private fun failedParseMsg(t: Throwable): String =
-        """
-            |Encountered an error processing a Club Locker email:
-            |
-            |Context:
-            |${print(context)}
-            |
-            |Stack trace:
-            |${print(t)}
-        """.trimMargin()
-
     fun publishSuccessfulReservation(result: ReservationMaker.Result.Success) {
         sns.publish(
             PublishRequest.builder()
@@ -105,27 +84,6 @@ class Notifier(
             |
             |Context:
             |${print(context)}
-        """.trimMargin()
-
-    fun publishFailedReservation(t: Throwable) {
-        sns.publish(
-            PublishRequest.builder()
-                .topicArn(topicArn)
-                .message(failedReservationMsg(t))
-                .subject("Failed to make reservation on Club Locker")
-                .build()
-        )
-    }
-
-    private fun failedReservationMsg(t: Throwable): String =
-        """
-            |Encountered an error making a reservation:
-            |
-            |Context:
-            |${print(context)}
-            |
-            |Stack trace:
-            |${print(t)}
         """.trimMargin()
 
     fun publishFoundOpenSlot(result: List<Slot>) {
@@ -160,19 +118,19 @@ class Notifier(
             "${properNoun(it.dayOfWeek.name)}, ${properNoun(it.month.name)} ${it.dayOfMonth}"
         }
 
-    fun publishFailedSlotMonitoring(failure: Throwable) {
+    fun publishFailure(t: Throwable) {
         sns.publish(
             PublishRequest.builder()
                 .topicArn(topicArn)
-                .message(failedSlotMonitoringMsg(failure))
-                .subject("Could not track open slots on Club Locker")
+                .message(failureMsg(t))
+                .subject("Failed to Execute Club Locker Lambda")
                 .build()
         )
     }
 
-    private fun failedSlotMonitoringMsg(failure: Throwable): String =
+    private fun failureMsg(failure: Throwable): String =
         """
-            |Could not monitor slots.
+            |Could not execute lambda.
             |
             |Context:
             |${print(context)}

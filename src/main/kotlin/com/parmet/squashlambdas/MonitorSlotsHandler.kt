@@ -1,8 +1,8 @@
 package com.parmet.squashlambdas
 
 import com.amazonaws.services.lambda.runtime.Context
+import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.parmet.squashlambdas.Context.addToContext
-import com.parmet.squashlambdas.Context.withInput
 import com.parmet.squashlambdas.activity.Sport
 import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
 import com.parmet.squashlambdas.clublocker.Slot
@@ -10,7 +10,9 @@ import com.parmet.squashlambdas.dagger.DaggerMonitorSlotsComponent
 import com.parmet.squashlambdas.dagger.MonitorSlotsComponent
 import com.parmet.squashlambdas.monitor.SlotsTracker
 import com.parmet.squashlambdas.notify.Notifier
+import com.parmet.squashlambdas.util.HasNotifier
 import com.parmet.squashlambdas.util.inBoston
+import com.parmet.squashlambdas.util.withErrorHandling
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.DayOfWeek.FRIDAY
 import java.time.DayOfWeek.MONDAY
@@ -20,12 +22,14 @@ import java.time.LocalTime
 import javax.inject.Inject
 import javax.inject.Named
 
-open class MonitorSlotsHandler : AbstractRequestHandler<Any>() {
-    override val logger = KotlinLogging.logger { }
+private val logger = KotlinLogging.logger { }
 
+open class MonitorSlotsHandler :
+    RequestHandler<Any, Any>,
+    HasNotifier {
     @Inject
     @Named("myNotifier")
-    lateinit var myNotifier: Notifier
+    override lateinit var notifier: Notifier
 
     @Inject
     @Named("publicNotifier")
@@ -40,17 +44,12 @@ open class MonitorSlotsHandler : AbstractRequestHandler<Any>() {
             .configName("production-monitor-slots-handler.yml")
             .build()
 
-    final override fun doHandleRequest(input: Any, context: Context) {
-        buildComponent().inject(this)
-        withInput(myNotifier::publishFailedSlotMonitoring, input) { doHandleRequest() }
-    }
-
-    override fun publishFailure(t: Throwable) =
-        if (::myNotifier.isInitialized) {
-            myNotifier.publishFailedSlotMonitoring(t)
-        } else {
-            null
+    final override fun handleRequest(input: Any, context: Context) {
+        withErrorHandling(input) {
+            buildComponent().inject(this)
+            doHandleRequest()
         }
+    }
 
     private fun doHandleRequest() {
         val now = Instant.now().inBoston()

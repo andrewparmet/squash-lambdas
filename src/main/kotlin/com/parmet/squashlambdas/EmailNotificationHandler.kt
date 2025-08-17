@@ -1,6 +1,7 @@
 package com.parmet.squashlambdas
 
 import com.amazonaws.services.lambda.runtime.Context
+import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.amazonaws.services.lambda.runtime.events.S3Event
 import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.cal.ChangeSummary
@@ -11,21 +12,23 @@ import com.parmet.squashlambdas.email.EmailRetriever
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.s3.S3CreateObjectInfo
 import com.parmet.squashlambdas.s3.S3EmailNotification
+import com.parmet.squashlambdas.util.HasNotifier
+import com.parmet.squashlambdas.util.withErrorHandling
 import io.github.oshai.kotlinlogging.KotlinLogging
 import javax.inject.Inject
 import javax.inject.Named
 
-private val fileLogger = KotlinLogging.logger { }
+private val logger = KotlinLogging.logger { }
 
-open class EmailNotificationHandler : AbstractRequestHandler<S3Event>() {
-    override val logger = fileLogger
-
+open class EmailNotificationHandler :
+    RequestHandler<S3Event, Any>,
+    HasNotifier {
     @Inject
     lateinit var config: EmailNotificationConfig
 
     @Inject
     @Named("myNotifier")
-    lateinit var notifier: Notifier
+    override lateinit var notifier: Notifier
 
     @Inject
     lateinit var retriever: EmailRetriever
@@ -39,23 +42,16 @@ open class EmailNotificationHandler : AbstractRequestHandler<S3Event>() {
             .configName("production-email-notification-handler.yml")
             .build()
 
-    override fun publishFailure(t: Throwable) =
-        if (::notifier.isInitialized) {
-            notifier.publishFailedParse(t)
-        } else {
-            null
-        }
-
-    final override fun doHandleRequest(input: S3Event, context: Context) {
-        buildComponent().inject(this)
-        val myLambdaUser = SingleLambdaUser(notifier, eventManager)
-        myLambdaUser.withInput(Notifier::publishFailedParse, input) {
+    final override fun handleRequest(input: S3Event, context: Context) {
+        withErrorHandling(input) {
+            buildComponent().inject(this)
             val info = getS3Info(input)
             val email = getEmail(info)
             ChangeSummary.fromEmail(email)?.also {
                 addToContext("changeSummary", it)
                 if (config.parse.primaryRecipient in email.recipients) {
-                    myLambdaUser.handleEmail(it)
+                    it.process(eventManager)
+                    notifier.publishSuccessfulParse(it)
                 } else {
                     logger.info { "Not notifying for info: $info" }
                 }

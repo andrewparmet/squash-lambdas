@@ -64,13 +64,13 @@ class NotifierTest {
     @Test
     fun `notifier sends a reasonable message on failure`() {
         context["key123"] = "val456"
-        notifier.publishFailedParse(ExceptionInInitializerError("something terrible has happened"))
+        notifier.publishFailure(ExceptionInInitializerError("something terrible has happened"))
 
         logger.info { "Received ${received[0].message()}" }
 
         assertThat(received).hasSize(1)
         assertThat(received[0].topicArn()).isEqualTo("some-arn")
-        assertThat(received[0].subject()).isEqualTo("Failed to Process Club Locker Email")
+        assertThat(received[0].subject()).isEqualTo("Failed to Execute Club Locker Lambda")
         assertThat(received[0].message()).contains("ExceptionInInitializerError")
         assertThat(received[0].message()).contains("key123")
         assertThat(received[0].message()).contains("val456")
