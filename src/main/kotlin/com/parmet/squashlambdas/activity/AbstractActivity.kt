@@ -1,12 +1,10 @@
 package com.parmet.squashlambdas.activity
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.google.api.client.util.DateTime
 import com.google.api.services.calendar.model.Event
 import com.google.api.services.calendar.model.EventDateTime
 import java.time.Instant
 
-@JsonPropertyOrder(value = ["type", "court", "start", "end", "origin", "players"])
 abstract class AbstractActivity : Activity {
     abstract val start: Instant
     abstract val end: Instant

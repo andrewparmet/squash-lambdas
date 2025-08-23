@@ -41,7 +41,7 @@ class SerializationTests {
                 1692,
                 LocalDate.parse("2019-02-02"),
                 Slot(LocalTime.parse("18:45"), LocalTime.parse("19:30")),
-                listOf(Player.member(167759), Player.member("open"))
+                listOf(Player.member(167759, true, "Foo Bar"))
             )
 
         val actual = Json.mapper.readTree(req.toJson())
