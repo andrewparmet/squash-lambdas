@@ -2,6 +2,7 @@ package com.parmet.squashlambdas.clublocker
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.common.base.Joiner
 import com.google.common.collect.ImmutableBiMap
@@ -157,7 +158,7 @@ internal class ClubLockerClientImpl(
                 val id = directory.idForPlayer(it)
                 if (id != null) {
                     logger.info { "Found id $id for $it" }
-                    Player.member(id)
+                    Player.member(id, true, it.name!!)
                 } else {
                     Player.guest(it.name!!)
                 }
@@ -208,22 +209,34 @@ data class ReservationReq(
     val applyUserRestrictionsForAdmin = false
     val payingForAll = false
 
+    @JsonProperty("MatchProperties")
+    val matchProperties =
+        mapOf(
+            "restrictJoinByRating" to false,
+            "matchType" to 1,
+            "customMatchType" to 144
+        )
+
     fun toJson() =
         Json.mapper.writeValueAsString(this)
 }
 
+@Suppress("UNUSED")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 class Player(
     val type: String,
     val id: Any?,
-    @Suppress("UNUSED")
+    val isMyself: Boolean,
+    val text: String?,
     val guestName: String?
 ) {
+    val confirmed = false
+
     companion object {
-        fun member(id: Any) =
-            Player("member", id, null)
+        fun member(id: Any, isMyself: Boolean, text: String) =
+            Player("member", id, isMyself, text, null)
 
         fun guest(name: String) =
-            Player("guest", null, name)
+            Player("guest", null, false, null, name)
     }
 }

@@ -1,22 +1,25 @@
 {
+  "type": "match",
+  "applyUserRestrictionsForAdmin": false,
   "clubId": 1413,
   "courtId": 1692,
   "date": "2019-02-02",
   "slot": "18:45-19:30",
-  "type": "match",
+  "isPrivate": false,
+  "notes": [],
   "players": [
     {
       "type": "member",
-      "id": 167759
-    },
-    {
-      "type": "member",
-      "id": "open"
+      "confirmed": false,
+      "id": 167759,
+      "text": "Foo Bar",
+      "isMyself": true
     }
   ],
-  "isPrivate": false,
-  "notes": [
-  ],
-  "applyUserRestrictionsForAdmin": false,
-  "payingForAll": false
+  "payingForAll": false,
+  "MatchProperties": {
+    "restrictJoinByRating": false,
+    "matchType": 1,
+    "customMatchType": 144
+  }
 }
