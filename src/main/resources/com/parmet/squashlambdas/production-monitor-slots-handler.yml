@@ -1,8 +1,9 @@
 clubLocker:
-  creds:
+  token:
     location: s3
-    bucket: ${CLUB_LOCKER_CREDS_BUCKET}
-    key: ${CLUB_LOCKER_CREDS_KEY}
+    bucket: ${CLUB_LOCKER_TOKEN_BUCKET}
+    key: ${CLUB_LOCKER_TOKEN_KEY}
+  email: ${CLUB_LOCKER_EMAIL}
 
 sns:
   myTopicArn: ${MY_TOPIC_ARN}

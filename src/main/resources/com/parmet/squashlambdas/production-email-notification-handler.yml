@@ -10,3 +10,11 @@ sns:
 
 parse:
   primaryRecipient: ${PARSE_PRIMARY_RECIPIENT}
+
+tokenUpdate:
+  expectedSender: ${TOKEN_UPDATE_EXPECTED_SENDER}
+  expectedSubject: ${TOKEN_UPDATE_EXPECTED_SUBJECT}
+  tokenDestination:
+    location: s3
+    bucket: ${CLUB_LOCKER_TOKEN_BUCKET}
+    key: ${CLUB_LOCKER_TOKEN_KEY}

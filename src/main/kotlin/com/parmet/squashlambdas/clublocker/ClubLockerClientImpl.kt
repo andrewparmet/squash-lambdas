@@ -4,14 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.google.common.base.Joiner
 import com.google.common.collect.ImmutableBiMap
 import com.google.common.net.HttpHeaders.ACCEPT
 import com.google.common.net.HttpHeaders.AUTHORIZATION
 import com.google.common.net.HttpHeaders.CONTENT_TYPE
-import com.google.common.net.MediaType.FORM_DATA
 import com.google.common.net.MediaType.JSON_UTF_8
-import com.google.common.net.UrlEscapers
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Court.Court1
 import com.parmet.squashlambdas.activity.Court.Court2
@@ -38,7 +35,7 @@ import java.net.http.HttpResponse.BodyHandlers
 import java.time.LocalDate
 
 internal class ClubLockerClientImpl(
-    private val user: ClubLockerUser
+    private val accessToken: String
 ) : ClubLockerClient {
     private val logger = KotlinLogging.logger { }
 
@@ -50,28 +47,11 @@ internal class ClubLockerClientImpl(
     private val resource = "$baseUrl/resources/res"
     private val clubResource = "$resource/clubs/$tennisAndRacquetClubId"
 
-    private lateinit var accessToken: String
     private lateinit var directory: Directory
 
     override fun init() {
-        accessToken = authenticate()
         directory = Directory(this)
     }
-
-    private fun authenticate() =
-        responseBody(
-            HttpRequest.newBuilder()
-                .uri(URI("$baseUrl/clublocker_login"))
-                .setHeader(CONTENT_TYPE, FORM_DATA.toString()),
-            Joiner.on("&").withKeyValueSeparator("=").join(
-                mapOf(
-                    "username" to user.username,
-                    "password" to user.password,
-                ).mapValues { (_, v) ->
-                    UrlEscapers.urlFormParameterEscaper().escape(v)
-                }
-            )
-        ).substringAfter("access_token=")
 
     override fun user(): UserResp =
         get("$resource/user")
@@ -172,11 +152,6 @@ internal class ClubLockerClientImpl(
         header(AUTHORIZATION, "Bearer $accessToken")
             .header(ACCEPT, JSON_UTF_8.toString())
 }
-
-data class ClubLockerUser(
-    val username: String,
-    val password: String
-)
 
 val COURTS_BY_ID =
     ImmutableBiMap.builder<Int, Court>()

@@ -138,4 +138,14 @@ class Notifier(
             |Stack trace:
             |${print(failure)}
         """.trimMargin()
+
+    fun publishTokenUpdated(updateTime: Instant) {
+        sns.publish(
+            PublishRequest.builder()
+                .topicArn(topicArn)
+                .message("ClubLocker token updated successfully at $updateTime")
+                .subject("ClubLocker token updated")
+                .build()
+        )
+    }
 }

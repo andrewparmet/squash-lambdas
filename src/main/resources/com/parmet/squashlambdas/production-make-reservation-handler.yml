@@ -1,9 +1,10 @@
 clubLocker:
-  creds:
+  token:
     location: s3
-    bucket: ${CLUB_LOCKER_CREDS_BUCKET}
-    key: ${CLUB_LOCKER_CREDS_KEY}
+    bucket: ${CLUB_LOCKER_TOKEN_BUCKET}
+    key: ${CLUB_LOCKER_TOKEN_KEY}
   name: ${CLUB_LOCKER_NAME}
+  email: ${CLUB_LOCKER_EMAIL}
 
 schedule:
   location: s3

@@ -1,0 +1,14 @@
+Return-Path: <me@example.com>
+Received: from mail.example.com (mail.example.com [192.168.1.1])
+ by inbound-smtp.us-east-1.amazonaws.com with SMTP id test123
+ for lambda@server.com;
+ Sat, 25 Jan 2026 12:00:00 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+From: me@example.com
+To: lambda@server.com
+Subject: ClubLocker Token
+Message-ID: <test-message-id@example.com>
+Date: Sat, 25 Jan 2026 12:00:00 +0000
+MIME-Version: 1.0
+
+test-access-token-12345
