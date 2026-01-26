@@ -48,7 +48,9 @@ open class MakeReservationHandler :
     @Inject
     lateinit var hostPlayer: Player
 
-    open fun buildComponent(): MakeReservationComponent =
+    private val component by lazy { buildComponent() }
+
+    private fun buildComponent(): MakeReservationComponent =
         DaggerMakeReservationComponent
             .builder()
             .configName("production-make-reservation-handler.yml")
@@ -56,7 +58,7 @@ open class MakeReservationHandler :
 
     final override fun handleRequest(input: ScheduledEvent, context: Context) {
         withErrorHandling(input) {
-            buildComponent().inject(this)
+            component.inject(this)
             doHandleRequest(input).also { logger.info { "Returning result: $it" } }
         }
     }

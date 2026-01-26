@@ -17,6 +17,9 @@ import com.parmet.squashlambdas.util.FileLoader
 import dagger.Module
 import dagger.Provides
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.sns.SnsClient
@@ -92,21 +95,40 @@ object MonitorSlotsModule {
 
 @Module
 object AwsModule {
+    private val awsClients: AwsClients by lazy {
+        withTiming("AwsClients") {
+            runBlocking {
+                coroutineScope {
+                    val s3 = async { S3Client.create() }
+                    val sns = async { SnsClient.create() }
+                    val dynamo = async { DynamoDbClient.create() }
+                    AwsClients(s3.await(), sns.await(), dynamo.await())
+                }
+            }
+        }
+    }
+
     @Provides
     @Singleton
     fun provideS3(): S3Client =
-        withTiming { S3Client.create() }
+        awsClients.s3
 
     @Provides
     @Singleton
     fun provideDynamoDb(): DynamoDbClient =
-        withTiming { DynamoDbClient.create() }
+        awsClients.dynamoDb
 
     @Provides
     @Singleton
     fun provideSnsClient(): SnsClient =
-        withTiming { SnsClient.create() }
+        awsClients.sns
 }
+
+private data class AwsClients(
+    val s3: S3Client,
+    val sns: SnsClient,
+    val dynamoDb: DynamoDbClient
+)
 
 @Module
 object NotifierModule {
@@ -153,5 +175,12 @@ private inline fun <reified T> withTiming(block: () -> T): T {
     val result: T
     val time = measureTime { result = block() }
     logger.info { "Finished building $result in $time" }
+    return result
+}
+
+private inline fun <T> withTiming(name: String, block: () -> T): T {
+    val result: T
+    val time = measureTime { result = block() }
+    logger.info { "Finished building $name in $time" }
     return result
 }

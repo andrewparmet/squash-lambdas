@@ -28,8 +28,10 @@ internal class TimeFilter(
             when {
                 dateIsMoreThanSevenDaysInFuture(time) ->
                     "Date $requestDate is too far in the future to reserve now ($time)"
+
                 reservationShouldAlreadyHaveBeenMade(time) ->
                     "Not scheduling past 1 am; assuming that the 12 am run already ran ($time)"
+
                 else -> null
             },
         )

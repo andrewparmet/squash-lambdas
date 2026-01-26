@@ -81,8 +81,10 @@ internal fun Court.Companion.fromLocationString(body: String) =
     when {
         TENNIS_COURT.matcher(body).matches() ->
             Court.TennisCourt
+
         RACQUETS_COURT.matcher(body).matches() ->
             Court.RacquetsCourt
+
         else -> {
             val matcher = NUMBERED_COURT.matcher(body)
             require(matcher.matches()) { "Unable to parse court from $body" }

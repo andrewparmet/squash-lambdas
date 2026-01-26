@@ -41,7 +41,9 @@ open class EmailNotificationHandler :
     @Inject
     lateinit var tokenUpdateHandler: TokenUpdateHandler
 
-    open fun buildComponent(): EmailNotificationComponent =
+    private val component by lazy { buildComponent() }
+
+    private fun buildComponent(): EmailNotificationComponent =
         DaggerEmailNotificationComponent
             .builder()
             .configName("production-email-notification-handler.yml")
@@ -49,7 +51,7 @@ open class EmailNotificationHandler :
 
     final override fun handleRequest(input: S3Event, context: Context) {
         withErrorHandling(input) {
-            buildComponent().inject(this)
+            component.inject(this)
             val info = getS3Info(input)
             val email = getEmail(info)
 
