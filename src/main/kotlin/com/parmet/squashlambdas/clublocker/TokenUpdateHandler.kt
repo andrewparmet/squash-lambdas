@@ -28,7 +28,7 @@ class TokenUpdateHandler @Inject constructor(
         val storedToken = StoredToken.create(token)
         val json = Json.mapper.writeValueAsString(storedToken)
 
-        logger.info { "Received token update email, storing token (${token.length} chars) to S3" }
+        logger.info { "Received token update email, storing to S3" }
 
         s3Client.putObject(
             { req ->
@@ -38,9 +38,7 @@ class TokenUpdateHandler @Inject constructor(
             RequestBody.fromString(json)
         )
 
-        logger.info {
-            "Token stored successfully to s3://${config.tokenDestination.bucket}/${config.tokenDestination.key}"
-        }
+        logger.info { "Token stored successfully" }
         notifier.publishTokenUpdated(storedToken.updateTime)
     }
 }

@@ -17,7 +17,6 @@ import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.util.FileLoader
 import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.addResourceSource
-import io.github.oshai.kotlinlogging.KotlinLogging
 import software.amazon.awssdk.services.sns.SnsClient
 
 inline fun <reified T : Any> loadConfiguration(file: String): T =
@@ -46,8 +45,6 @@ fun configureCalendar(config: GoogleCalConfig, fileLoader: FileLoader) =
         .setApplicationName("PARMET_SQUASH_LAMBDAS")
         .build()
 
-private val logger = KotlinLogging.logger { }
-
 data class ClubLockerResources(
     val client: ClubLockerClient,
     val player: Player
@@ -55,7 +52,6 @@ data class ClubLockerResources(
 
 fun configureClubLockerResources(config: ClubLockerConfig, fileLoader: FileLoader): ClubLockerResources {
     val storedToken: StoredToken = fileLoader.streamFile(config.token).use { Json.mapper.readValue(it) }
-    logger.info { "Loaded ClubLocker token updated at ${storedToken.updateTime}" }
 
     val hostPlayer =
         Player(
