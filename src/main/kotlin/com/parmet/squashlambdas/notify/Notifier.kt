@@ -148,4 +148,14 @@ class Notifier(
                 .build()
         )
     }
+
+    fun publishTokenInvalidated(reason: String) {
+        sns.publish(
+            PublishRequest.builder()
+                .topicArn(topicArn)
+                .message("ClubLocker token has been marked invalid. Reason: $reason. Please send a new token.")
+                .subject("ClubLocker token invalid - action required")
+                .build()
+        )
+    }
 }

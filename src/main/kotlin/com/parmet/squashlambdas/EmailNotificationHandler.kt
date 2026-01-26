@@ -43,7 +43,7 @@ open class EmailNotificationHandler :
 
     private val component by lazy { buildComponent() }
 
-    private fun buildComponent(): EmailNotificationComponent =
+    protected open fun buildComponent(): EmailNotificationComponent =
         DaggerEmailNotificationComponent
             .builder()
             .configName("production-email-notification-handler.yml")
