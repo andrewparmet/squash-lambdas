@@ -12,7 +12,7 @@ parse:
   primaryRecipient: "joecool@peanuts.com"
 
 tokenUpdate:
-  expectedSender: "me@example.com"
+  expectedSender: "joecool@peanuts.com"
   expectedSubject: "ClubLocker Token"
   tokenDestination:
     location: s3

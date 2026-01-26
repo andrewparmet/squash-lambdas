@@ -1,14 +1,92 @@
-Return-Path: <me@example.com>
-Received: from mail.example.com (mail.example.com [192.168.1.1])
- by inbound-smtp.us-east-1.amazonaws.com with SMTP id test123
+Return-Path: <joecool@peanuts.com>
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+ by inbound-smtp.us-east-1.amazonaws.com with SMTP id 2mleifkp1hgnilepddsjuu0ue683ejqoqa71o8g1
  for lambda@server.com;
- Sat, 25 Jan 2026 12:00:00 +0000 (UTC)
-Content-Type: text/plain; charset=UTF-8
-From: me@example.com
-To: lambda@server.com
-Subject: ClubLocker Token
-Message-ID: <test-message-id@example.com>
-Date: Sat, 25 Jan 2026 12:00:00 +0000
+ Mon, 26 Jan 2026 01:13:08 +0000 (UTC)
+X-SES-Spam-Verdict: PASS
+X-SES-Virus-Verdict: PASS
+Received-SPF: pass (spfCheck: domain of _spf.google.com designates 209.85.222.41 as permitted sender) client-ip=209.85.222.41; envelope-from=joecool@peanuts.com; helo=mail-ua1-f41.google.com;
+Authentication-Results: amazonses.com;
+ spf=pass (spfCheck: domain of _spf.google.com designates 209.85.222.41 as permitted sender) client-ip=209.85.222.41; envelope-from=joecool@peanuts.com; helo=mail-ua1-f41.google.com;
+ dkim=pass header.i=@gmail.com;
+ dmarc=pass header.from=gmail.com;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFHLzhuaHdCN1h2VzZRUG9wWG9PaWNMeE5leUxCR005QUtwVnBqZCtUTkdRQlgrMjdIWExrSmNtcjJUeVFSSUVoMDJVMjh0Vjc5Q2JjTmRRejFseXAvVHJWK3B3Mm8xSWJHeEVjVUl0dlVSelBtZUdjeGNySTZjS3FvWThURUs1WStBbVdHaVFLNkFmdW1ObXVWQU1LUDNVNU1rMGR4MmxEWFEybElrSUxtdkNMSFNRU0RLNmdZOWkxSmtsN3ZUTEhhZVRCNDZPYlZ1eW10WXJRaHJBbmtLMWFNYkdINHdnTURVTXZjTDRBSHE3SXl2SS9GVytib3I3MStTS0R0WUUwWjNZU2JSUmNIYXVPWThHOFNVTnVaL2tGTDRHQ2FvTTBjRzg5MThoWXZnYWc9PQ==
+X-SES-DKIM-SIGNATURE: a=rsa-sha256; q=dns/txt; b=TA1tjsYe+GRoe5F4GuFEe1I9B3zgB2yIT1EWquGQuSKYYCycHQviar8cMb9FCmLRKLKQS4w4E4ijFdzSaXkS05bpXCD24B14gDlClcZq2N1lycShgNHizjPNYacnm4ET9UtfPLUbAdnm97mtuY2acwPZhy/kvZSt3q0XlsmMmSY=; c=relaxed/simple; s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1769389988; v=1; bh=kAcXL3unoA9IXOhj46i67EmBSYzVQOiU6dx0y7DV3xs=; h=From:To:Cc:Bcc:Subject:Date:Message-ID:MIME-Version:Content-Type:X-SES-RECEIPT;
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-9483ffbde85so559340241.1
+        for <lambda@server.com>; Sun, 25 Jan 2026 17:13:08 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769389988; cv=none;
+        d=google.com; s=arc-20240605;
+        b=iaDgZ5F0VRhpCxWV/qfaV++BsOp5P0nuzsEx6LkglYbJ3HXiNR4IzkJEDl0ZfhyBvF
+         pPldY9T0k353MgknjKuAEAs982baasydqPSNqC1jXwQ8bEXl1aLEazDngf2Gkl7kO+2o
+         88qvpq2MR96imDRdoAkW3QTKI2aGMZcTBr3/0K482fhRSabCCqm2ZsdTTtDb5K+o30/r
+         OtSLH0Wh98d59D4aCzOkq+zZuVbXid6TaezW841TuQtvXApGyitR1YJ96AIuPbJZcIm0
+         UGaYEFRDqJJZfBidLhfi37B+okr+fUPyKOWkT2Y896TomFVBF7N9+OFflVVfambCFuC6
+         u7Nw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=to:subject:message-id:date:from:mime-version:dkim-signature;
+        bh=kAcXL3unoA9IXOhj46i67EmBSYzVQOiU6dx0y7DV3xs=;
+        fh=oGUaYoqBoGEjFmUNEbBoNCHQOgV333kqjtFG01rJ9hM=;
+        b=AweGl7tz9QJdH9snifcF1PdVpYxFrlRSl04gDMItEA35cdpNxF+v+Goxanv6Y1d09V
+         pU2AfZcZ02DHOmRE2E42UPnOESd4snAdu6m9bjKmWnFFsGpgb5/9EUhg0ITsdzcwM6vW
+         Fzy9eefvj6ni4AliFETdtebZMK5sWsx6BHdZnwQRQK5FVL/h01pwu9Esdokq0is9PSvM
+         kdZLtDXLYTGF8c3yF1rHp2R0NZIkCbuw/TDXCueI+duvxUraETqddhoImPjHUjfcm1jP
+         bOpMWmEZ5Dqw4mcLuVeM0Ik3f83kYOa1xxEBbmoBC9HGYRSsp3y04w2TRbVPoBfygqFK
+         z4AA==;
+        darn=server.com
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769389988; x=1769994788; darn=server.com;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kAcXL3unoA9IXOhj46i67EmBSYzVQOiU6dx0y7DV3xs=;
+        b=XmbPE1yRs3n40q1F4Yf4dqvPxL3igwEFm4n+3Pdr4k5HCWIs0HDEPOGFuUGObN6XOX
+         +ZNqv3Qjep2e7SMVEUX82R0MWmV8K3PpfsjGxtBQyuTwHd8DkXBPntASBp3J5n2v/a2T
+         D50j1kyoFBWPYadEWY0pomv9twALRXmtRe/gIHaAQ83o4B4WIvsFbXGnWUJUFMLttCv5
+         9J/UCpCeGFTcFGD3wImgRMRogwDaYBQ9UYjaKeNA2bgB+C8ttmSY3R/yBCpwsWI4HYw+
+         XHhz6o6+v/jRMZqrixMDoqCMiawdBLQM8l0TzGmFyvn7VgjfQyQ8lMildpk5oCMrpYoR
+         9yPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769389988; x=1769994788;
+        h=to:subject:message-id:date:from:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kAcXL3unoA9IXOhj46i67EmBSYzVQOiU6dx0y7DV3xs=;
+        b=fn/Lerxiz6HLrbDCvZQWWufUmno+p0mhAfwXpVUzYISQKxBwCm60oDLz+mx0nHbnRZ
+         eaQ/crWr8igS7L324TvqqB/5pMWXiU1bqI9ktt8/9E65y4vxAU8+XZCj3SVFl8kxYepA
+         CM19lWC5kwofU7dGwCut0f8sFtCxg5nYL4tPbCTTbdexb1LCfTS4oqN2eRCDCd3urU4P
+         87oihYybozHfgnBoeQcode84s7mOKYcqXF6+lcSN+Iky7Kh8bOoz4gbglSveaGwv+rna
+         sBePdDXzuuXw86fKsqdwWLAMAFpGIGYBL2PhpTZ5mNCYdUlyu8OvXxx9Z4vhAu0YHsWM
+         n/gA==
+X-Gm-Message-State: AOJu0YzgdH1bl+gtGFgvWOWeSA6FAaoOxMgonOItNL7JUsUSJEwbO92p
+	4ZJay0DzJQyiYIq5qgnwT8KlI77WgdJCQDmdIcbnkaGSrPS+HLh2nuDJcqCSMSet1826Gn5bcYC
+	urOElaAS7u72odckjGrcq1OvLxMkJQcaMCQ==
+X-Gm-Gg: AZuq6aJhnjJcQkV4Y2+13/GkpuyQLJud4ZcNBpDzHABWm/DFetKgxACAPS5S2l/qr7C
+	/6ysUNd4RyTOS5OGgbpWE9hJNPLfua8iFWBfVi2473kb417OgdpSFybr7lT0j70UYPiEe5+pTes
+	vOHBWMDyOPtmno+S4Qrst0TIFayRVugNxWmUUNmS184oO4EEEHI7Qn854ynE6vBmYeONjpy8Wi6
+	kn2gq+q5gmCu/MWOspS8MHWyyp/2JE8Ux1pYvFiF8Sxm9VcBNSZj7eoTjUIc+IxSCDY0MbdXKkM
+	BPKCco4Y9z3mzfa3uLFO1YG+pIRKIJKKLdsI62aBYoXRi1etv+9EkmEiPKQ2jJ6nu8skH2IVn/z
+	APLryRrS4C+Tg/bIIcMEznCrk1pqgE7fQgxsiBviJDql8X7yO9oUGTiqjdS1iMVe5XU4Zdhbbdm
+	rBX1I=
+X-Received: by 2002:a05:6102:6c7:b0:5f5:3244:20c with SMTP id
+ ada2fe7eead31-5f5771afb11mr952826137.4.1769389987615; Sun, 25 Jan 2026
+ 17:13:07 -0800 (PST)
 MIME-Version: 1.0
+From: Joe Cool <joecool@peanuts.com>
+Date: Sun, 25 Jan 2026 20:12:31 -0500
+X-Gm-Features: AZwV_QjkJe-FQ7wrOHCW0algShpul_6PtawfUMP_BlzfShx17m9ARYXSErIN5e4
+Message-ID: <CADudEQNVLSdR3BrJeVa_g_1WF=s7OmCM2y6QfXp5bbuGNj_qbA@mail.gmail.com>
+Subject: ClubLocker Token
+To: joecool@peanuts.com
+Content-Type: multipart/alternative; boundary="000000000000ae567106494035ca"
 
-test-access-token-12345
+--000000000000ae567106494035ca
+Content-Type: text/plain; charset="UTF-8"
+
+test-token-123
+
+--000000000000ae567106494035ca
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">test-token-123</div>
+
+--000000000000ae567106494035ca--
