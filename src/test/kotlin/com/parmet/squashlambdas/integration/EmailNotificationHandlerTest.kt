@@ -133,7 +133,7 @@ class EmailNotificationHandlerTest {
         }.use { it.bufferedReader().readText() }
 
         val storedToken: StoredToken = Json.mapper.readValue(storedTokenJson)
-        assertThat(storedToken.token).isEqualTo("test-access-token-12345")
+        assertThat(storedToken.token).isEqualTo("test-token-123")
         assertThat(storedToken.updateTime).isNotNull()
 
         val publishRequest = slot<PublishRequest>()
