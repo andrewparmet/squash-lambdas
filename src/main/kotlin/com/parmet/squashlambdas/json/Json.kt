@@ -13,7 +13,7 @@ object Json {
         jacksonObjectMapper()
             .registerModule(JavaTimeModule())
             .registerModule(JodaModule())
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 }
