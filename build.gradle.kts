@@ -22,6 +22,7 @@ dependencies {
     implementation(libs.aws.sns)
     implementation(libs.aws.v1.s3)
     implementation(libs.commons.email)
+    implementation(libs.coroutines)
     implementation(libs.dagger)
     implementation(libs.google.calendar)
     implementation(libs.google.oauth2.http)

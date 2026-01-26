@@ -40,7 +40,9 @@ open class MonitorSlotsHandler :
     @Inject
     lateinit var slotsTracker: SlotsTracker
 
-    open fun buildComponent(): MonitorSlotsComponent =
+    private val component by lazy { buildComponent() }
+
+    private fun buildComponent(): MonitorSlotsComponent =
         DaggerMonitorSlotsComponent
             .builder()
             .configName("production-monitor-slots-handler.yml")
@@ -48,7 +50,7 @@ open class MonitorSlotsHandler :
 
     final override fun handleRequest(input: ScheduledEvent, context: Context) {
         withErrorHandling(input) {
-            buildComponent().inject(this)
+            component.inject(this)
             doHandleRequest()
         }
     }
