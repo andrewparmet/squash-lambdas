@@ -86,15 +86,18 @@ tasks.withType<Test> {
     environment("GOOGLE_CAL_CREDS_KEY", "test-cal-creds-key")
     environment("MY_TOPIC_ARN", "test-my-topic-arn")
     environment("PARSE_PRIMARY_RECIPIENT", "test-parse-primary-recipient")
-    environment("CLUB_LOCKER_CREDS_BUCKET", "test-club-locker-creds-bucket")
-    environment("CLUB_LOCKER_CREDS_KEY", "test-club-locker-creds-key")
+    environment("CLUB_LOCKER_TOKEN_BUCKET", "test-club-locker-token-bucket")
+    environment("CLUB_LOCKER_TOKEN_KEY", "test-club-locker-token-key")
     environment("CLUB_LOCKER_NAME", "test-club-locker-name")
+    environment("CLUB_LOCKER_EMAIL", "test@example.com")
     environment("RESERVATION_BUCKET", "test-reservation-bucket")
     environment("RESERVATION_SCHEDULE_KEY", "test-reservation-schedule-key")
     environment("RESERVATION_COURTS_KEY", "test-reservation-courts-key")
     environment("RESERVATION_TIMES_KEY", "test-reservation-times-key")
     environment("PUBLIC_TOPIC_ARN", "test-public-topic-arn")
     environment("SLOTS_MONITORING_TABLE", "test-slots-monitoring-table")
+    environment("TOKEN_UPDATE_EXPECTED_SENDER", "test-sender@example.com")
+    environment("TOKEN_UPDATE_EXPECTED_SUBJECT", "ClubLocker Token")
 }
 
 buildConfig {

@@ -10,3 +10,11 @@ sns:
 
 parse:
   primaryRecipient: "joecool@peanuts.com"
+
+tokenUpdate:
+  expectedSender: "me@example.com"
+  expectedSubject: "ClubLocker Token"
+  tokenDestination:
+    location: s3
+    bucket: test-bucket-name
+    key: clublocker-token.json

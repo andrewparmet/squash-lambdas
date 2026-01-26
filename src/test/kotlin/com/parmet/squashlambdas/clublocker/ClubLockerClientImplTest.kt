@@ -14,7 +14,7 @@ import java.time.LocalDate
 @Disabled
 class ClubLockerClientImplTest {
     private val email = "email"
-    private val client = ClubLockerClientImpl(ClubLockerUser(email, "password"))
+    private val client = ClubLockerClientImpl("your-access-token-here")
 
     @BeforeEach
     fun startClient() {

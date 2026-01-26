@@ -3,7 +3,14 @@ package com.parmet.squashlambdas
 data class EmailNotificationConfig(
     val googleCal: GoogleCalConfig,
     val sns: SnsConfig,
-    val parse: ParseConfig
+    val parse: ParseConfig,
+    val tokenUpdate: TokenUpdateConfig
+)
+
+data class TokenUpdateConfig(
+    val expectedSender: String,
+    val expectedSubject: String,
+    val tokenDestination: FileConfig
 )
 
 data class MakeReservationConfig(
@@ -35,8 +42,9 @@ data class DynamoDbConfig(
 )
 
 data class ClubLockerConfig(
-    val creds: FileConfig,
-    val name: String?
+    val token: FileConfig,
+    val name: String?,
+    val email: String
 )
 
 data class FileConfig(

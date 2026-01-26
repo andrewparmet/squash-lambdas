@@ -1,8 +1,9 @@
 clubLocker:
-  creds:
+  token:
     location: local
-    fileName: clublocker-creds.json
+    fileName: clublocker-token.txt
   name: John Smith
+  email: test@example.com
 
 sns:
   myTopicArn: fake-arn

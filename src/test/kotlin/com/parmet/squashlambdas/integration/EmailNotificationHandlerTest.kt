@@ -2,16 +2,20 @@ package com.parmet.squashlambdas.integration
 
 import com.amazonaws.services.lambda.runtime.events.S3Event
 import com.amazonaws.services.s3.event.S3EventNotification
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.model.Event
 import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.EmailNotificationHandler
 import com.parmet.squashlambdas.cal.ChangeSummaryTest
+import com.parmet.squashlambdas.clublocker.StoredToken
+import com.parmet.squashlambdas.json.Json
 import com.parmet.squashlambdas.testutil.getResourceAsString
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.verify
 import io.mockk.verifySequence
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -110,6 +114,35 @@ class EmailNotificationHandlerTest {
         )
     }
 
+    @Test
+    fun `token update email stores token to S3`() {
+        val handler = configureHandler()
+        s3Client.putObject(
+            {
+                it.bucket("test-bucket-name")
+                it.key("test-object-key")
+            },
+            RequestBody.fromString(getResourceAsString(this::class, "tokenUpdateEmail"))
+        )
+
+        handler.handleRequest(S3Event(listOf(createRecord())), mockk())
+
+        val storedTokenJson = s3Client.getObject {
+            it.bucket("test-bucket-name")
+            it.key("clublocker-token.json")
+        }.use { it.bufferedReader().readText() }
+
+        val storedToken: StoredToken = Json.mapper.readValue(storedTokenJson)
+        assertThat(storedToken.token).isEqualTo("test-access-token-12345")
+        assertThat(storedToken.updateTime).isNotNull()
+
+        val publishRequest = slot<PublishRequest>()
+        verify { snsClient.publish(capture(publishRequest)) }
+
+        assertThat(publishRequest.captured.topicArn()).isEqualTo("fake-arn")
+        assertThat(publishRequest.captured.subject()).isEqualTo("ClubLocker token updated")
+    }
+
     private fun createRecord() =
         S3EventNotification.S3EventNotificationRecord(
             "region",
@@ -143,12 +176,13 @@ class EmailNotificationHandlerTest {
         )
 
     private fun configureHandler(): EmailNotificationHandler {
+        val testS3Client = s3Client
         val handler = object : EmailNotificationHandler() {
             override fun buildComponent() =
                 DaggerEmailNotificationTestComponent
                     .builder()
                     .configName("test-email-notification-handler.yml")
-                    .emailNotificationTestModule(EmailNotificationTestModule(calender, s3Client, snsClient))
+                    .emailNotificationTestModule(EmailNotificationTestModule(calender, testS3Client, snsClient))
                     .build()
         }
 

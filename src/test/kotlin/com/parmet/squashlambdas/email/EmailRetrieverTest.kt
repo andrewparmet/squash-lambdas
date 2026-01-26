@@ -20,6 +20,7 @@ class EmailRetrieverTest {
 
 fun emailData() =
     EmailData(
+        "Club Locker <no-reply@clublocker.com>",
         listOf("joecool@peanuts.com"),
         "Tennis & Racquet Club Reservation Confirmation",
         """

@@ -6,6 +6,7 @@ import com.amazonaws.services.lambda.runtime.events.S3Event
 import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.cal.ChangeSummary
 import com.parmet.squashlambdas.cal.EventManager
+import com.parmet.squashlambdas.clublocker.TokenUpdateHandler
 import com.parmet.squashlambdas.dagger.DaggerEmailNotificationComponent
 import com.parmet.squashlambdas.dagger.EmailNotificationComponent
 import com.parmet.squashlambdas.email.EmailRetriever
@@ -37,6 +38,9 @@ open class EmailNotificationHandler :
     @Inject
     lateinit var eventManager: EventManager
 
+    @Inject
+    lateinit var tokenUpdateHandler: TokenUpdateHandler
+
     open fun buildComponent(): EmailNotificationComponent =
         DaggerEmailNotificationComponent
             .builder()
@@ -48,6 +52,12 @@ open class EmailNotificationHandler :
             buildComponent().inject(this)
             val info = getS3Info(input)
             val email = getEmail(info)
+
+            if (tokenUpdateHandler.isTokenUpdateEmail(email)) {
+                tokenUpdateHandler.handle(email)
+                return@withErrorHandling
+            }
+
             ChangeSummary.fromEmail(email)?.also {
                 addToContext("changeSummary", it)
                 if (config.parse.primaryRecipient in email.recipients) {

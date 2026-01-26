@@ -42,6 +42,11 @@ object EmailNotificationModule {
     @Singleton
     fun provideNotifierConfig(config: EmailNotificationConfig) =
         config.sns
+
+    @Provides
+    @Singleton
+    fun provideTokenUpdateConfig(config: EmailNotificationConfig) =
+        config.tokenUpdate
 }
 
 @Module

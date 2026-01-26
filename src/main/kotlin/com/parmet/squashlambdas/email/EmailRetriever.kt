@@ -14,6 +14,7 @@ class EmailRetriever @Inject constructor(
         }.use { stream ->
             val message = MimeMessage(null, stream)
             EmailData(
+                message.from?.firstOrNull()?.toString() ?: "",
                 message.allRecipients.map { it.toString() },
                 message.subject,
                 BodyExtractor.extract(message).toString(),
