@@ -7,6 +7,7 @@ import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.activity.Sport
 import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
 import com.parmet.squashlambdas.clublocker.Slot
+import com.parmet.squashlambdas.clublocker.TokenStatusManager
 import com.parmet.squashlambdas.dagger.DaggerMonitorSlotsComponent
 import com.parmet.squashlambdas.dagger.MonitorSlotsComponent
 import com.parmet.squashlambdas.monitor.SlotsTracker
@@ -40,6 +41,9 @@ open class MonitorSlotsHandler :
     @Inject
     lateinit var slotsTracker: SlotsTracker
 
+    @Inject
+    lateinit var tokenStatusManager: TokenStatusManager
+
     private val component by lazy { buildComponent() }
 
     private fun buildComponent(): MonitorSlotsComponent =
@@ -56,6 +60,11 @@ open class MonitorSlotsHandler :
     }
 
     private fun doHandleRequest() {
+        if (!tokenStatusManager.isTokenValid()) {
+            logger.info { "Token is marked invalid, skipping slot monitoring" }
+            return
+        }
+
         val now = Instant.now().inBoston()
 
         val date =
