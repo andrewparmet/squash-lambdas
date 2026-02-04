@@ -1,5 +1,6 @@
 package com.parmet.squashlambdas.clublocker
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import java.time.Instant
 
 data class StoredToken(
@@ -7,6 +8,7 @@ data class StoredToken(
     val updateTime: Instant,
     val invalidTime: Instant? = null
 ) {
+    @get:JsonIgnore
     val isValid: Boolean
         get() = invalidTime == null
 
