@@ -35,7 +35,7 @@ import java.net.http.HttpResponse.BodyHandlers
 import java.time.LocalDate
 
 internal class ClubLockerClientImpl(
-    private val accessToken: String
+    private val tokenManager: TokenManager
 ) : ClubLockerClient {
     private val logger = KotlinLogging.logger { }
 
@@ -149,7 +149,7 @@ internal class ClubLockerClientImpl(
         get() = COURTS_BY_ID.inverse().getValue(this)
 
     private fun HttpRequest.Builder.authorized() =
-        header(AUTHORIZATION, "Bearer $accessToken")
+        header(AUTHORIZATION, "Bearer ${tokenManager.getToken()}")
             .header(ACCEPT, JSON_UTF_8.toString())
 }
 

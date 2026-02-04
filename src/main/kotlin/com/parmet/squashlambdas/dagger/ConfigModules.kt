@@ -3,6 +3,7 @@ package com.parmet.squashlambdas.dagger
 import com.google.api.services.calendar.Calendar
 import com.parmet.squashlambdas.ClubLockerConfig
 import com.parmet.squashlambdas.ClubLockerResources
+import com.parmet.squashlambdas.clublocker.TokenManager
 import com.parmet.squashlambdas.EmailNotificationConfig
 import com.parmet.squashlambdas.GoogleCalConfig
 import com.parmet.squashlambdas.MakeReservationConfig
@@ -149,8 +150,13 @@ object NotifierModule {
 object ClubLockerModule {
     @Provides
     @Singleton
-    fun provideClubLockerResources(config: ClubLockerConfig, fileLoader: FileLoader) =
-        withTiming { configureClubLockerResources(config, fileLoader) }
+    fun provideTokenManager(config: ClubLockerConfig, s3Client: S3Client) =
+        withTiming { TokenManager(config, s3Client) }
+
+    @Provides
+    @Singleton
+    fun provideClubLockerResources(config: ClubLockerConfig, tokenManager: TokenManager) =
+        withTiming { configureClubLockerResources(config, tokenManager) }
 
     @Provides
     @Singleton
