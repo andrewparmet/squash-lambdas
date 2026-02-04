@@ -1,6 +1,5 @@
 package com.parmet.squashlambdas
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.calendar.Calendar
@@ -11,8 +10,7 @@ import com.parmet.squashlambdas.Context.context
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.clublocker.ClubLockerClientImpl
-import com.parmet.squashlambdas.clublocker.StoredToken
-import com.parmet.squashlambdas.json.Json
+import com.parmet.squashlambdas.clublocker.TokenManager
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.util.FileLoader
 import com.sksamuel.hoplite.ConfigLoaderBuilder
@@ -50,9 +48,7 @@ data class ClubLockerResources(
     val player: Player
 )
 
-fun configureClubLockerResources(config: ClubLockerConfig, fileLoader: FileLoader): ClubLockerResources {
-    val storedToken: StoredToken = fileLoader.streamFile(config.token).use { Json.mapper.readValue(it) }
-
+fun configureClubLockerResources(config: ClubLockerConfig, tokenManager: TokenManager): ClubLockerResources {
     val hostPlayer =
         Player(
             email = config.email,
@@ -60,7 +56,7 @@ fun configureClubLockerResources(config: ClubLockerConfig, fileLoader: FileLoade
         )
 
     return ClubLockerResources(
-        ClubLockerClientImpl(storedToken.token),
+        ClubLockerClientImpl(tokenManager),
         hostPlayer
     )
 }

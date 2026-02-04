@@ -4,6 +4,8 @@ import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.activity.Player
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -14,7 +16,9 @@ import java.time.LocalDate
 @Disabled
 class ClubLockerClientImplTest {
     private val email = "email"
-    private val client = ClubLockerClientImpl("your-access-token-here")
+    private val token = "test-token"
+    private val tokenManager = mockk<TokenManager> { every { getToken() } returns token }
+    private val client = ClubLockerClientImpl(tokenManager)
 
     @BeforeEach
     fun startClient() {
