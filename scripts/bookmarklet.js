@@ -1,0 +1,1 @@
+javascript:(function(){var t=localStorage.getItem('token_usq-clublocker');if(t){navigator.clipboard.writeText(t).then(function(){alert('Token copied to clipboard!')}).catch(function(){alert('Copy failed.')})}else{alert('Token not found.')}})();
