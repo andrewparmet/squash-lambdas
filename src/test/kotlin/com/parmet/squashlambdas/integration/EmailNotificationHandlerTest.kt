@@ -11,6 +11,7 @@ import com.parmet.squashlambdas.cal.ChangeSummaryTest
 import com.parmet.squashlambdas.clublocker.StoredToken
 import com.parmet.squashlambdas.json.Json
 import com.parmet.squashlambdas.testutil.getResourceAsString
+import dev.zacsweers.metro.createGraphFactory
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
@@ -178,12 +179,9 @@ class EmailNotificationHandlerTest {
     private fun configureHandler(): EmailNotificationHandler {
         val testS3Client = s3Client
         val handler = object : EmailNotificationHandler() {
-            override fun buildComponent() =
-                DaggerEmailNotificationTestComponent
-                    .builder()
-                    .configName("test-email-notification-handler.yml")
-                    .emailNotificationTestModule(EmailNotificationTestModule(calender, testS3Client, snsClient))
-                    .build()
+            override fun buildGraph() =
+                createGraphFactory<EmailNotificationTestGraph.Factory>()
+                    .create("test-email-notification-handler.yml", calender, testS3Client, snsClient)
         }
 
         return handler

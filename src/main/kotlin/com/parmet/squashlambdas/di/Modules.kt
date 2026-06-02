@@ -1,22 +1,29 @@
-package com.parmet.squashlambdas.dagger
+package com.parmet.squashlambdas.di
 
 import com.google.api.services.calendar.Calendar
 import com.parmet.squashlambdas.ClubLockerConfig
 import com.parmet.squashlambdas.ClubLockerResources
-import com.parmet.squashlambdas.clublocker.TokenManager
+import com.parmet.squashlambdas.DynamoDbConfig
 import com.parmet.squashlambdas.EmailNotificationConfig
 import com.parmet.squashlambdas.GoogleCalConfig
 import com.parmet.squashlambdas.MakeReservationConfig
 import com.parmet.squashlambdas.MonitorSlotsConfig
 import com.parmet.squashlambdas.SnsConfig
+import com.parmet.squashlambdas.TokenUpdateConfig
+import com.parmet.squashlambdas.activity.Player
+import com.parmet.squashlambdas.clublocker.ClubLockerClient
+import com.parmet.squashlambdas.clublocker.TokenManager
 import com.parmet.squashlambdas.configureCalendar
 import com.parmet.squashlambdas.configureClubLockerResources
 import com.parmet.squashlambdas.configureNotifier
 import com.parmet.squashlambdas.loadConfiguration
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.util.FileLoader
-import dagger.Module
-import dagger.Provides
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.Named
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -24,77 +31,67 @@ import kotlinx.coroutines.runBlocking
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.sns.SnsClient
-import javax.inject.Named
-import javax.inject.Singleton
 import kotlin.time.measureTime
 
 private val logger = KotlinLogging.logger { }
 
-@Module
+@BindingContainer
 object EmailNotificationModule {
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     fun provideConfig(@Named("configName") configName: String): EmailNotificationConfig =
         withTiming { loadConfiguration(configName) }
 
     @Provides
-    @Singleton
-    fun provideGoogleCalConfig(config: EmailNotificationConfig) =
+    fun provideGoogleCalConfig(config: EmailNotificationConfig): GoogleCalConfig =
         config.googleCal
 
     @Provides
-    @Singleton
-    fun provideNotifierConfig(config: EmailNotificationConfig) =
+    fun provideNotifierConfig(config: EmailNotificationConfig): SnsConfig =
         config.sns
 
     @Provides
-    @Singleton
-    fun provideTokenUpdateConfig(config: EmailNotificationConfig) =
+    fun provideTokenUpdateConfig(config: EmailNotificationConfig): TokenUpdateConfig =
         config.tokenUpdate
 }
 
-@Module
+@BindingContainer
 object MakeReservationModule {
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     fun provideConfig(@Named("configName") configName: String): MakeReservationConfig =
         withTiming { loadConfiguration(configName) }
 
     @Provides
-    @Singleton
-    fun provideClubLockerConfig(config: MakeReservationConfig) =
+    fun provideClubLockerConfig(config: MakeReservationConfig): ClubLockerConfig =
         config.clubLocker
 
     @Provides
-    @Singleton
-    fun provideNotifierConfig(config: MakeReservationConfig) =
+    fun provideNotifierConfig(config: MakeReservationConfig): SnsConfig =
         config.sns
 }
 
-@Module
+@BindingContainer
 object MonitorSlotsModule {
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     fun provideConfig(@Named("configName") configName: String): MonitorSlotsConfig =
         withTiming { loadConfiguration(configName) }
 
     @Provides
-    @Singleton
-    fun provideClubLockerConfig(config: MonitorSlotsConfig) =
+    fun provideClubLockerConfig(config: MonitorSlotsConfig): ClubLockerConfig =
         config.clubLocker
 
     @Provides
-    @Singleton
-    fun provideNotifierConfig(config: MonitorSlotsConfig) =
+    fun provideNotifierConfig(config: MonitorSlotsConfig): SnsConfig =
         config.sns
 
     @Provides
-    @Singleton
-    fun provideDynamoDbConfig(config: MonitorSlotsConfig) =
+    fun provideDynamoDbConfig(config: MonitorSlotsConfig): DynamoDbConfig =
         config.dynamoDb
 }
 
-@Module
+@BindingContainer
 object AwsModule {
     private val awsClients: AwsClients by lazy {
         withTiming("AwsClients") {
@@ -110,17 +107,17 @@ object AwsModule {
     }
 
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     fun provideS3(): S3Client =
         awsClients.s3
 
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     fun provideDynamoDb(): DynamoDbClient =
         awsClients.dynamoDb
 
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     fun provideSnsClient(): SnsClient =
         awsClients.sns
 }
@@ -131,48 +128,47 @@ private data class AwsClients(
     val dynamoDb: DynamoDbClient
 )
 
-@Module
+@BindingContainer
 object NotifierModule {
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     @Named("myNotifier")
     fun provideMyNotifier(config: SnsConfig, snsClient: SnsClient): Notifier =
         withTiming { configureNotifier(config.myTopicArn, snsClient) }
 
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     @Named("publicNotifier")
     fun providePublicNotifier(config: SnsConfig, snsClient: SnsClient): Notifier =
         withTiming { configureNotifier(config.publicTopicArn!!, snsClient) }
 }
 
-@Module
+@BindingContainer
 object ClubLockerModule {
     @Provides
-    @Singleton
-    fun provideTokenManager(config: ClubLockerConfig, s3Client: S3Client) =
+    @SingleIn(AppScope::class)
+    fun provideTokenManager(config: ClubLockerConfig, s3Client: S3Client): TokenManager =
         withTiming { TokenManager(config, s3Client) }
 
     @Provides
-    @Singleton
-    fun provideClubLockerResources(config: ClubLockerConfig, tokenManager: TokenManager) =
+    @SingleIn(AppScope::class)
+    fun provideClubLockerResources(config: ClubLockerConfig, tokenManager: TokenManager): ClubLockerResources =
         withTiming { configureClubLockerResources(config, tokenManager) }
 
     @Provides
-    @Singleton
-    fun provideClubLockerClient(resources: ClubLockerResources) =
+    @SingleIn(AppScope::class)
+    fun provideClubLockerClient(resources: ClubLockerResources): ClubLockerClient =
         withTiming { resources.client.apply { init() } }
 
     @Provides
-    @Singleton
-    fun provideHostPlayer(resources: ClubLockerResources) =
+    fun provideHostPlayer(resources: ClubLockerResources): Player =
         resources.player
 }
 
-@Module
+@BindingContainer
 object CalendarModule {
     @Provides
-    @Singleton
+    @SingleIn(AppScope::class)
     fun provideCalendar(config: GoogleCalConfig, fileLoader: FileLoader): Calendar =
         withTiming { configureCalendar(config, fileLoader) }
 }

@@ -8,8 +8,7 @@ import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.activity.valueOf
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
-import com.parmet.squashlambdas.dagger.DaggerMakeReservationComponent
-import com.parmet.squashlambdas.dagger.MakeReservationComponent
+import com.parmet.squashlambdas.di.MakeReservationGraph
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.reserve.ReservationMaker
 import com.parmet.squashlambdas.reserve.ReservationMaker.Result
@@ -19,15 +18,18 @@ import com.parmet.squashlambdas.reserve.mapNonEmptyLines
 import com.parmet.squashlambdas.util.FileLoader
 import com.parmet.squashlambdas.util.HasNotifier
 import com.parmet.squashlambdas.util.withErrorHandling
+import dev.zacsweers.metro.HasMemberInjections
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Named
+import dev.zacsweers.metro.createGraphFactory
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.InputStream
 import java.time.LocalDate
 import java.time.LocalTime
-import javax.inject.Inject
-import javax.inject.Named
 
 private val logger = KotlinLogging.logger { }
 
+@HasMemberInjections
 open class MakeReservationHandler :
     RequestHandler<ScheduledEvent, Any>,
     HasNotifier {
@@ -48,17 +50,15 @@ open class MakeReservationHandler :
     @Inject
     lateinit var hostPlayer: Player
 
-    private val component by lazy { buildComponent() }
+    private val graph by lazy { buildGraph() }
 
-    private fun buildComponent(): MakeReservationComponent =
-        DaggerMakeReservationComponent
-            .builder()
-            .configName("production-make-reservation-handler.yml")
-            .build()
+    private fun buildGraph(): MakeReservationGraph =
+        createGraphFactory<MakeReservationGraph.Factory>()
+            .create("production-make-reservation-handler.yml")
 
     final override fun handleRequest(input: ScheduledEvent, context: Context) {
         withErrorHandling(input) {
-            component.inject(this)
+            graph.inject(this)
             doHandleRequest(input).also { logger.info { "Returning result: $it" } }
         }
     }

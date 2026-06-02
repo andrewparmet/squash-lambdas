@@ -6,7 +6,6 @@ aws-lambda-core = "1.3.0"
 aws-lambda-events = "2.2.9"
 buildConfig = "6.0.7"
 commons-email = "1.6.0"
-dagger = "2.59"
 google-calendar = "v3-rev20250404-2.0.0"
 google-oauth2-http = "1.42.1"
 guava = "33.5.0-jre"
@@ -17,7 +16,7 @@ junit = "5.13.4"
 jackson = "2.21.0"
 kotlin = "2.3.0"
 kotlinLogging = "7.0.12"
-ksp = "2.3.4"
+metro = "1.1.1"
 log4j = "2.25.1"
 mockk = "1.14.7"
 reflections = "0.10.2"
@@ -29,7 +28,7 @@ truth = "1.4.5"
 [plugins]
 buildConfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildConfig" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
@@ -43,8 +42,6 @@ aws-sns = { module = "software.amazon.awssdk:sns" }
 aws-v1-s3 = { module = "com.amazonaws:aws-java-sdk-s3", version.ref = "aws-v1" }
 commons-email = { module = "org.apache.commons:commons-email", version.ref = "commons-email" }
 coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
-dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 google-calendar = { module = "com.google.apis:google-api-services-calendar", version.ref = "google-calendar" }
 google-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version.ref = "google-oauth2-http" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }

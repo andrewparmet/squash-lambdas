@@ -4,10 +4,11 @@ import com.google.api.services.calendar.Calendar
 import com.google.common.collect.Iterables
 import com.parmet.squashlambdas.GoogleCalConfig
 import com.parmet.squashlambdas.activity.Activity
+import dev.zacsweers.metro.Inject
 import io.github.oshai.kotlinlogging.KotlinLogging
-import javax.inject.Inject
 
-class EventManager @Inject constructor(
+@Inject
+class EventManager(
     private val calendar: Calendar,
     config: GoogleCalConfig
 ) {

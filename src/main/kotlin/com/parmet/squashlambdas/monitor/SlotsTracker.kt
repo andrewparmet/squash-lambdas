@@ -3,14 +3,15 @@ package com.parmet.squashlambdas.monitor
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.clublocker.Slot
 import com.parmet.squashlambdas.clublocker.TokenStatusManager
+import dev.zacsweers.metro.Inject
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.apache.http.client.HttpResponseException
 import java.time.LocalDate
-import javax.inject.Inject
 
 private val logger = KotlinLogging.logger { }
 
-class SlotsTracker @Inject constructor(
+@Inject
+class SlotsTracker(
     private val client: ClubLockerClient,
     private val slotStorageManager: SlotStorageManager,
     private val tokenStatusManager: TokenStatusManager

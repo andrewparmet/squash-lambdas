@@ -8,24 +8,26 @@ import com.parmet.squashlambdas.activity.Sport
 import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
 import com.parmet.squashlambdas.clublocker.Slot
 import com.parmet.squashlambdas.clublocker.TokenStatusManager
-import com.parmet.squashlambdas.dagger.DaggerMonitorSlotsComponent
-import com.parmet.squashlambdas.dagger.MonitorSlotsComponent
+import com.parmet.squashlambdas.di.MonitorSlotsGraph
 import com.parmet.squashlambdas.monitor.SlotsTracker
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.util.HasNotifier
 import com.parmet.squashlambdas.util.inBoston
 import com.parmet.squashlambdas.util.withErrorHandling
+import dev.zacsweers.metro.HasMemberInjections
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Named
+import dev.zacsweers.metro.createGraphFactory
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.DayOfWeek.FRIDAY
 import java.time.DayOfWeek.MONDAY
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
-import javax.inject.Inject
-import javax.inject.Named
 
 private val logger = KotlinLogging.logger { }
 
+@HasMemberInjections
 open class MonitorSlotsHandler :
     RequestHandler<ScheduledEvent, Any>,
     HasNotifier {
@@ -44,17 +46,15 @@ open class MonitorSlotsHandler :
     @Inject
     lateinit var tokenStatusManager: TokenStatusManager
 
-    private val component by lazy { buildComponent() }
+    private val graph by lazy { buildGraph() }
 
-    private fun buildComponent(): MonitorSlotsComponent =
-        DaggerMonitorSlotsComponent
-            .builder()
-            .configName("production-monitor-slots-handler.yml")
-            .build()
+    private fun buildGraph(): MonitorSlotsGraph =
+        createGraphFactory<MonitorSlotsGraph.Factory>()
+            .create("production-monitor-slots-handler.yml")
 
     final override fun handleRequest(input: ScheduledEvent, context: Context) {
         withErrorHandling(input) {
-            component.inject(this)
+            graph.inject(this)
             doHandleRequest()
         }
     }

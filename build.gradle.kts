@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.buildConfig)
     alias(libs.plugins.kotlin)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.metro)
     alias(libs.plugins.shadow)
     alias(libs.plugins.spotless)
 }
@@ -23,7 +23,6 @@ dependencies {
     implementation(libs.aws.v1.s3)
     implementation(libs.commons.email)
     implementation(libs.coroutines)
-    implementation(libs.dagger)
     implementation(libs.google.calendar)
     implementation(libs.google.oauth2.http)
     implementation(libs.jackson.joda)
@@ -35,8 +34,6 @@ dependencies {
     implementation(libs.kotlinLogging)
     implementation(libs.log4j.core)
 
-    ksp(libs.dagger.compiler)
-
     runtimeOnly(libs.log4j.jcl)
     runtimeOnly(libs.log4j.slf4jImpl)
 
@@ -46,7 +43,6 @@ dependencies {
     testImplementation(libs.testcontainers.junit)
     testImplementation(libs.testcontainers.localstack)
     testImplementation(libs.truth)
-    kspTest(libs.dagger.compiler)
 
     testRuntimeOnly(libs.junit.platformLauncher)
 }

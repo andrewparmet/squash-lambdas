@@ -1,10 +1,11 @@
 package com.parmet.squashlambdas.email
 
+import dev.zacsweers.metro.Inject
 import software.amazon.awssdk.services.s3.S3Client
-import javax.inject.Inject
 import javax.mail.internet.MimeMessage
 
-class EmailRetriever @Inject constructor(
+@Inject
+class EmailRetriever(
     private val s3: S3Client
 ) {
     fun retrieveEmail(bucket: String, key: String) =

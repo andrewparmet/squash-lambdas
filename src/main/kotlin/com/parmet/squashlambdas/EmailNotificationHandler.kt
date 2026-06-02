@@ -7,20 +7,23 @@ import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.cal.ChangeSummary
 import com.parmet.squashlambdas.cal.EventManager
 import com.parmet.squashlambdas.clublocker.TokenUpdateHandler
-import com.parmet.squashlambdas.dagger.DaggerEmailNotificationComponent
-import com.parmet.squashlambdas.dagger.EmailNotificationComponent
+import com.parmet.squashlambdas.di.EmailNotificationGraph
+import com.parmet.squashlambdas.di.EmailNotificationInjector
 import com.parmet.squashlambdas.email.EmailRetriever
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.s3.S3CreateObjectInfo
 import com.parmet.squashlambdas.s3.S3EmailNotification
 import com.parmet.squashlambdas.util.HasNotifier
 import com.parmet.squashlambdas.util.withErrorHandling
+import dev.zacsweers.metro.HasMemberInjections
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Named
+import dev.zacsweers.metro.createGraphFactory
 import io.github.oshai.kotlinlogging.KotlinLogging
-import javax.inject.Inject
-import javax.inject.Named
 
 private val logger = KotlinLogging.logger { }
 
+@HasMemberInjections
 open class EmailNotificationHandler :
     RequestHandler<S3Event, Any>,
     HasNotifier {
@@ -41,17 +44,15 @@ open class EmailNotificationHandler :
     @Inject
     lateinit var tokenUpdateHandler: TokenUpdateHandler
 
-    private val component by lazy { buildComponent() }
+    private val graph by lazy { buildGraph() }
 
-    protected open fun buildComponent(): EmailNotificationComponent =
-        DaggerEmailNotificationComponent
-            .builder()
-            .configName("production-email-notification-handler.yml")
-            .build()
+    protected open fun buildGraph(): EmailNotificationInjector =
+        createGraphFactory<EmailNotificationGraph.Factory>()
+            .create("production-email-notification-handler.yml")
 
     final override fun handleRequest(input: S3Event, context: Context) {
         withErrorHandling(input) {
-            component.inject(this)
+            graph.inject(this)
             val info = getS3Info(input)
             val email = getEmail(info)
 

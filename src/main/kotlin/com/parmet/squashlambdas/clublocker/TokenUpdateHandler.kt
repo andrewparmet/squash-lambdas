@@ -4,15 +4,16 @@ import com.parmet.squashlambdas.TokenUpdateConfig
 import com.parmet.squashlambdas.email.EmailData
 import com.parmet.squashlambdas.json.Json
 import com.parmet.squashlambdas.notify.Notifier
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Named
 import io.github.oshai.kotlinlogging.KotlinLogging
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
-import javax.inject.Inject
-import javax.inject.Named
 
 private val logger = KotlinLogging.logger { }
 
-class TokenUpdateHandler @Inject constructor(
+@Inject
+class TokenUpdateHandler(
     private val config: TokenUpdateConfig,
     private val s3Client: S3Client,
     @param:Named("myNotifier") private val notifier: Notifier

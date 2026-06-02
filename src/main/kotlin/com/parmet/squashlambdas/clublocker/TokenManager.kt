@@ -3,13 +3,14 @@ package com.parmet.squashlambdas.clublocker
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.parmet.squashlambdas.ClubLockerConfig
 import com.parmet.squashlambdas.json.Json
+import dev.zacsweers.metro.Inject
 import io.github.oshai.kotlinlogging.KotlinLogging
 import software.amazon.awssdk.services.s3.S3Client
-import javax.inject.Inject
 
 private val logger = KotlinLogging.logger { }
 
-class TokenManager @Inject constructor(
+@Inject
+class TokenManager(
     private val config: ClubLockerConfig,
     private val s3Client: S3Client
 ) {

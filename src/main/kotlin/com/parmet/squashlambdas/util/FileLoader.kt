@@ -1,11 +1,12 @@
 package com.parmet.squashlambdas.util
 
 import com.parmet.squashlambdas.FileConfig
+import dev.zacsweers.metro.Inject
 import software.amazon.awssdk.services.s3.S3Client
 import java.io.File
-import javax.inject.Inject
 
-class FileLoader @Inject constructor(
+@Inject
+class FileLoader(
     private val s3Client: S3Client
 ) {
     fun streamFile(config: FileConfig) =
