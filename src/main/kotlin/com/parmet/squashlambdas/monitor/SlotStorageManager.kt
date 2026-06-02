@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.parmet.squashlambdas.DynamoDbConfig
 import com.parmet.squashlambdas.clublocker.Slot
 import com.parmet.squashlambdas.json.Json
+import dev.zacsweers.metro.Inject
 import io.github.oshai.kotlinlogging.KotlinLogging
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
@@ -11,9 +12,9 @@ import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import java.time.Instant
 import java.time.LocalDate
-import javax.inject.Inject
 
-class SlotStorageManager @Inject constructor(
+@Inject
+class SlotStorageManager(
     private val dynamoDb: DynamoDbClient,
     private val config: DynamoDbConfig
 ) {
