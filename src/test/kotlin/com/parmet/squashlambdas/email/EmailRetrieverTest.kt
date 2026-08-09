@@ -16,12 +16,27 @@ class EmailRetrieverTest {
         val data = EmailRetriever(s3).retrieveEmail("", "some-object-key")
         assertThat(data).isEqualTo(emailData())
     }
+
+    @Test
+    fun `retrieveEmail includes forwarded recipients`() {
+        val email =
+            getResourceAsString(ChangeSummaryTest::class.java, "reservationCreated2")
+                .replace(Regex("(?m)^To: joecool@peanuts\\.com\\r?$"), "To: intermediate@example.com")
+        val data = EmailRetriever(EmailReturningS3(email)).retrieveEmail("", "some-object-key")
+
+        assertThat(data.recipients)
+            .containsExactly(
+                "intermediate@example.com",
+                "joecool@peanuts.com",
+                "0f4m5uqk@robot.zapier.com",
+            ).inOrder()
+    }
 }
 
 fun emailData() =
     EmailData(
         "Club Locker <no-reply@clublocker.com>",
-        listOf("joecool@peanuts.com"),
+        listOf("joecool@peanuts.com", "0f4m5uqk@robot.zapier.com"),
         "Tennis & Racquet Club Reservation Confirmation",
         """
             Hello Andrew Parmet, A reservation including you has been made via the Tennis & Racquet
