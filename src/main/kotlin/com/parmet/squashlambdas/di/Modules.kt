@@ -28,6 +28,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
+import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.sns.SnsClient
@@ -97,9 +98,9 @@ object AwsModule {
         withTiming("AwsClients") {
             runBlocking {
                 coroutineScope {
-                    val s3 = async { S3Client.create() }
-                    val sns = async { SnsClient.create() }
-                    val dynamo = async { DynamoDbClient.create() }
+                    val s3 = async { buildS3Client() }
+                    val sns = async { buildSnsClient() }
+                    val dynamo = async { buildDynamoDbClient() }
                     AwsClients(s3.await(), sns.await(), dynamo.await())
                 }
             }
@@ -120,6 +121,21 @@ object AwsModule {
     @SingleIn(AppScope::class)
     fun provideSnsClient(): SnsClient =
         awsClients.sns
+
+    private fun buildS3Client() =
+        S3Client.builder()
+            .httpClientBuilder(UrlConnectionHttpClient.builder())
+            .build()
+
+    private fun buildSnsClient() =
+        SnsClient.builder()
+            .httpClientBuilder(UrlConnectionHttpClient.builder())
+            .build()
+
+    private fun buildDynamoDbClient() =
+        DynamoDbClient.builder()
+            .httpClientBuilder(UrlConnectionHttpClient.builder())
+            .build()
 }
 
 private data class AwsClients(

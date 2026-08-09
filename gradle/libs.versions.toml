@@ -38,6 +38,7 @@ aws-lambda-core = { module = "com.amazonaws:aws-lambda-java-core", version.ref =
 aws-lambda-events = { module = "com.amazonaws:aws-lambda-java-events", version.ref = "aws-lambda-events" }
 aws-s3 = { module = "software.amazon.awssdk:s3" }
 aws-sns = { module = "software.amazon.awssdk:sns" }
+aws-url-connection-client = { module = "software.amazon.awssdk:url-connection-client" }
 commons-email = { module = "org.apache.commons:commons-email", version.ref = "commons-email" }
 coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 google-calendar = { module = "com.google.apis:google-api-services-calendar", version.ref = "google-calendar" }
