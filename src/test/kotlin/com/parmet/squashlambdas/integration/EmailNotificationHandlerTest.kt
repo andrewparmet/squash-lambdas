@@ -116,6 +116,28 @@ class EmailNotificationHandlerTest {
     }
 
     @Test
+    fun `react when the primary recipient is forwarded`() {
+        val handler = configureHandler()
+        val email =
+            getResourceAsString(ChangeSummaryTest::class, "reservationCreated")
+                .replace(Regex("(?m)^To: joecool@peanuts\\.com\\r?$"), "To: intermediate@example.com")
+        s3Client.putObject(
+            {
+                it.bucket("test-bucket-name")
+                it.key("test-object-key")
+            },
+            RequestBody.fromString(email),
+        )
+
+        handler.handleRequest(S3Event(listOf(createRecord())), mockk())
+
+        verifySequence {
+            events.insert("primary", any())
+            snsClient.publish(any<PublishRequest>())
+        }
+    }
+
+    @Test
     fun `token update email stores token to S3`() {
         val handler = configureHandler()
         s3Client.putObject(
