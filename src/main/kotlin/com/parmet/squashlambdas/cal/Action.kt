@@ -1,7 +1,10 @@
 package com.parmet.squashlambdas.cal
 
 import com.parmet.squashlambdas.activity.Activity
+import com.parmet.squashlambdas.notify.ActionSerializer
+import kotlinx.serialization.Serializable
 
+@Serializable(with = ActionSerializer::class)
 sealed class Action(
     val handle: (Activity, EventManager) -> Unit
 ) {

@@ -1,6 +1,5 @@
 package com.parmet.squashlambdas.clublocker
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.json.Json
 import org.junit.jupiter.api.Test
@@ -21,7 +20,7 @@ class StoredTokenTest {
     @Test
     fun `serializes to JSON`() {
         val token = StoredToken("my-token", Instant.parse("2026-01-25T12:00:00Z"))
-        val json = Json.mapper.writeValueAsString(token)
+        val json = Json.encode(token)
 
         assertThat(json).contains("\"token\":\"my-token\"")
         assertThat(json).contains("\"updateTime\"")
@@ -30,7 +29,7 @@ class StoredTokenTest {
     @Test
     fun `deserializes from JSON`() {
         val json = """{"token":"my-token","updateTime":"2026-01-25T12:00:00Z"}"""
-        val token: StoredToken = Json.mapper.readValue(json)
+        val token: StoredToken = Json.decode(json)
 
         assertThat(token.token).isEqualTo("my-token")
         assertThat(token.updateTime).isEqualTo(Instant.parse("2026-01-25T12:00:00Z"))
@@ -39,8 +38,8 @@ class StoredTokenTest {
     @Test
     fun `round trip serialization`() {
         val original = StoredToken.create("round-trip-token")
-        val json = Json.mapper.writeValueAsString(original)
-        val deserialized: StoredToken = Json.mapper.readValue(json)
+        val json = Json.encode(original)
+        val deserialized: StoredToken = Json.decode(json)
 
         assertThat(deserialized).isEqualTo(original)
     }

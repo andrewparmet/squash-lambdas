@@ -3,8 +3,10 @@ package com.parmet.squashlambdas.activity
 import com.google.api.client.util.DateTime
 import com.google.api.services.calendar.model.Event
 import com.google.api.services.calendar.model.EventDateTime
+import kotlinx.serialization.Serializable
 import java.time.Instant
 
+@Serializable
 abstract class AbstractActivity : Activity {
     abstract val start: Instant
     abstract val end: Instant

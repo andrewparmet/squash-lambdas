@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test
 class ConfigTest {
     @Test
     fun `parse configs`() {
-        loadConfiguration<EmailNotificationConfig>("production-email-notification-handler.yml")
-        loadConfiguration<MakeReservationConfig>("production-make-reservation-handler.yml")
-        loadConfiguration<MonitorSlotsConfig>("production-monitor-slots-handler.yml")
+        loadConfiguration<EmailNotificationConfig>("production-email-notification-handler.conf")
+        loadConfiguration<MakeReservationConfig>("production-make-reservation-handler.conf")
+        loadConfiguration<MonitorSlotsConfig>("production-monitor-slots-handler.conf")
     }
 }

@@ -1,9 +1,11 @@
 package com.parmet.squashlambdas.s3
-import com.fasterxml.jackson.annotation.JsonProperty
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 internal data class S3CreateObjectInfo(
     private val bucket: BucketInfo,
-    @param:JsonProperty("object")
+    @SerialName("object")
     private val objectInfo: S3ObjectInfo
 ) {
     val bucketName

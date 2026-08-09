@@ -1,9 +1,5 @@
 package com.parmet.squashlambdas.clublocker
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.common.collect.ImmutableBiMap
 import com.google.common.net.HttpHeaders.ACCEPT
 import com.google.common.net.HttpHeaders.AUTHORIZATION
@@ -24,6 +20,11 @@ import com.parmet.squashlambdas.json.Json
 import com.parmet.squashlambdas.reserve.slot
 import com.parmet.squashlambdas.util.inBoston
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.jsoup.Jsoup
 import java.net.URI
 import java.net.http.HttpClient
@@ -39,8 +40,6 @@ internal class ClubLockerClientImpl(
     private val logger = KotlinLogging.logger { }
 
     private val httpClient = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NEVER).build()
-    private val mapper = Json.mapper
-
     private val baseUrl = "https://api.ussquash.com"
     private val tennisAndRacquetClubId = 1413
     private val resource = "$baseUrl/resources/res"
@@ -94,7 +93,7 @@ internal class ClubLockerClientImpl(
     }
 
     private inline fun <reified T> get(resource: String): T =
-        mapper.readValue(responseBody(HttpRequest.newBuilder(URI(resource)).authorized()))
+        Json.decode(responseBody(HttpRequest.newBuilder(URI(resource)).authorized()))
 
     override fun makeReservation(match: Match): ReservationResp {
         try {
@@ -108,16 +107,16 @@ internal class ClubLockerClientImpl(
                 )
 
             val code = response.statusCode()
-            val body: Map<String, Any> = mapper.readValue(response.body())
+            val body = Json.parse(response.body()).jsonObject
             return if (code == 200) {
                 if (body.containsKey("createDenied")) {
-                    ReservationResp.Error(code, body["reason"] as String, match)
+                    ReservationResp.Error(code, body.getValue("reason").jsonPrimitive.content, match)
                 } else {
                     check(body.containsKey("id")) { "Deduced success but body contained no id: $body" }
-                    ReservationResp.Success((body["id"] as Number).toInt(), match)
+                    ReservationResp.Success(body.getValue("id").jsonPrimitive.int, match)
                 }
             } else {
-                ReservationResp.Error(code, body["error"], match)
+                ReservationResp.Error(code, body["error"]?.jsonPrimitive?.content, match)
             }
         } catch (t: Throwable) {
             return ReservationResp.Failure(t, match)
@@ -169,37 +168,27 @@ val COURTS_BY_ID =
 data class ReservationReq(
     val clubId: Int,
     val courtId: Int,
-    @JsonIgnore
     val localDate: LocalDate,
-    @JsonIgnore
     val timeSlot: com.parmet.squashlambdas.reserve.Slot,
     val players: List<Player>
 ) {
-    val date = localDate.toString()
-    val slot = timeSlot.slot
-    val type = "match"
-    val isPrivate = false
-    val notes = listOf<Any>()
-    val applyUserRestrictionsForAdmin = false
-    val payingForAll = false
-
-    @JsonProperty("MatchProperties")
-    val matchProperties =
-        mapOf(
-            "restrictJoinByRating" to false,
-            "matchType" to 1,
-            "customMatchType" to 144
-        )
-
     fun toJson() =
-        Json.mapper.writeValueAsString(this)
+        Json.encode(
+            ReservationRequestPayload(
+                clubId = clubId,
+                courtId = courtId,
+                players = players,
+                date = localDate.toString(),
+                slot = timeSlot.slot
+            )
+        )
 }
 
 @Suppress("UNUSED")
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@Serializable
 class Player(
     val type: String,
-    val id: Any?,
+    val id: Int?,
     val isMyself: Boolean,
     val text: String?,
     val guestName: String?
@@ -207,10 +196,33 @@ class Player(
     val confirmed = false
 
     companion object {
-        fun member(id: Any, isMyself: Boolean, text: String) =
+        fun member(id: Int, isMyself: Boolean, text: String) =
             Player("member", id, isMyself, text, null)
 
         fun guest(name: String) =
             Player("guest", null, false, null, name)
     }
 }
+
+@Serializable
+private data class ReservationRequestPayload(
+    val clubId: Int,
+    val courtId: Int,
+    val players: List<Player>,
+    val date: String,
+    val slot: String,
+    val type: String = "match",
+    val isPrivate: Boolean = false,
+    val notes: List<String> = emptyList(),
+    val applyUserRestrictionsForAdmin: Boolean = false,
+    val payingForAll: Boolean = false,
+    @SerialName("MatchProperties")
+    val matchProperties: MatchProperties = MatchProperties()
+)
+
+@Serializable
+private data class MatchProperties(
+    val restrictJoinByRating: Boolean = false,
+    val matchType: Int = 1,
+    val customMatchType: Int = 144
+)

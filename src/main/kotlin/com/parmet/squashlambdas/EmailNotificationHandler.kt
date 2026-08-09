@@ -48,7 +48,7 @@ open class EmailNotificationHandler :
 
     protected open fun buildGraph(): EmailNotificationInjector =
         createGraphFactory<EmailNotificationGraph.Factory>()
-            .create("production-email-notification-handler.yml")
+            .create("production-email-notification-handler.conf")
 
     final override fun handleRequest(input: S3Event, context: Context) {
         withErrorHandling(input) {

@@ -1,5 +1,8 @@
 package com.parmet.squashlambdas.activity
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Player(
     val name: String? = null,
     val email: String? = null,

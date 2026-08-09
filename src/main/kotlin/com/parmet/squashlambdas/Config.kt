@@ -1,5 +1,8 @@
 package com.parmet.squashlambdas
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class EmailNotificationConfig(
     val googleCal: GoogleCalConfig,
     val sns: SnsConfig,
@@ -7,12 +10,14 @@ data class EmailNotificationConfig(
     val tokenUpdate: TokenUpdateConfig
 )
 
+@Serializable
 data class TokenUpdateConfig(
     val expectedSender: String,
     val expectedSubject: String,
     val tokenDestination: FileConfig
 )
 
+@Serializable
 data class MakeReservationConfig(
     val clubLocker: ClubLockerConfig,
     val schedule: FileConfig,
@@ -21,39 +26,46 @@ data class MakeReservationConfig(
     val sns: SnsConfig
 )
 
+@Serializable
 data class MonitorSlotsConfig(
     val clubLocker: ClubLockerConfig,
     val sns: SnsConfig,
     val dynamoDb: DynamoDbConfig
 )
 
+@Serializable
 data class GoogleCalConfig(
     val calendarId: String,
     val creds: FileConfig
 )
 
+@Serializable
 data class SnsConfig(
     val myTopicArn: String,
-    val publicTopicArn: String?
+    val publicTopicArn: String? = null
 )
 
+@Serializable
 data class DynamoDbConfig(
     val squashSlotsTableName: String
 )
 
+@Serializable
 data class ClubLockerConfig(
     val token: FileConfig,
-    val name: String?,
+    val name: String? = null,
     val email: String
 )
 
+@Serializable
 data class FileConfig(
     val location: String,
-    val bucket: String?,
-    val key: String?,
-    val fileName: String?
+    val bucket: String? = null,
+    val key: String? = null,
+    val fileName: String? = null
 )
 
+@Serializable
 data class ParseConfig(
     val primaryRecipient: String
 )

@@ -13,15 +13,19 @@ import com.parmet.squashlambdas.clublocker.ClubLockerClientImpl
 import com.parmet.squashlambdas.clublocker.TokenManager
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.util.FileLoader
-import com.sksamuel.hoplite.ConfigLoaderBuilder
-import com.sksamuel.hoplite.addResourceSource
+import com.typesafe.config.ConfigFactory
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.hocon.Hocon
+import kotlinx.serialization.serializer
 import software.amazon.awssdk.services.sns.SnsClient
 
-inline fun <reified T : Any> loadConfiguration(file: String): T =
-    ConfigLoaderBuilder.default()
-        .addResourceSource("/com/parmet/squashlambdas/$file")
-        .build()
-        .loadConfigOrThrow<T>()
+@OptIn(ExperimentalSerializationApi::class)
+inline fun <reified T : Any> loadConfiguration(file: String): T {
+    val config =
+        ConfigFactory.parseResources("com/parmet/squashlambdas/$file")
+            .resolveWith(ConfigFactory.systemEnvironment())
+    return Hocon.decodeFromConfig(serializer(), config)
+}
 
 fun configureNotifier(topicArn: String, snsClient: SnsClient) =
     Notifier(

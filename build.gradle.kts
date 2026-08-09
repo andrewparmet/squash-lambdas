@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.buildConfig)
     alias(libs.plugins.kotlin)
+    alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.metro)
     alias(libs.plugins.shadow)
     alias(libs.plugins.spotless)
@@ -12,7 +13,6 @@ repositories {
 
 dependencies {
     implementation(platform(libs.aws.bom))
-    implementation(platform(libs.jackson.bom))
 
     implementation(libs.aws.dynamodb)
     implementation(libs.aws.lambda.core)
@@ -24,13 +24,11 @@ dependencies {
     implementation(libs.coroutines)
     implementation(libs.google.calendar)
     implementation(libs.google.oauth2.http)
-    implementation(libs.jackson.joda)
-    implementation(libs.jackson.jsr310)
-    implementation(libs.jackson.kotlin)
     implementation(libs.guava)
-    implementation(libs.hoplite)
     implementation(libs.jsoup)
     implementation(libs.kotlinLogging)
+    implementation(libs.kotlinx.serialization.hocon)
+    implementation(libs.kotlinx.serialization.json)
 
     runtimeOnly(libs.slf4j.jcl)
     runtimeOnly(libs.slf4j.simple)

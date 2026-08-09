@@ -5,8 +5,11 @@ import com.parmet.squashlambdas.activity.Sport.Hardball
 import com.parmet.squashlambdas.activity.Sport.Racquets
 import com.parmet.squashlambdas.activity.Sport.Squash
 import com.parmet.squashlambdas.activity.Sport.Tennis
+import com.parmet.squashlambdas.notify.CourtSerializer
+import kotlinx.serialization.Serializable
 import java.util.regex.Pattern
 
+@Serializable(with = CourtSerializer::class)
 sealed class Court(
     val sport: Sport
 ) {
@@ -67,10 +70,17 @@ private val TENNIS_COURT = Pattern.compile(".*Court Tennis [-/] Court Tennis.*")
 private val RACQUETS_COURT = Pattern.compile(".*Racquets [-/] Racquets.*")
 
 private val map =
-    Court::class.nestedClasses
-        .map { it.objectInstance }
-        .filterIsInstance<Court>()
-        .associateBy { it.pretty }
+    listOf(
+        Court.Court1,
+        Court.Court2,
+        Court.Court3,
+        Court.Court5,
+        Court.Court6,
+        Court.Court7,
+        Court.TennisCourt,
+        Court.RacquetsCourt,
+        Court.FitnessClasses
+    ).associateBy { it.pretty }
 
 internal fun Court.Companion.valueOf(value: String) =
     requireNotNull(map[value]) {

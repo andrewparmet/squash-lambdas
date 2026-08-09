@@ -7,6 +7,6 @@ import java.time.Instant
 class ClinicTest {
     @Test
     fun `match can be serialized`() {
-        Json.mapper.writeValueAsString(Clinic(Court.Court2, Instant.now(), Instant.now(), "foo"))
+        Json.encode(Clinic(Court.Court2, Instant.now(), Instant.now(), "foo"))
     }
 }

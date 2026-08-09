@@ -27,7 +27,7 @@ class TokenUpdateHandler(
     fun handle(email: EmailData) {
         val token = email.body.trim()
         val storedToken = StoredToken.create(token)
-        val json = Json.mapper.writeValueAsString(storedToken)
+        val json = Json.encode(storedToken)
 
         logger.info { "Received token update email, storing to S3" }
 

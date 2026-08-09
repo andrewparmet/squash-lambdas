@@ -1,15 +1,6 @@
 package com.parmet.squashlambdas.notify
 
-import com.fasterxml.jackson.databind.ObjectWriter
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.databind.module.SimpleModule
 import com.google.common.base.CaseFormat
-import com.google.common.base.Throwables
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
-import com.parmet.squashlambdas.activity.Court
-import com.parmet.squashlambdas.activity.Sport
-import com.parmet.squashlambdas.cal.Action
 import com.parmet.squashlambdas.cal.ChangeSummary
 import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
 import com.parmet.squashlambdas.clublocker.Slot
@@ -26,27 +17,15 @@ class Notifier(
     private val topicArn: String,
     private val context: Map<*, *>
 ) {
-    private val printer: ObjectWriter =
-        Json.mapper.copy()
-            .registerModule(
-                SimpleModule()
-                    .addSerializer(Sport::class.java, SportSerializer)
-                    .addSerializer(Court::class.java, CourtSerializer)
-                    .addSerializer(Action::class.java, ActionSerializer)
-            )
-            .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-            .writer()
-
     private fun print(any: Any) =
         try {
-            // Gson's pretty printing is better
-            GsonBuilder().setPrettyPrinting().create().toJson(JsonParser.parseString(printer.writeValueAsString(any)))
+            Json.prettyPrint(any.toJsonElement())
         } catch (ex: Exception) {
             any.toString() + "[error while serializing object of type ${any::class}: $ex]"
         }.replace("\n", "\n|")
 
     private fun print(t: Throwable) =
-        Throwables.getStackTraceAsString(t).replace("\n", "\n|")
+        t.stackTraceToString().replace("\n", "\n|")
 
     fun publishSuccessfulParse(summary: ChangeSummary) {
         sns.publish(

@@ -20,9 +20,9 @@ abstract class ConfiguredTest {
 
     @BeforeEach
     fun before() {
-        emailNotificationConfig = loadConfiguration("test-email-notification-handler.yml")
-        makeReservationConfig = loadConfiguration("test-make-reservation-handler.yml")
-        monitorSlotsConfig = loadConfiguration("test-monitor-slots-handler.yml")
+        emailNotificationConfig = loadConfiguration("test-email-notification-handler.conf")
+        makeReservationConfig = loadConfiguration("test-make-reservation-handler.conf")
+        monitorSlotsConfig = loadConfiguration("test-monitor-slots-handler.conf")
         calendar = configureCalendar(emailNotificationConfig.googleCal, mockk())
         val clubLockerResources = configureClubLockerResources(makeReservationConfig.clubLocker, mockk())
         client = clubLockerResources.client

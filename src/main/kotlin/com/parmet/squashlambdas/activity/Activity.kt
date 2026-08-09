@@ -1,16 +1,11 @@
 package com.parmet.squashlambdas.activity
 
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.google.api.services.calendar.model.Event
 import com.parmet.squashlambdas.email.EmailData
+import kotlinx.serialization.Serializable
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-@JsonSubTypes(
-    JsonSubTypes.Type(value = Match::class, name = "Match"),
-    JsonSubTypes.Type(value = Clinic::class, name = "Clinic")
-)
-interface Activity {
+@Serializable
+sealed interface Activity {
     fun toEvent(): Event
 
     fun searchString(): String

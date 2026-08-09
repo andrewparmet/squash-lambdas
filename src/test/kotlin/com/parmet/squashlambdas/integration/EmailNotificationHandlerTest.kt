@@ -2,7 +2,6 @@ package com.parmet.squashlambdas.integration
 
 import com.amazonaws.services.lambda.runtime.events.S3Event
 import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.model.Event
 import com.google.common.truth.Truth.assertThat
@@ -155,7 +154,7 @@ class EmailNotificationHandlerTest {
             it.key("clublocker-token.json")
         }.use { it.bufferedReader().readText() }
 
-        val storedToken: StoredToken = Json.mapper.readValue(storedTokenJson)
+        val storedToken: StoredToken = Json.decode(storedTokenJson)
         assertThat(storedToken.token).isEqualTo("test-token-123")
         assertThat(storedToken.updateTime).isNotNull()
 
@@ -199,7 +198,7 @@ class EmailNotificationHandlerTest {
         val handler = object : EmailNotificationHandler() {
             override fun buildGraph() =
                 createGraphFactory<EmailNotificationTestGraph.Factory>()
-                    .create("test-email-notification-handler.yml", calender, testS3Client, snsClient)
+                    .create("test-email-notification-handler.conf", calender, testS3Client, snsClient)
         }
 
         return handler
