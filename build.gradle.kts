@@ -20,7 +20,6 @@ dependencies {
     implementation(libs.aws.lambda.events)
     implementation(libs.aws.s3)
     implementation(libs.aws.sns)
-    implementation(libs.aws.v1.s3)
     implementation(libs.commons.email)
     implementation(libs.coroutines)
     implementation(libs.google.calendar)
