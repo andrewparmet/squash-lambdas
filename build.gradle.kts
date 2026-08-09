@@ -49,6 +49,7 @@ dependencies {
 
 configurations.configureEach {
     exclude(group = "software.amazon.awssdk", module = "apache-client")
+    exclude(group = "software.amazon.awssdk", module = "apache5-client")
     exclude(group = "software.amazon.awssdk", module = "netty-nio-client")
 }
 
