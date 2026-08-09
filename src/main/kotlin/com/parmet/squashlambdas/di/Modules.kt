@@ -25,13 +25,11 @@ import dev.zacsweers.metro.Named
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.sns.SnsClient
+import java.util.concurrent.Executors
 import kotlin.time.measureTime
 
 private val logger = KotlinLogging.logger { }
@@ -96,13 +94,11 @@ object MonitorSlotsModule {
 object AwsModule {
     private val awsClients: AwsClients by lazy {
         withTiming("AwsClients") {
-            runBlocking {
-                coroutineScope {
-                    val s3 = async { buildS3Client() }
-                    val sns = async { buildSnsClient() }
-                    val dynamo = async { buildDynamoDbClient() }
-                    AwsClients(s3.await(), sns.await(), dynamo.await())
-                }
+            Executors.newVirtualThreadPerTaskExecutor().use { executor ->
+                val s3 = executor.submit(::buildS3Client)
+                val sns = executor.submit(::buildSnsClient)
+                val dynamo = executor.submit(::buildDynamoDbClient)
+                AwsClients(s3.get(), sns.get(), dynamo.get())
             }
         }
     }
