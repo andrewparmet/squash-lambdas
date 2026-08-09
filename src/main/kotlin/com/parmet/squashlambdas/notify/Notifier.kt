@@ -8,6 +8,8 @@ import com.parmet.squashlambdas.json.Json
 import com.parmet.squashlambdas.monitor.TimeFormatter
 import com.parmet.squashlambdas.reserve.ReservationMaker
 import com.parmet.squashlambdas.util.inBoston
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 import software.amazon.awssdk.services.sns.SnsClient
 import software.amazon.awssdk.services.sns.model.PublishRequest
 import java.time.Instant
@@ -15,13 +17,13 @@ import java.time.Instant
 class Notifier(
     private val sns: SnsClient,
     private val topicArn: String,
-    private val context: Map<*, *>
+    private val context: Map<String, JsonElement>
 ) {
-    private fun print(any: Any) =
+    private fun print(value: JsonElement) =
         try {
-            Json.prettyPrint(any.toJsonElement())
+            Json.prettyPrint(value)
         } catch (ex: Exception) {
-            any.toString() + "[error while serializing object of type ${any::class}: $ex]"
+            value.toString() + "[error while formatting JSON: $ex]"
         }.replace("\n", "\n|")
 
     private fun print(t: Throwable) =
@@ -40,10 +42,10 @@ class Notifier(
     private fun successfulParseMsg(summary: ChangeSummary): String =
         """
             |Successfully processed change:
-            |${print(summary)}
+            |${print(Json.element(summary))}
             |
             |Context:
-            |${print(context)}
+            |${print(JsonObject(context))}
         """.trimMargin()
 
     fun publishSuccessfulReservation(result: ReservationMaker.Result.Success) {
@@ -59,10 +61,10 @@ class Notifier(
     private fun successfulReservationMsg(result: ReservationMaker.Result.Success): String =
         """
             |Successfully made a reservation:
-            |${print(result)}
+            |${print(result.toJsonElement())}
             |
             |Context:
-            |${print(context)}
+            |${print(JsonObject(context))}
         """.trimMargin()
 
     fun publishFoundOpenSlot(result: List<Slot>) {
@@ -112,7 +114,7 @@ class Notifier(
             |Could not execute lambda.
             |
             |Context:
-            |${print(context)}
+            |${print(JsonObject(context))}
             |
             |Stack trace:
             |${print(failure)}

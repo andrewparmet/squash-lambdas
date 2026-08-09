@@ -10,49 +10,22 @@ import kotlinx.serialization.Serializable
 import java.util.regex.Pattern
 
 @Serializable(with = CourtSerializer::class)
-sealed class Court(
-    val sport: Sport
+enum class Court(
+    val sport: Sport,
+    val pretty: String
 ) {
-    abstract val pretty: String
+    Court1(Squash, "Court 1"),
+    Court2(Squash, "Court 2"),
+    Court3(Squash, "Court 3"),
+    Court5(Hardball, "Court 5"),
+    Court6(Hardball, "Court 6"),
+    Court7(Hardball, "Court 7"),
+    TennisCourt(Tennis, "Tennis Court"),
+    RacquetsCourt(Racquets, "Racquets Court"),
+    FitnessClasses(Fitness, "Fitness Classes");
 
     override fun toString() =
         pretty
-
-    object Court1 : Court(Squash) {
-        override val pretty = "Court 1"
-    }
-
-    object Court2 : Court(Squash) {
-        override val pretty = "Court 2"
-    }
-
-    object Court3 : Court(Squash) {
-        override val pretty = "Court 3"
-    }
-
-    object Court5 : Court(Hardball) {
-        override val pretty = "Court 5"
-    }
-
-    object Court6 : Court(Hardball) {
-        override val pretty = "Court 6"
-    }
-
-    object Court7 : Court(Hardball) {
-        override val pretty = "Court 7"
-    }
-
-    object TennisCourt : Court(Tennis) {
-        override val pretty = "Tennis Court"
-    }
-
-    object RacquetsCourt : Court(Racquets) {
-        override val pretty = "Racquets Court"
-    }
-
-    object FitnessClasses : Court(Fitness) {
-        override val pretty = "Fitness Classes"
-    }
 
     companion object
 }
@@ -69,22 +42,11 @@ private val TENNIS_COURT = Pattern.compile(".*Court Tennis [-/] Court Tennis.*")
 // "Court: Racquets / Racquets" (match deletion)
 private val RACQUETS_COURT = Pattern.compile(".*Racquets [-/] Racquets.*")
 
-private val map =
-    listOf(
-        Court.Court1,
-        Court.Court2,
-        Court.Court3,
-        Court.Court5,
-        Court.Court6,
-        Court.Court7,
-        Court.TennisCourt,
-        Court.RacquetsCourt,
-        Court.FitnessClasses
-    ).associateBy { it.pretty }
+private val courtsByPretty = Court.entries.associateBy { it.pretty }
 
-internal fun Court.Companion.valueOf(value: String) =
-    requireNotNull(map[value]) {
-        "No enum constant ${Court::class.java.name}.$value"
+internal fun Court.Companion.fromPrettyName(value: String) =
+    requireNotNull(courtsByPretty[value]) {
+        "No court named $value"
     }
 
 internal fun Court.Companion.fromLocationString(body: String) =
@@ -98,6 +60,6 @@ internal fun Court.Companion.fromLocationString(body: String) =
         else -> {
             val matcher = NUMBERED_COURT.matcher(body)
             require(matcher.matches()) { "Unable to parse court from $body" }
-            valueOf("Court ${matcher.group(1)}")
+            fromPrettyName("Court ${matcher.group(1)}")
         }
     }

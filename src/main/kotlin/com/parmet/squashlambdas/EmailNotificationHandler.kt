@@ -10,6 +10,7 @@ import com.parmet.squashlambdas.clublocker.TokenUpdateHandler
 import com.parmet.squashlambdas.di.EmailNotificationGraph
 import com.parmet.squashlambdas.di.EmailNotificationInjector
 import com.parmet.squashlambdas.email.EmailRetriever
+import com.parmet.squashlambdas.json.Json
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.s3.S3CreateObjectInfo
 import com.parmet.squashlambdas.s3.S3EmailNotification
@@ -62,7 +63,7 @@ open class EmailNotificationHandler :
             }
 
             ChangeSummary.fromEmail(email)?.also {
-                addToContext("changeSummary", it)
+                addToContext("changeSummary", Json.element(it))
                 if (config.parse.primaryRecipient in email.recipients) {
                     it.process(eventManager)
                     notifier.publishSuccessfulParse(it)
@@ -75,11 +76,11 @@ open class EmailNotificationHandler :
 
     private fun getS3Info(input: S3Event) =
         S3EmailNotification.fromInputObject(input).s3ObjectInfo.also {
-            addToContext("s3CreateObjectInfo", it)
+            addToContext("s3CreateObjectInfo", Json.element(it))
         }
 
     private fun getEmail(info: S3CreateObjectInfo) =
         retriever.retrieveEmail(info.bucketName, info.objectKey).also {
-            addToContext("emailData", it)
+            addToContext("emailData", Json.element(it))
         }
 }
