@@ -2,7 +2,9 @@ package com.parmet.squashlambdas.cal
 
 import com.parmet.squashlambdas.activity.Activity
 import com.parmet.squashlambdas.email.EmailData
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ChangeSummary(
     val action: Action,
     val activity: Activity

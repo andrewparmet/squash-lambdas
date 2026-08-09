@@ -1,14 +1,17 @@
 package com.parmet.squashlambdas.clublocker
 
-import com.fasterxml.jackson.annotation.JsonIgnore
+import com.parmet.squashlambdas.json.InstantSerializer
+import kotlinx.serialization.Serializable
 import java.time.Instant
 
+@Serializable
 data class StoredToken(
     val token: String,
+    @Serializable(with = InstantSerializer::class)
     val updateTime: Instant,
+    @Serializable(with = InstantSerializer::class)
     val invalidTime: Instant? = null
 ) {
-    @get:JsonIgnore
     val isValid: Boolean
         get() = invalidTime == null
 

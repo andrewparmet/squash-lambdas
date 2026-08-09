@@ -1,6 +1,5 @@
 package com.parmet.squashlambdas.clublocker
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.parmet.squashlambdas.ClubLockerConfig
 import com.parmet.squashlambdas.json.Json
 import com.parmet.squashlambdas.notify.Notifier
@@ -36,7 +35,7 @@ class TokenStatusManager(
         }
 
         val invalidatedToken = currentToken.invalidate()
-        val json = Json.mapper.writeValueAsString(invalidatedToken)
+        val json = Json.encode(invalidatedToken)
 
         logger.info { "Marking token as invalid: $reason" }
 
@@ -56,5 +55,5 @@ class TokenStatusManager(
         s3Client.getObject {
             it.bucket(config.token.bucket)
             it.key(config.token.key)
-        }.use { Json.mapper.readValue(it) }
+        }.use { Json.decode(it.bufferedReader().readText()) }
 }

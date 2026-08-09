@@ -1,6 +1,5 @@
 package com.parmet.squashlambdas.notify
 
-import com.fasterxml.jackson.databind.module.SimpleModule
 import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.activity.Activity
 import com.parmet.squashlambdas.activity.Clinic
@@ -37,12 +36,6 @@ class JsonUtilsTest {
             ""
         )
 
-    private val module =
-        SimpleModule()
-            .addSerializer(Sport::class.java, SportSerializer)
-            .addSerializer(Court::class.java, CourtSerializer)
-            .addSerializer(Action::class.java, ActionSerializer)
-
     @Test
     fun `activity adapter works for all subclasses`() {
         val instances: Map<KClass<*>, *> =
@@ -53,9 +46,8 @@ class JsonUtilsTest {
 
         assertHasAnExampleOfEachConcreteSubclass(Activity::class, instances)
 
-        // With Jackson annotations on Activity, writing as base type includes "type"
         instances.forEach { (kclass, instance) ->
-            val serialized = Json.mapper.writeValueAsString(instance as Activity)
+            val serialized = Json.encode(instance as Activity)
             logger.info { "Checking serialized form for $instance of type ${kclass.simpleName}: $serialized" }
             assertThat(serialized).contains("\"type\":\"${kclass.simpleName}\"")
         }
@@ -111,9 +103,8 @@ class JsonUtilsTest {
         !Modifier.isAbstract(modifiers)
 
     private fun assertSerializedFormContainsTypeString(instances: Map<KClass<*>, *>, klass: KClass<*>) {
-        val mapper = Json.mapper.copy().registerModule(module)
         instances.forEach { (kclass, instance) ->
-            val serialized = mapper.writeValueAsString(instance)
+            val serialized = Json.prettyPrint(instance.toJsonElement())
             logger.info { "Checking serialized form for $instance of type ${kclass.simpleName}: $serialized" }
             assertThat(serialized).contains(instance.toString())
         }

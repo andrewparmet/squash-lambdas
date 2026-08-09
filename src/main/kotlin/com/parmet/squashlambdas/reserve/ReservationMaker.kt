@@ -92,8 +92,7 @@ class ReservationMaker(
         }
 
     private fun ReservationResp.Error.isFatal(): Boolean =
-        (message as? String)?.contains("Player has already booked their maximum number of prime time reservations")
-            ?: false
+        message?.contains("Player has already booked their maximum number of prime time reservations") ?: false
 
     class Options(
         val hostPlayer: Player,

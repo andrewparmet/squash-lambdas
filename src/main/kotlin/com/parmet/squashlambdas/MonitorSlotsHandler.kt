@@ -50,7 +50,7 @@ open class MonitorSlotsHandler :
 
     private fun buildGraph(): MonitorSlotsGraph =
         createGraphFactory<MonitorSlotsGraph.Factory>()
-            .create("production-monitor-slots-handler.yml")
+            .create("production-monitor-slots-handler.conf")
 
     final override fun handleRequest(input: ScheduledEvent, context: Context) {
         withErrorHandling(input) {

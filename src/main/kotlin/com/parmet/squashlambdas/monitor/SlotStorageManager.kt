@@ -1,6 +1,5 @@
 package com.parmet.squashlambdas.monitor
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.parmet.squashlambdas.DynamoDbConfig
 import com.parmet.squashlambdas.clublocker.Slot
 import com.parmet.squashlambdas.json.Json
@@ -26,7 +25,7 @@ class SlotStorageManager(
     fun save(date: LocalDate, slots: List<Slot>) {
         val item: MutableMap<String, AttributeValue> = mutableMapOf()
         item[primaryKey] = AttributeValue.builder().s("$date/taken").build()
-        item[entriesKey] = AttributeValue.builder().ss(slots.map { Json.mapper.writeValueAsString(it) }).build()
+        item[entriesKey] = AttributeValue.builder().ss(slots.map { Json.encode(it) }).build()
         item[modifiedTimeKey] = AttributeValue.builder().s(Instant.now().toString()).build()
 
         dynamoDb.putItem(
@@ -52,7 +51,7 @@ class SlotStorageManager(
             emptyList()
         } else {
             val jsonEntries: List<String> = response.item()[entriesKey]?.ss() ?: emptyList()
-            jsonEntries.map { json -> Json.mapper.readValue<Slot>(json) }
+            jsonEntries.map { json -> Json.decode<Slot>(json) }
                 .also { logger.info { "Loaded latest snapshot of taken slots: $it" } }
         }
     }

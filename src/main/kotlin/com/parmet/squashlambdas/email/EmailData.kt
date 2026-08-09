@@ -1,5 +1,8 @@
 package com.parmet.squashlambdas.email
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class EmailData(
     val sender: String,
     val recipients: List<String>,

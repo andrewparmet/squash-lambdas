@@ -10,7 +10,7 @@ import java.time.Instant
 class MatchTest {
     @Test
     fun `match can be serialized`() {
-        Json.mapper.writeValueAsString(
+        Json.encode(
             Match(
                 Court.Court2,
                 Instant.now(),

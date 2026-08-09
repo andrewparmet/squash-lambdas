@@ -1,6 +1,7 @@
 package com.parmet.squashlambdas.clublocker
 
 import com.parmet.squashlambdas.activity.Match
+import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
 interface ClubLockerClient {
@@ -17,23 +18,27 @@ interface ClubLockerClient {
     fun directory(): List<User>
 }
 
+@Serializable
 data class UserResp(
     val id: Int,
     val affiliations: List<Affiliation>,
     val email: String
 )
 
+@Serializable
 data class Affiliation(
     val id: Int,
     val name: String
 )
 
+@Serializable
 data class CourtResp(
     val id: Int,
     val name: String,
     val slotLengthMinutes: Int
 )
 
+@Serializable
 data class Slot(
     val id: Int,
     val reservationId: Int,
@@ -53,7 +58,7 @@ sealed class ReservationResp {
 
     internal data class Error(
         val statusCode: Int,
-        val message: Any?,
+        val message: String?,
         val match: Match
     ) : NonSuccess()
 
@@ -63,6 +68,7 @@ sealed class ReservationResp {
     ) : NonSuccess()
 }
 
+@Serializable
 data class User(
     val id: Int,
     private val name: String

@@ -8,13 +8,12 @@ commons-email = "1.6.0"
 google-calendar = "v3-rev20250404-2.0.0"
 google-oauth2-http = "1.42.1"
 guava = "33.5.0-jre"
-hoplite = "2.9.0"
 jvmTarget = "25"
 jsoup = "1.22.1"
 junit = "5.13.4"
-jackson = "2.21.0"
 kotlin = "2.3.0"
 kotlinLogging = "7.0.12"
+kotlinxSerialization = "1.10.0"
 metro = "1.1.1"
 mockk = "1.14.7"
 reflections = "0.10.2"
@@ -27,6 +26,7 @@ truth = "1.4.5"
 [plugins]
 buildConfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildConfig" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
@@ -44,15 +44,12 @@ coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version
 google-calendar = { module = "com.google.apis:google-api-services-calendar", version.ref = "google-calendar" }
 google-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version.ref = "google-oauth2-http" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
-hoplite = { module = "com.sksamuel.hoplite:hoplite-yaml", version.ref = "hoplite" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 junit-platformLauncher = { module = "org.junit.platform:junit-platform-launcher" }
-jackson-bom = { module = "com.fasterxml.jackson:jackson-bom", version.ref = "jackson" }
-jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin" }
-jackson-joda = { module = "com.fasterxml.jackson.datatype:jackson-datatype-joda" }
-jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" }
 kotlinLogging = { module = "io.github.oshai:kotlin-logging", version.ref = "kotlinLogging" }
+kotlinx-serialization-hocon = { module = "org.jetbrains.kotlinx:kotlinx-serialization-hocon", version.ref = "kotlinxSerialization" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 reflections = { module = "org.reflections:reflections", version.ref = "reflections" }
 slf4j-jcl = { module = "org.slf4j:jcl-over-slf4j", version.ref = "slf4j" }

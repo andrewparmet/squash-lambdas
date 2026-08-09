@@ -1,6 +1,5 @@
 package com.parmet.squashlambdas.clublocker
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.parmet.squashlambdas.ClubLockerConfig
 import com.parmet.squashlambdas.json.Json
 import dev.zacsweers.metro.Inject
@@ -42,7 +41,7 @@ class TokenManager(
         val storedToken: StoredToken = s3Client.getObject {
             it.bucket(config.token.bucket)
             it.key(config.token.key)
-        }.use { Json.mapper.readValue(it) }
+        }.use { Json.decode(it.bufferedReader().readText()) }
 
         logger.info { "Loaded token with updateTime: ${storedToken.updateTime}" }
         return storedToken.token

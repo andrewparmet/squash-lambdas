@@ -1,6 +1,5 @@
 package com.parmet.squashlambdas.reserve
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.clublocker.Affiliation
 import com.parmet.squashlambdas.clublocker.CourtResp
@@ -19,7 +18,7 @@ class SerializationTests {
     @Test
     fun `test court parsing`() {
         val courts: List<CourtResp> =
-            Json.mapper.readValue(getResourceAsString("courts.json"))
+            Json.decode(getResourceAsString("courts.json"))
 
         assertThat(courts).containsExactly(
             CourtResp(1690, "Court Tennis", 60),
@@ -44,15 +43,15 @@ class SerializationTests {
                 listOf(Player.member(167759, true, "Foo Bar"))
             )
 
-        val actual = Json.mapper.readTree(req.toJson())
-        val expected = Json.mapper.readTree(getResourceAsString("reservation-request.json"))
+        val actual = Json.parse(req.toJson())
+        val expected = Json.parse(getResourceAsString("reservation-request.json"))
         assertThat(actual).isEqualTo(expected)
     }
 
     @Test
     fun `test slots taken parsing`() {
         val taken: List<Slot> =
-            Json.mapper.readValue(getResourceAsString("slots-taken.json"))
+            Json.decode(getResourceAsString("slots-taken.json"))
 
         assertThat(taken.subList(0, 2)).containsExactly(
             Slot(
@@ -76,7 +75,7 @@ class SerializationTests {
 
     @Test
     fun `test user parsing`() {
-        assertThat(Json.mapper.readValue<UserResp>(getResourceAsString("user.json")))
+        assertThat(Json.decode<UserResp>(getResourceAsString("user.json")))
             .isEqualTo(
                 UserResp(
                     167759,
@@ -89,7 +88,7 @@ class SerializationTests {
     @Test
     fun `test directory parsing`() {
         val directory: List<User> =
-            Json.mapper.readValue(getResourceAsString("directory.json"))
+            Json.decode(getResourceAsString("directory.json"))
 
         assertThat(directory).containsExactly(
             User(167759, "Parmet, Andrew")

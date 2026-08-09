@@ -54,7 +54,7 @@ open class MakeReservationHandler :
 
     private fun buildGraph(): MakeReservationGraph =
         createGraphFactory<MakeReservationGraph.Factory>()
-            .create("production-make-reservation-handler.yml")
+            .create("production-make-reservation-handler.conf")
 
     final override fun handleRequest(input: ScheduledEvent, context: Context) {
         withErrorHandling(input) {
