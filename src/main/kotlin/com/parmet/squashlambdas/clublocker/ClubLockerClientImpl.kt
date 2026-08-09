@@ -24,7 +24,6 @@ import com.parmet.squashlambdas.json.Json
 import com.parmet.squashlambdas.reserve.slot
 import com.parmet.squashlambdas.util.inBoston
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.apache.http.client.HttpResponseException
 import org.jsoup.Jsoup
 import java.net.URI
 import java.net.http.HttpClient
@@ -72,10 +71,10 @@ internal class ClubLockerClientImpl(
         logger.info { "Received response: $code, $respBody" }
         if (code >= 400) {
             try {
-                throw HttpResponseException(code, Jsoup.parse(respBody).wholeText().replace("\n", ";"))
+                throw ClubLockerHttpException(code, Jsoup.parse(respBody).wholeText().replace("\n", ";"))
             } catch (ex: Exception) {
                 logger.info(ex) { "Error while parsing response error body" }
-                throw HttpResponseException(code, respBody.replace("\n", ";"))
+                throw ClubLockerHttpException(code, respBody.replace("\n", ";"))
             }
         }
         return respBody

@@ -16,10 +16,10 @@ jackson = "2.21.0"
 kotlin = "2.3.0"
 kotlinLogging = "7.0.12"
 metro = "1.1.1"
-log4j = "2.25.1"
 mockk = "1.14.7"
 reflections = "0.10.2"
 shadow = "9.3.1"
+slf4j = "1.7.36"
 spotless = "8.2.0"
 testcontainers = "1.21.4"
 truth = "1.4.5"
@@ -53,12 +53,10 @@ jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin"
 jackson-joda = { module = "com.fasterxml.jackson.datatype:jackson-datatype-joda" }
 jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" }
 kotlinLogging = { module = "io.github.oshai:kotlin-logging", version.ref = "kotlinLogging" }
-log4j-bom = { module = "org.apache.logging.log4j:log4j-bom", version.ref = "log4j" }
-log4j-core = { module = "org.apache.logging.log4j:log4j-core" }
-log4j-jcl = { module = "org.apache.logging.log4j:log4j-jcl" }
-log4j-slf4jImpl = { module = "org.apache.logging.log4j:log4j-slf4j-impl" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 reflections = { module = "org.reflections:reflections", version.ref = "reflections" }
+slf4j-jcl = { module = "org.slf4j:jcl-over-slf4j", version.ref = "slf4j" }
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 testcontainers-localstack = { module = "org.testcontainers:localstack", version.ref = "testcontainers" }
 testcontainers-junit = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }

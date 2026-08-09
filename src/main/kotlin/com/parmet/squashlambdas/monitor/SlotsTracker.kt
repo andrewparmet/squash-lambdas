@@ -1,11 +1,11 @@
 package com.parmet.squashlambdas.monitor
 
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
+import com.parmet.squashlambdas.clublocker.ClubLockerHttpException
 import com.parmet.squashlambdas.clublocker.Slot
 import com.parmet.squashlambdas.clublocker.TokenStatusManager
 import dev.zacsweers.metro.Inject
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.apache.http.client.HttpResponseException
 import java.time.LocalDate
 
 private val logger = KotlinLogging.logger { }
@@ -22,7 +22,7 @@ class SlotsTracker(
         val slotsTaken =
             try {
                 client.slotsTaken(date, date)
-            } catch (e: HttpResponseException) {
+            } catch (e: ClubLockerHttpException) {
                 if (e.statusCode in listOf(401, 403)) {
                     logger.warn { "Auth failure (${e.statusCode}), marking token invalid" }
                     tokenStatusManager.markTokenInvalid("HTTP ${e.statusCode}: ${e.reasonPhrase}")
