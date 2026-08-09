@@ -6,10 +6,11 @@ import com.amazonaws.services.lambda.runtime.events.ScheduledEvent
 import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Player
-import com.parmet.squashlambdas.activity.valueOf
+import com.parmet.squashlambdas.activity.fromPrettyName
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.di.MakeReservationGraph
 import com.parmet.squashlambdas.notify.Notifier
+import com.parmet.squashlambdas.notify.toJsonElement
 import com.parmet.squashlambdas.reserve.ReservationMaker
 import com.parmet.squashlambdas.reserve.ReservationMaker.Result
 import com.parmet.squashlambdas.reserve.Schedule
@@ -23,6 +24,7 @@ import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.Named
 import dev.zacsweers.metro.createGraphFactory
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.serialization.json.JsonPrimitive
 import java.io.InputStream
 import java.time.LocalDate
 import java.time.LocalTime
@@ -67,8 +69,7 @@ open class MakeReservationHandler :
         val timeFilter = TimeFilter(input.time)
         val requestDate = timeFilter.requestDate
 
-        addToContext("input", input)
-        addToContext("requestDate", requestDate)
+        addToContext("requestDate", JsonPrimitive(requestDate.toString()))
 
         val reservationTimeFiltered = timeFilter.filterBasedOnBostonTime()
         if (!reservationTimeFiltered.shouldMakeReservation()) {
@@ -102,7 +103,7 @@ open class MakeReservationHandler :
                 )
             ).makeReservation(requestDate)
 
-        addToContext("result", result)
+        addToContext("result", result.toJsonElement())
 
         when (result) {
             is Result.Success -> notifier.publishSuccessfulReservation(result)
@@ -123,7 +124,7 @@ open class MakeReservationHandler :
 }
 
 fun getPreferredCourts(stream: InputStream) =
-    stream.mapNonEmptyLines { Court.valueOf(it) }
+    stream.mapNonEmptyLines { Court.fromPrettyName(it) }
 
 fun getPreferredTimes(stream: InputStream) =
     stream.mapNonEmptyLines { LocalTime.parse(it) }

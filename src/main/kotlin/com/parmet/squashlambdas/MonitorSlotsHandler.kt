@@ -9,6 +9,7 @@ import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
 import com.parmet.squashlambdas.clublocker.Slot
 import com.parmet.squashlambdas.clublocker.TokenStatusManager
 import com.parmet.squashlambdas.di.MonitorSlotsGraph
+import com.parmet.squashlambdas.json.Json
 import com.parmet.squashlambdas.monitor.SlotsTracker
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.util.HasNotifier
@@ -19,6 +20,7 @@ import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.Named
 import dev.zacsweers.metro.createGraphFactory
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.serialization.json.JsonPrimitive
 import java.time.DayOfWeek.FRIDAY
 import java.time.DayOfWeek.MONDAY
 import java.time.Instant
@@ -87,7 +89,7 @@ open class MonitorSlotsHandler :
             return emptyList()
         }
 
-        addToContext("checkDate", date)
+        addToContext("checkDate", JsonPrimitive(date.toString()))
 
         val newlyOpen = slotsTracker.findNewlyOpen(date)
 
@@ -101,12 +103,12 @@ open class MonitorSlotsHandler :
     }
 
     private fun publish(slots: List<Slot>) {
-        addToContext("foundSlots", slots)
+        addToContext("foundSlots", Json.element(slots))
         slots
             .filter { it.startTime in 1701..2099 }
             .filter { COURTS_BY_ID.getValue(it.court).sport in setOf(Sport.Squash, Sport.Tennis) }
             .let {
-                addToContext("filteredSlots", it)
+                addToContext("filteredSlots", Json.element(it))
                 if (it.isNotEmpty()) {
                     publicNotifier.publishFoundOpenSlot(it)
                 }

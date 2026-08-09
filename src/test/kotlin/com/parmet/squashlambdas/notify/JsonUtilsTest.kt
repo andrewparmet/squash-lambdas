@@ -54,38 +54,30 @@ class JsonUtilsTest {
     }
 
     @Test
-    fun `sport serializer works for all subclasses`() {
-        val instances: Map<KClass<*>, *> =
-            listOf(Sport.Squash, Sport.Hardball, Sport.Racquets, Sport.Tennis, Sport.Fitness)
-                .associateBy { it::class }
-
-        assertHasAnExampleOfEachConcreteSubclass(Sport::class, instances)
-
-        assertSerializedFormContainsTypeString(instances, Sport::class)
+    fun `sport serializer works for all entries`() {
+        Sport.entries.forEach { sport ->
+            val serialized = Json.encode(sport)
+            logger.info { "Checking serialized form for $sport: $serialized" }
+            assertThat(serialized).isEqualTo("\"$sport\"")
+        }
     }
 
     @Test
-    fun `court serializer works for all subclasses`() {
-        val instances: Map<KClass<*>, *> =
-            listOf(
-                Court.Court1, Court.Court2, Court.Court3, Court.Court5, Court.Court6,
-                Court.Court7, Court.TennisCourt, Court.RacquetsCourt, Court.FitnessClasses,
-            ).associateBy { it::class }
-
-        assertHasAnExampleOfEachConcreteSubclass(Court::class, instances)
-
-        assertSerializedFormContainsTypeString(instances, Court::class)
+    fun `court serializer works for all entries`() {
+        Court.entries.forEach { court ->
+            val serialized = Json.prettyPrint(Json.element(court))
+            logger.info { "Checking serialized form for $court: $serialized" }
+            assertThat(serialized).contains(court.toString())
+        }
     }
 
     @Test
-    fun `action serializer works for all subclasses`() {
-        val instances: Map<KClass<*>, *> =
-            listOf(Action.Create, Action.Update, Action.Delete, Action.None)
-                .associateBy { it::class }
-
-        assertHasAnExampleOfEachConcreteSubclass(Action::class, instances)
-
-        assertSerializedFormContainsTypeString(instances, Action::class)
+    fun `action serializer works for all entries`() {
+        Action.entries.forEach { action ->
+            val serialized = Json.encode(action)
+            logger.info { "Checking serialized form for $action: $serialized" }
+            assertThat(serialized).isEqualTo("\"$action\"")
+        }
     }
 
     private fun assertHasAnExampleOfEachConcreteSubclass(kclass: KClass<*>, instances: Map<KClass<*>, *>) {
@@ -101,12 +93,4 @@ class JsonUtilsTest {
 
     private fun Class<*>.isConcrete() =
         !Modifier.isAbstract(modifiers)
-
-    private fun assertSerializedFormContainsTypeString(instances: Map<KClass<*>, *>, klass: KClass<*>) {
-        instances.forEach { (kclass, instance) ->
-            val serialized = Json.prettyPrint(instance.toJsonElement())
-            logger.info { "Checking serialized form for $instance of type ${kclass.simpleName}: $serialized" }
-            assertThat(serialized).contains(instance.toString())
-        }
-    }
 }

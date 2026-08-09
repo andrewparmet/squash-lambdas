@@ -10,6 +10,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
+import kotlinx.serialization.serializer
 import kotlinx.serialization.json.Json as KotlinJson
 
 object Json {
@@ -40,6 +41,9 @@ object Json {
 
     inline fun <reified T> decode(value: String): T =
         format.decodeFromString(value)
+
+    inline fun <reified T> element(value: T): JsonElement =
+        format.encodeToJsonElement(serializer<T>(), value)
 
     fun parse(value: String): JsonElement =
         format.parseToJsonElement(value)

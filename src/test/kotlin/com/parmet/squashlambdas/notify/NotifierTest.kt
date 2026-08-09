@@ -8,6 +8,8 @@ import com.parmet.squashlambdas.cal.Action
 import com.parmet.squashlambdas.cal.ChangeSummary
 import com.parmet.squashlambdas.clublocker.Slot
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
 import org.junit.jupiter.api.Test
 import software.amazon.awssdk.services.sns.SnsClient
 import software.amazon.awssdk.services.sns.model.PublishRequest
@@ -32,7 +34,7 @@ class NotifierTest {
             override fun close() {}
         }
 
-    private val context = mutableMapOf<Any, Any>()
+    private val context = mutableMapOf<String, JsonElement>()
     private val notifier = Notifier(sns, "some-arn", context)
 
     @Test
@@ -63,7 +65,7 @@ class NotifierTest {
 
     @Test
     fun `notifier sends a reasonable message on failure`() {
-        context["key123"] = "val456"
+        context["key123"] = JsonPrimitive("val456")
         notifier.publishFailure(ExceptionInInitializerError("something terrible has happened"))
 
         logger.info { "Received ${received[0].message()}" }

@@ -1,23 +1,16 @@
 package com.parmet.squashlambdas.cal
 
 import com.parmet.squashlambdas.activity.Activity
-import com.parmet.squashlambdas.notify.ActionSerializer
 import kotlinx.serialization.Serializable
 
-@Serializable(with = ActionSerializer::class)
-sealed class Action(
+@Serializable
+enum class Action(
     val handle: (Activity, EventManager) -> Unit
 ) {
-    object Create : Action({ activity, manager -> manager.create(activity) })
-
-    object Update : Action({ activity, manager -> manager.update(activity) })
-
-    object Delete : Action({ activity, manager -> manager.delete(activity) })
-
-    object None : Action({ _, _ -> })
-
-    override fun toString() =
-        this::class.java.simpleName
+    Create({ activity, manager -> manager.create(activity) }),
+    Update({ activity, manager -> manager.update(activity) }),
+    Delete({ activity, manager -> manager.delete(activity) }),
+    None({ _, _ -> });
 
     companion object {
         private val CREATION =
