@@ -1,7 +1,7 @@
 package com.parmet.squashlambdas.integration
 
 import com.amazonaws.services.lambda.runtime.events.S3Event
-import com.amazonaws.services.s3.event.S3EventNotification
+import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.model.Event
@@ -191,10 +191,6 @@ class EmailNotificationHandlerTest {
                 ),
                 "s3SchemaVersion"
             ),
-            mockk(),
-            mockk(),
-            mockk(),
-            mockk(),
             mockk()
         )
 
