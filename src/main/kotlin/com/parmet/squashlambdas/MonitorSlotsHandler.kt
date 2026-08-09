@@ -13,6 +13,7 @@ import com.parmet.squashlambdas.json.Json
 import com.parmet.squashlambdas.monitor.SlotsTracker
 import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.util.HasNotifier
+import com.parmet.squashlambdas.util.SnapStartInitializer
 import com.parmet.squashlambdas.util.inBoston
 import com.parmet.squashlambdas.util.withErrorHandling
 import dev.zacsweers.metro.HasMemberInjections
@@ -49,6 +50,7 @@ open class MonitorSlotsHandler :
     lateinit var tokenStatusManager: TokenStatusManager
 
     private val graph by lazy { buildGraph() }
+    private val initializer = SnapStartInitializer { graph.inject(this) }
 
     private fun buildGraph(): MonitorSlotsGraph =
         createGraphFactory<MonitorSlotsGraph.Factory>()
@@ -56,7 +58,7 @@ open class MonitorSlotsHandler :
 
     final override fun handleRequest(input: ScheduledEvent, context: Context) {
         withErrorHandling(input) {
-            graph.inject(this)
+            initializer.initialize()
             doHandleRequest()
         }
     }

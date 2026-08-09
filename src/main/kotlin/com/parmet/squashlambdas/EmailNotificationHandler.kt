@@ -15,6 +15,7 @@ import com.parmet.squashlambdas.notify.Notifier
 import com.parmet.squashlambdas.s3.S3CreateObjectInfo
 import com.parmet.squashlambdas.s3.S3EmailNotification
 import com.parmet.squashlambdas.util.HasNotifier
+import com.parmet.squashlambdas.util.SnapStartInitializer
 import com.parmet.squashlambdas.util.withErrorHandling
 import dev.zacsweers.metro.HasMemberInjections
 import dev.zacsweers.metro.Inject
@@ -46,6 +47,7 @@ open class EmailNotificationHandler :
     lateinit var tokenUpdateHandler: TokenUpdateHandler
 
     private val graph by lazy { buildGraph() }
+    private val initializer = SnapStartInitializer { graph.inject(this) }
 
     protected open fun buildGraph(): EmailNotificationInjector =
         createGraphFactory<EmailNotificationGraph.Factory>()
@@ -53,7 +55,7 @@ open class EmailNotificationHandler :
 
     final override fun handleRequest(input: S3Event, context: Context) {
         withErrorHandling(input) {
-            graph.inject(this)
+            initializer.initialize()
             val info = getS3Info(input)
             val email = getEmail(info)
 
