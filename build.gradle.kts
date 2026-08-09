@@ -13,7 +13,6 @@ repositories {
 dependencies {
     implementation(platform(libs.aws.bom))
     implementation(platform(libs.jackson.bom))
-    implementation(platform(libs.log4j.bom))
 
     implementation(libs.aws.dynamodb)
     implementation(libs.aws.lambda.core)
@@ -32,10 +31,9 @@ dependencies {
     implementation(libs.hoplite)
     implementation(libs.jsoup)
     implementation(libs.kotlinLogging)
-    implementation(libs.log4j.core)
 
-    runtimeOnly(libs.log4j.jcl)
-    runtimeOnly(libs.log4j.slf4jImpl)
+    runtimeOnly(libs.slf4j.jcl)
+    runtimeOnly(libs.slf4j.simple)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
@@ -48,9 +46,16 @@ dependencies {
 }
 
 configurations.configureEach {
+    exclude(group = "com.google.http-client", module = "google-http-client-apache-v2")
+    exclude(group = "org.apache.httpcomponents", module = "httpclient")
+    exclude(group = "org.apache.httpcomponents", module = "httpcore")
     exclude(group = "software.amazon.awssdk", module = "apache-client")
     exclude(group = "software.amazon.awssdk", module = "apache5-client")
     exclude(group = "software.amazon.awssdk", module = "netty-nio-client")
+}
+
+tasks.shadowJar {
+    exclude("com/google/api/client/http/apache/**")
 }
 
 spotless {
