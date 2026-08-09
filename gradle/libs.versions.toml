@@ -3,6 +3,7 @@ aws-v2 = "2.51.3"
 aws-lambda-core = "1.4.0"
 aws-lambda-events = "3.16.1"
 buildConfig = "6.0.10"
+crac = "1.5.0"
 google-calendar = "v3-rev20260708-2.0.0"
 google-oauth2-http = "1.50.0"
 guava = "33.6.0-jre"
@@ -38,6 +39,7 @@ aws-lambda-events = { module = "com.amazonaws:aws-lambda-java-events", version.r
 aws-s3 = { module = "software.amazon.awssdk:s3" }
 aws-sns = { module = "software.amazon.awssdk:sns" }
 aws-url-connection-client = { module = "software.amazon.awssdk:url-connection-client" }
+crac = { module = "org.crac:crac", version.ref = "crac" }
 google-calendar = { module = "com.google.apis:google-api-services-calendar", version.ref = "google-calendar" }
 google-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version.ref = "google-oauth2-http" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }

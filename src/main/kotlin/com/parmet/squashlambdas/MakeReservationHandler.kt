@@ -18,6 +18,7 @@ import com.parmet.squashlambdas.reserve.TimeFilter
 import com.parmet.squashlambdas.reserve.mapNonEmptyLines
 import com.parmet.squashlambdas.util.FileLoader
 import com.parmet.squashlambdas.util.HasNotifier
+import com.parmet.squashlambdas.util.SnapStartInitializer
 import com.parmet.squashlambdas.util.withErrorHandling
 import dev.zacsweers.metro.HasMemberInjections
 import dev.zacsweers.metro.Inject
@@ -53,6 +54,7 @@ open class MakeReservationHandler :
     lateinit var hostPlayer: Player
 
     private val graph by lazy { buildGraph() }
+    private val initializer = SnapStartInitializer { graph.inject(this) }
 
     private fun buildGraph(): MakeReservationGraph =
         createGraphFactory<MakeReservationGraph.Factory>()
@@ -60,7 +62,7 @@ open class MakeReservationHandler :
 
     final override fun handleRequest(input: ScheduledEvent, context: Context) {
         withErrorHandling(input) {
-            graph.inject(this)
+            initializer.initialize()
             doHandleRequest(input).also { logger.info { "Returning result: $it" } }
         }
     }

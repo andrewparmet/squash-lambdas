@@ -20,6 +20,7 @@ dependencies {
     implementation(libs.aws.s3)
     implementation(libs.aws.sns)
     implementation(libs.aws.url.connection.client)
+    implementation(libs.crac)
     implementation(libs.google.calendar)
     implementation(libs.google.oauth2.http)
     implementation(libs.guava)
