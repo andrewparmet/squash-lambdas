@@ -20,6 +20,7 @@ dependencies {
     implementation(libs.aws.lambda.events)
     implementation(libs.aws.s3)
     implementation(libs.aws.sns)
+    implementation(libs.aws.url.connection.client)
     implementation(libs.commons.email)
     implementation(libs.coroutines)
     implementation(libs.google.calendar)
@@ -44,6 +45,11 @@ dependencies {
     testImplementation(libs.truth)
 
     testRuntimeOnly(libs.junit.platformLauncher)
+}
+
+configurations.configureEach {
+    exclude(group = "software.amazon.awssdk", module = "apache-client")
+    exclude(group = "software.amazon.awssdk", module = "netty-nio-client")
 }
 
 spotless {
