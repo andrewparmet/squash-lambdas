@@ -20,9 +20,9 @@ import io.mockk.verifySequence
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.testcontainers.containers.localstack.LocalStackContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import org.testcontainers.localstack.LocalStackContainer
 import org.testcontainers.utility.DockerImageName
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
@@ -41,12 +41,12 @@ class EmailNotificationHandlerTest {
 
     @Container
     val localstack =
-        LocalStackContainer(DockerImageName.parse("localstack/localstack:4.7.0"))
-            .withServices(LocalStackContainer.Service.S3)
+        LocalStackContainer(DockerImageName.parse("localstack/localstack:4.14.0"))
+            .withServices("s3")
 
     private val s3Client by lazy {
         S3Client.builder()
-            .endpointOverride(localstack.getEndpointOverride(LocalStackContainer.Service.S3))
+            .endpointOverride(localstack.endpoint)
             .region(Region.of(localstack.region))
             .credentialsProvider(
                 StaticCredentialsProvider.create(

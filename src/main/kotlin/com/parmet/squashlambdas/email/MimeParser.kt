@@ -1,7 +1,7 @@
 package com.parmet.squashlambdas.email
 
+import jakarta.mail.Part
 import org.jsoup.Jsoup
-import javax.mail.Part
 
 internal class MimeParser<T> private constructor(
     private val mimeType: String,

@@ -24,9 +24,9 @@ interface EmailNotificationTestGraph : EmailNotificationInjector {
     fun interface Factory {
         fun create(
             @Provides @Named("configName") configName: String,
-            @Provides @SingleIn(AppScope::class) calendar: Calendar,
-            @Provides @SingleIn(AppScope::class) s3Client: S3Client,
-            @Provides @SingleIn(AppScope::class) snsClient: SnsClient
+            @Provides calendar: Calendar,
+            @Provides s3Client: S3Client,
+            @Provides snsClient: SnsClient
         ): EmailNotificationTestGraph
     }
 }

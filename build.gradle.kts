@@ -53,6 +53,11 @@ configurations.configureEach {
 
 tasks.shadowJar {
     exclude("com/google/api/client/http/apache/**")
+    exclude("META-INF/com.android.tools/**")
+    exclude("META-INF/maven/**")
+    exclude("META-INF/native-image/**")
+    exclude("META-INF/*.kotlin_module")
+    exclude("META-INF/**/verification.properties")
 }
 
 spotless {
@@ -75,7 +80,7 @@ spotless {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(libs.versions.jvmTarget.get().toString()))
+        languageVersion.set(JavaLanguageVersion.of(libs.versions.jvmTarget.get()))
     }
 }
 

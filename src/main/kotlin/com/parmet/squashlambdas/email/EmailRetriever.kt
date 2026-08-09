@@ -1,9 +1,9 @@
 package com.parmet.squashlambdas.email
 
 import dev.zacsweers.metro.Inject
+import jakarta.mail.internet.InternetAddress
+import jakarta.mail.internet.MimeMessage
 import software.amazon.awssdk.services.s3.S3Client
-import javax.mail.internet.InternetAddress
-import javax.mail.internet.MimeMessage
 
 @Inject
 class EmailRetriever(
