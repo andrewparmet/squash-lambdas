@@ -22,6 +22,10 @@ import com.parmet.squashlambdas.util.inBoston
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -107,17 +111,7 @@ internal class ClubLockerClientImpl(
                 )
 
             val code = response.statusCode()
-            val body = Json.parse(response.body()).jsonObject
-            return if (code == 200) {
-                if (body.containsKey("createDenied")) {
-                    ReservationResp.Error(code, body.getValue("reason").jsonPrimitive.content, match)
-                } else {
-                    check(body.containsKey("id")) { "Deduced success but body contained no id: $body" }
-                    ReservationResp.Success(body.getValue("id").jsonPrimitive.int, match)
-                }
-            } else {
-                ReservationResp.Error(code, body["error"]?.jsonPrimitive?.content, match)
-            }
+            return parseReservationResponse(code, response.body(), match)
         } catch (t: Throwable) {
             return ReservationResp.Failure(t, match)
         }
@@ -150,6 +144,28 @@ internal class ClubLockerClientImpl(
         header(AUTHORIZATION, "Bearer ${tokenManager.getToken()}")
             .header(ACCEPT, JSON_UTF_8.toString())
 }
+
+internal fun parseReservationResponse(code: Int, responseBody: String, match: Match): ReservationResp {
+    val body = Json.parse(responseBody).jsonObject
+    return if (code == 200) {
+        if (body.containsKey("createDenied")) {
+            ReservationResp.Error(code, body.getValue("reason").jsonPrimitive.content, match)
+        } else {
+            check(body.containsKey("id")) { "Deduced success but body contained no id: $body" }
+            ReservationResp.Success(body.getValue("id").jsonPrimitive.int, match)
+        }
+    } else {
+        ReservationResp.Error(code, body["error"].asMessage(), match)
+    }
+}
+
+private fun JsonElement?.asMessage(): String? =
+    when (this) {
+        null, JsonNull -> null
+        is JsonPrimitive -> content
+        is JsonObject -> this["message"].asMessage() ?: toString()
+        else -> toString()
+    }
 
 val COURTS_BY_ID =
     ImmutableBiMap.builder<Int, Court>()
