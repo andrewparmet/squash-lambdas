@@ -94,7 +94,7 @@ private class UserProvisioner(private val repositoryDirectory: Path) {
             aws.close()
         }
 
-        InfrastructurePublisher(repositoryDirectory).publishWithExistingLogin()
+        InfrastructurePublisher(repositoryDirectory).publishWithExistingLogin(nonInteractive = true)
     }
 
     private fun addTenant(

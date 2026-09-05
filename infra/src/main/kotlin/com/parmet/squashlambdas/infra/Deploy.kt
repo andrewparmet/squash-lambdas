@@ -35,22 +35,22 @@ internal class InfrastructurePublisher(private val repositoryDirectory: Path) {
     private val bootstrap = Bootstrap(aws)
 
     suspend fun publish() =
-        publish(authenticate = true)
+        publish(authenticate = true, nonInteractive = false)
 
-    suspend fun publishWithExistingLogin() =
-        publish(authenticate = false)
+    suspend fun publishWithExistingLogin(nonInteractive: Boolean) =
+        publish(authenticate = false, nonInteractive = nonInteractive)
 
-    private suspend fun publish(authenticate: Boolean) =
+    private suspend fun publish(authenticate: Boolean, nonInteractive: Boolean) =
         try {
             if (authenticate) {
                 commands.awsLogin(profile, region)
             }
-            publishConfiguration()
+            publishConfiguration(nonInteractive)
         } finally {
             aws.close()
         }
 
-    private suspend fun publishConfiguration() {
+    private suspend fun publishConfiguration(nonInteractive: Boolean) {
         check(artifact.exists()) { "Build artifact is missing" }
         check(artifact.fileSize() <= MAX_DIRECT_UPLOAD_BYTES) {
             "Build artifact exceeds Lambda's 50 MB direct-upload limit"
@@ -85,11 +85,10 @@ internal class InfrastructurePublisher(private val repositoryDirectory: Path) {
                 ),
                 terraformEnvironment
             )
-            val applyResult =
-                commands.interactiveResult(
-                    listOf("terraform", "-chdir=${infrastructureDirectory.absolutePathString()}", "apply"),
-                    terraformEnvironment
-                )
+            val applyCommand =
+                listOf("terraform", "-chdir=${infrastructureDirectory.absolutePathString()}", "apply") +
+                    if (nonInteractive) listOf("-auto-approve", "-input=false") else emptyList()
+            val applyResult = commands.interactiveResult(applyCommand, terraformEnvironment)
             if (applyResult != 0) {
                 if (diagnostics.exists() && diagnostics.fileSize() > 0) {
                     System.err.println("SnapStart diagnostics:")
