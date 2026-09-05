@@ -29,6 +29,7 @@ data class SesReceipt(
     val recipients: List<String>,
     val spamVerdict: SesVerdict,
     val virusVerdict: SesVerdict,
+    val dkimVerdict: SesVerdict,
     val dmarcVerdict: SesVerdict
 ) {
     val isSafe

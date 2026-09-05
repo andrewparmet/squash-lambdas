@@ -78,7 +78,7 @@ private data class HandlerState(
             return
         }
         if (!routing.calendarExpectedSender.equals(email.sender, ignoreCase = true) ||
-            !record.ses.receipt.dmarcVerdict.passed
+            !record.ses.receipt.dkimVerdict.passed
         ) {
             throw SecurityException("Rejected unauthenticated calendar email")
         }

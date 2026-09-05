@@ -166,11 +166,22 @@ class EmailNotificationHandlerTest {
     }
 
     @Test
-    fun `reject unauthenticated calendar email`() {
+    fun `accept an authenticated forwarded calendar email without DMARC alignment`() {
         objectStorage.objects["inbound/test-object-key"] =
             getResourceAsString(ChangeSummaryTest::class, "reservationCreated").encodeToByteArray()
 
         handle(createRecord(dmarcStatus = "FAIL"))
+
+        verify { events.insert("primary", any()) }
+        assertThat(topicPublisher.messages.single().subject).isEqualTo("Processed: Squash Match")
+    }
+
+    @Test
+    fun `reject a calendar email that fails DKIM`() {
+        objectStorage.objects["inbound/test-object-key"] =
+            getResourceAsString(ChangeSummaryTest::class, "reservationCreated").encodeToByteArray()
+
+        handle(createRecord(dkimStatus = "FAIL"))
 
         verify(exactly = 0) { events.insert(any(), any()) }
         assertThat(topicPublisher.messages.single().subject).isEqualTo("Failed to Execute Club Locker Lambda")
@@ -202,6 +213,7 @@ class EmailNotificationHandlerTest {
     private fun createRecord(
         messageId: String = "test-object-key",
         recipients: List<String> = listOf("receiver@example.com"),
+        dkimStatus: String = "PASS",
         dmarcStatus: String = "PASS",
         spamStatus: String = "PASS",
         virusStatus: String = "PASS"
@@ -213,6 +225,7 @@ class EmailNotificationHandlerTest {
                     recipients,
                     SesVerdict(spamStatus),
                     SesVerdict(virusStatus),
+                    SesVerdict(dkimStatus),
                     SesVerdict(dmarcStatus)
                 )
             )
