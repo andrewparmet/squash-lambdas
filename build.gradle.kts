@@ -53,6 +53,8 @@ configurations.configureEach {
 }
 
 tasks.shadowJar {
+    isPreserveFileTimestamps = false
+    isReproducibleFileOrder = true
     exclude("com/google/api/client/http/apache/**")
     exclude("META-INF/com.android.tools/**")
     exclude("META-INF/maven/**")
@@ -74,6 +76,17 @@ spotless {
                     "ktlint_standard_trailing-comma-on-declaration-site" to "disabled",
                     "ktlint_standard_discouraged-comment-location" to "disabled",
                     "ij_kotlin_packages_to_use_import_on_demand" to null,
+                )
+            )
+    }
+    kotlinGradle {
+        target("scripts/*.main.kts")
+        ktlint()
+            .editorConfigOverride(
+                mapOf(
+                    "max_line_length" to 120,
+                    "ktlint_standard_trailing-comma-on-call-site" to "disabled",
+                    "ktlint_standard_trailing-comma-on-declaration-site" to "disabled",
                 )
             )
     }
@@ -109,6 +122,14 @@ tasks.withType<Test> {
     environment("SLOTS_MONITORING_TABLE", "test-slots-monitoring-table")
     environment("TOKEN_UPDATE_EXPECTED_SENDER", "test-sender@example.com")
     environment("TOKEN_UPDATE_EXPECTED_SUBJECT", "ClubLocker Token")
+}
+
+val testDeploymentScript = tasks.register<Exec>("testDeploymentScript") {
+    commandLine("kotlin", "scripts/deploy.main.kts", "self-test")
+}
+
+tasks.named("check") {
+    dependsOn(testDeploymentScript)
 }
 
 buildConfig {

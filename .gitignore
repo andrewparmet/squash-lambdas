@@ -10,3 +10,16 @@ out/
 
 **google-squash-project.json**
 **clublocker-creds.json**
+
+# Terraform local and private data
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+*.tfvars.json
+infra/backend.hcl
+infra/private.env
+infra/private.env.tpl
+crash.log
+crash.*.log
