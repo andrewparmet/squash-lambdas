@@ -9,6 +9,7 @@ import com.parmet.squashlambdas.EmailNotificationHandler
 import com.parmet.squashlambdas.aws.ObjectStorage
 import com.parmet.squashlambdas.aws.TopicPublisher
 import com.parmet.squashlambdas.cal.CalendarProvider
+import com.parmet.squashlambdas.cal.ChangeSummaryResolver
 import com.parmet.squashlambdas.cal.ChangeSummaryTest
 import com.parmet.squashlambdas.clublocker.StoredToken
 import com.parmet.squashlambdas.json.Json
@@ -28,6 +29,7 @@ class EmailNotificationHandlerTest {
         override suspend fun get() =
             calendar
     }
+    private val identityChangeSummaryResolver = ChangeSummaryResolver { it }
     private val objectStorage = InMemoryObjectStorage()
     private val topicPublisher = RecordingTopicPublisher()
 
@@ -99,6 +101,7 @@ class EmailNotificationHandlerTest {
                 createGraphFactory<EmailNotificationTestGraph.Factory>().create(
                     "test-email-notification-handler.conf",
                     calendarProvider,
+                    identityChangeSummaryResolver,
                     objectStorage,
                     topicPublisher,
                 )

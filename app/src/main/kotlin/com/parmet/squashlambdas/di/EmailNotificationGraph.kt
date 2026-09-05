@@ -14,6 +14,8 @@ interface EmailNotificationInjector {
     scope = AppScope::class,
     bindingContainers = [
         EmailNotificationModule::class,
+        ChangeSummaryResolverModule::class,
+        ClubLockerModule::class,
         CalendarModule::class,
         AwsModule::class,
         NotifierModule::class

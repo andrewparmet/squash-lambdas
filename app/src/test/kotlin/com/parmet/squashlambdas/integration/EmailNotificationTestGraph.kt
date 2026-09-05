@@ -3,6 +3,7 @@ package com.parmet.squashlambdas.integration
 import com.parmet.squashlambdas.aws.ObjectStorage
 import com.parmet.squashlambdas.aws.TopicPublisher
 import com.parmet.squashlambdas.cal.CalendarProvider
+import com.parmet.squashlambdas.cal.ChangeSummaryResolver
 import com.parmet.squashlambdas.di.EmailNotificationInjector
 import com.parmet.squashlambdas.di.EmailNotificationModule
 import com.parmet.squashlambdas.di.NotifierModule
@@ -21,6 +22,7 @@ interface EmailNotificationTestGraph : EmailNotificationInjector {
         fun create(
             @Provides @Named("configName") configName: String,
             @Provides calendarProvider: CalendarProvider,
+            @Provides changeSummaryResolver: ChangeSummaryResolver,
             @Provides objectStorage: ObjectStorage,
             @Provides topicPublisher: TopicPublisher,
         ): EmailNotificationTestGraph

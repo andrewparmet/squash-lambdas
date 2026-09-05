@@ -27,7 +27,7 @@ data class Match(
         if (otherPlayers().isEmpty()) {
             "Match"
         } else {
-            "v. ${otherPlayers().joinToString(",") { it.name!! }}"
+            "v. ${otherPlayers().joinToString(", ") { it.name!! }}"
         }
 
     companion object {

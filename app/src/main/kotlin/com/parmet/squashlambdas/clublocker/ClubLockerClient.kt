@@ -13,6 +13,8 @@ interface ClubLockerClient {
 
     suspend fun slotsTaken(from: LocalDate, to: LocalDate): List<Slot>
 
+    suspend fun reservation(id: Int): Reservation
+
     suspend fun makeReservation(match: Match): ReservationResp
 
     suspend fun directory(): List<User>
@@ -46,6 +48,17 @@ data class Slot(
     val startTime: Int,
     val endTime: Int,
     val startUtc: Long
+)
+
+@Serializable
+data class Reservation(
+    val players: List<ReservationPlayer>
+)
+
+@Serializable
+data class ReservationPlayer(
+    val text: String,
+    val isMyself: Boolean
 )
 
 sealed class ReservationResp {

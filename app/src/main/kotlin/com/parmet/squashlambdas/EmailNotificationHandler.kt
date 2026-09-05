@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.amazonaws.services.lambda.runtime.events.S3Event
 import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.cal.ChangeSummary
+import com.parmet.squashlambdas.cal.ChangeSummaryResolver
 import com.parmet.squashlambdas.cal.EventManager
 import com.parmet.squashlambdas.clublocker.TokenUpdateHandler
 import com.parmet.squashlambdas.di.EmailNotificationGraph
@@ -45,6 +46,9 @@ open class EmailNotificationHandler :
     lateinit var eventManager: EventManager
 
     @Inject
+    lateinit var changeSummaryResolver: ChangeSummaryResolver
+
+    @Inject
     lateinit var tokenUpdateHandler: TokenUpdateHandler
 
     private val graph by lazy { buildGraph() }
@@ -66,7 +70,7 @@ open class EmailNotificationHandler :
                     return@withErrorHandling
                 }
 
-                ChangeSummary.fromEmail(email)?.also {
+                ChangeSummary.fromEmail(email)?.let { changeSummaryResolver.resolve(it) }?.also {
                     addToContext("changeSummary", Json.element(it))
                     if (config.parse.primaryRecipient in email.recipients) {
                         it.process(eventManager)

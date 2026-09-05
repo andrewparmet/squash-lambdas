@@ -68,6 +68,9 @@ internal class ClubLockerClientImpl(
     override suspend fun slotsTaken(from: LocalDate, to: LocalDate): List<Slot> =
         get("$clubResource/slots_taken/from/$from/to/$to")
 
+    override suspend fun reservation(id: Int): Reservation =
+        get("$resource/reservations/$id")
+
     private suspend fun responseBody(builder: HttpRequest.Builder, requestBody: String? = null): String {
         val response = response(builder, requestBody)
         val code = response.statusCode()

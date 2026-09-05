@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class EmailNotificationConfig(
+    val clubLocker: ClubLockerConfig,
     val googleCal: GoogleCalConfig,
     val sns: SnsConfig,
     val parse: ParseConfig,

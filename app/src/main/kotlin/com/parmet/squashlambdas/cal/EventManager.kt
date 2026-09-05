@@ -1,6 +1,5 @@
 package com.parmet.squashlambdas.cal
 
-import com.google.common.collect.Iterables
 import com.parmet.squashlambdas.GoogleCalConfig
 import com.parmet.squashlambdas.activity.Activity
 import dev.zacsweers.metro.Inject
@@ -28,19 +27,25 @@ class EventManager(
 
         val events = findEvents(activity)
 
-        if (events.size > 1) {
-            logger.info { "Found too many events to update; deleting them all. $events" }
-            events.forEach {
-                withCalendar<Unit> { calendar ->
-                    calendar.events().delete(calendarId, it.id).execute()
+        when (events.size) {
+            0 -> create(activity)
+
+            1 -> {
+                val event = events.single()
+                logger.info { "Found one event to update: $event" }
+                withCalendar<Unit> {
+                    it.events().patch(calendarId, event.id, activity.toEvent()).execute()
                 }
             }
-            create(activity)
-        } else {
-            val event = Iterables.getOnlyElement(events)
-            logger.info { "Found one event to update: $event" }
-            withCalendar<Unit> {
-                it.events().patch(calendarId, event.id, activity.toEvent()).execute()
+
+            else -> {
+                logger.info { "Found too many events to update; deleting them all. $events" }
+                events.forEach {
+                    withCalendar<Unit> { calendar ->
+                        calendar.events().delete(calendarId, it.id).execute()
+                    }
+                }
+                create(activity)
             }
         }
     }
