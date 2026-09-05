@@ -5,11 +5,15 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger { }
 
-internal suspend fun HasNotifier.withErrorHandling(input: Any, action: suspend () -> Unit) {
+internal suspend fun withErrorHandling(
+    input: Any,
+    publishFailure: suspend (Throwable) -> Unit,
+    action: suspend () -> Unit
+) {
     Context.withInput(
         {
             try {
-                notifier.publishFailure(it)
+                publishFailure(it)
             } catch (ex: Exception) {
                 it.addSuppressed(ex)
             }

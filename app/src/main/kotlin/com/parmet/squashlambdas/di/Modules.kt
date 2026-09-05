@@ -18,9 +18,11 @@ import com.parmet.squashlambdas.aws.TopicPublisher
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.clublocker.TokenManager
 import com.parmet.squashlambdas.configureClubLockerResources
-import com.parmet.squashlambdas.configureNotifier
+import com.parmet.squashlambdas.configureOpenSlotNotifier
+import com.parmet.squashlambdas.configureOperatorNotifier
 import com.parmet.squashlambdas.loadConfiguration
-import com.parmet.squashlambdas.notify.Notifier
+import com.parmet.squashlambdas.notify.OpenSlotNotifier
+import com.parmet.squashlambdas.notify.OperatorNotifier
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.Named
@@ -33,11 +35,6 @@ private val logger = KotlinLogging.logger { }
 
 @BindingContainer
 object EmailNotificationModule {
-    @Provides
-    @SingleIn(AppScope::class)
-    fun provideConfig(@Named("configName") configName: String): EmailNotificationConfig =
-        withTiming { loadConfiguration(configName) }
-
     @Provides
     fun provideClubLockerConfig(config: EmailNotificationConfig): ClubLockerConfig =
         config.clubLocker
@@ -129,15 +126,13 @@ private data class AwsClients(
 object NotifierModule {
     @Provides
     @SingleIn(AppScope::class)
-    @Named("myNotifier")
-    fun provideMyNotifier(config: SnsConfig, topicPublisher: TopicPublisher): Notifier =
-        withTiming { configureNotifier(config.myTopicArn, topicPublisher) }
+    fun provideOperatorNotifier(config: SnsConfig, topicPublisher: TopicPublisher): OperatorNotifier =
+        withTiming { configureOperatorNotifier(config.myTopicArn, topicPublisher) }
 
     @Provides
     @SingleIn(AppScope::class)
-    @Named("publicNotifier")
-    fun providePublicNotifier(config: SnsConfig, topicPublisher: TopicPublisher): Notifier =
-        withTiming { configureNotifier(config.publicTopicArn!!, topicPublisher) }
+    fun provideOpenSlotNotifier(config: SnsConfig, topicPublisher: TopicPublisher): OpenSlotNotifier =
+        withTiming { configureOpenSlotNotifier(config.publicTopicArn!!, topicPublisher) }
 }
 
 @BindingContainer

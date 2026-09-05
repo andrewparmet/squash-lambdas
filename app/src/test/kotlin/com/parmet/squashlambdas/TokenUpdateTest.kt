@@ -17,86 +17,53 @@ class TokenUpdateTest {
     private val handler = TokenUpdateHandler(config, mockk(), mockk())
 
     @Test
-    fun `matches when sender contains expected and subject matches exactly`() {
-        val email =
-            EmailData(
-                sender = "Me <me@example.com>",
-                recipients = listOf("redacted@example.com"),
-                subject = "ClubLocker Token",
-                body = "some-token",
-                origin = "test"
-            )
-
-        assertThat(handler.isTokenUpdateEmail(email)).isTrue()
+    fun `matches authenticated exact sender and subject`() {
+        assertThat(handler.isTokenUpdateEmail(email(), true)).isTrue()
     }
 
     @Test
-    fun `does not match with different case sender`() {
-        val email =
-            EmailData(
-                sender = "ME@EXAMPLE.COM",
-                recipients = listOf("redacted@example.com"),
-                subject = "ClubLocker Token",
-                body = "some-token",
-                origin = "test"
-            )
-
-        assertThat(handler.isTokenUpdateEmail(email)).isFalse()
+    fun `matches sender without case sensitivity`() {
+        assertThat(handler.isTokenUpdateEmail(email(sender = "ME@EXAMPLE.COM"), true)).isTrue()
     }
 
     @Test
     fun `does not match with different case subject`() {
-        val email =
-            EmailData(
-                sender = "me@example.com",
-                recipients = listOf("redacted@example.com"),
-                subject = "CLUBLOCKER TOKEN",
-                body = "some-token",
-                origin = "test"
-            )
-
-        assertThat(handler.isTokenUpdateEmail(email)).isFalse()
+        assertThat(handler.isTokenUpdateEmail(email(subject = "CLUBLOCKER TOKEN"), true)).isFalse()
     }
 
     @Test
     fun `does not match when sender is different`() {
-        val email =
-            EmailData(
-                sender = "other@example.com",
-                recipients = listOf("redacted@example.com"),
-                subject = "ClubLocker Token",
-                body = "some-token",
-                origin = "test"
-            )
+        assertThat(handler.isTokenUpdateEmail(email(sender = "other@example.com"), true)).isFalse()
+    }
 
-        assertThat(handler.isTokenUpdateEmail(email)).isFalse()
+    @Test
+    fun `does not match sender containing the expected address`() {
+        assertThat(handler.isTokenUpdateEmail(email(sender = "attacker-me@example.com"), true)).isFalse()
+    }
+
+    @Test
+    fun `does not match unauthenticated sender`() {
+        assertThat(handler.isTokenUpdateEmail(email(), false)).isFalse()
     }
 
     @Test
     fun `does not match when subject is different`() {
-        val email =
-            EmailData(
-                sender = "me@example.com",
-                recipients = listOf("redacted@example.com"),
-                subject = "Tennis & Racquet Club Reservation Confirmation",
-                body = "some content",
-                origin = "test"
-            )
-
-        assertThat(handler.isTokenUpdateEmail(email)).isFalse()
+        assertThat(
+            handler.isTokenUpdateEmail(email(subject = "Tennis & Racquet Club Reservation Confirmation"), true)
+        ).isFalse()
     }
 
     @Test
     fun `does not match when subject is partial match`() {
-        val email =
-            EmailData(
-                sender = "me@example.com",
-                recipients = listOf("redacted@example.com"),
-                subject = "ClubLocker Token Update",
-                body = "some-token",
-                origin = "test"
-            )
-
-        assertThat(handler.isTokenUpdateEmail(email)).isFalse()
+        assertThat(handler.isTokenUpdateEmail(email(subject = "ClubLocker Token Update"), true)).isFalse()
     }
+
+    private fun email(sender: String = "me@example.com", subject: String = "ClubLocker Token") =
+        EmailData(
+            sender = sender,
+            recipients = listOf("lambda@example.com"),
+            subject = subject,
+            body = "some-token",
+            origin = "test"
+        )
 }

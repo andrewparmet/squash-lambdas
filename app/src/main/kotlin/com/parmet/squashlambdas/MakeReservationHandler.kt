@@ -9,7 +9,7 @@ import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.activity.fromPrettyName
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.di.MakeReservationGraph
-import com.parmet.squashlambdas.notify.Notifier
+import com.parmet.squashlambdas.notify.OperatorNotifier
 import com.parmet.squashlambdas.notify.toJsonElement
 import com.parmet.squashlambdas.reserve.ReservationMaker
 import com.parmet.squashlambdas.reserve.ReservationMaker.Result
@@ -17,12 +17,10 @@ import com.parmet.squashlambdas.reserve.Schedule
 import com.parmet.squashlambdas.reserve.TimeFilter
 import com.parmet.squashlambdas.reserve.mapNonEmptyLines
 import com.parmet.squashlambdas.util.FileLoader
-import com.parmet.squashlambdas.util.HasNotifier
 import com.parmet.squashlambdas.util.SnapStartInitializer
 import com.parmet.squashlambdas.util.withErrorHandling
 import dev.zacsweers.metro.HasMemberInjections
 import dev.zacsweers.metro.Inject
-import dev.zacsweers.metro.Named
 import dev.zacsweers.metro.createGraphFactory
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.runBlocking
@@ -34,9 +32,7 @@ import java.time.LocalTime
 private val logger = KotlinLogging.logger { }
 
 @HasMemberInjections
-open class MakeReservationHandler :
-    RequestHandler<ScheduledEvent, Any>,
-    HasNotifier {
+open class MakeReservationHandler : RequestHandler<ScheduledEvent, Any> {
 
     @Inject
     lateinit var config: MakeReservationConfig
@@ -45,8 +41,7 @@ open class MakeReservationHandler :
     lateinit var fileLoader: FileLoader
 
     @Inject
-    @Named("myNotifier")
-    override lateinit var notifier: Notifier
+    lateinit var notifier: OperatorNotifier
 
     @Inject
     lateinit var client: ClubLockerClient
@@ -63,7 +58,7 @@ open class MakeReservationHandler :
 
     final override fun handleRequest(input: ScheduledEvent, context: Context) {
         runBlocking {
-            withErrorHandling(input) {
+            withErrorHandling(input, { notifier.publishFailure(it) }) {
                 initializer.initialize()
                 doHandleRequest(input).also { logger.info { "Returning result: $it" } }
             }

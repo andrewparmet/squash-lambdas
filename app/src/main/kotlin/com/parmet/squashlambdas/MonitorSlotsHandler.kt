@@ -11,14 +11,13 @@ import com.parmet.squashlambdas.clublocker.TokenStatusManager
 import com.parmet.squashlambdas.di.MonitorSlotsGraph
 import com.parmet.squashlambdas.json.Json
 import com.parmet.squashlambdas.monitor.SlotsTracker
-import com.parmet.squashlambdas.notify.Notifier
-import com.parmet.squashlambdas.util.HasNotifier
+import com.parmet.squashlambdas.notify.OpenSlotNotifier
+import com.parmet.squashlambdas.notify.OperatorNotifier
 import com.parmet.squashlambdas.util.SnapStartInitializer
 import com.parmet.squashlambdas.util.inBoston
 import com.parmet.squashlambdas.util.withErrorHandling
 import dev.zacsweers.metro.HasMemberInjections
 import dev.zacsweers.metro.Inject
-import dev.zacsweers.metro.Named
 import dev.zacsweers.metro.createGraphFactory
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.runBlocking
@@ -32,17 +31,13 @@ import java.time.LocalTime
 private val logger = KotlinLogging.logger { }
 
 @HasMemberInjections
-open class MonitorSlotsHandler :
-    RequestHandler<ScheduledEvent, Any>,
-    HasNotifier {
+open class MonitorSlotsHandler : RequestHandler<ScheduledEvent, Any> {
 
     @Inject
-    @Named("myNotifier")
-    override lateinit var notifier: Notifier
+    lateinit var notifier: OperatorNotifier
 
     @Inject
-    @Named("publicNotifier")
-    lateinit var publicNotifier: Notifier
+    lateinit var publicNotifier: OpenSlotNotifier
 
     @Inject
     lateinit var slotsTracker: SlotsTracker
@@ -59,7 +54,7 @@ open class MonitorSlotsHandler :
 
     final override fun handleRequest(input: ScheduledEvent, context: Context) {
         runBlocking {
-            withErrorHandling(input) {
+            withErrorHandling(input, { notifier.publishFailure(it) }) {
                 initializer.initialize()
                 doHandleRequest()
             }

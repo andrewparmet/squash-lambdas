@@ -13,59 +13,72 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import java.time.Instant
 
-class Notifier(
+class OperatorNotifier(
     private val topicPublisher: TopicPublisher,
     private val topicArn: String,
     private val context: Map<String, JsonElement>
 ) {
-    private fun print(value: JsonElement) =
-        try {
-            Json.prettyPrint(value)
-        } catch (ex: Exception) {
-            value.toString() + "[error while formatting JSON: $ex]"
-        }.replace("\n", "\n|")
-
-    private fun print(t: Throwable) =
-        t.stackTraceToString().replace("\n", "\n|")
-
     suspend fun publishSuccessfulParse(summary: ChangeSummary) =
-        publish("Processed: ${summary.summary()}", successfulParseMsg(summary))
-
-    private fun successfulParseMsg(summary: ChangeSummary): String =
-        """
-            |Successfully processed change:
-            |${print(Json.element(summary))}
-            |
-            |Context:
-            |${print(JsonObject(context))}
-        """.trimMargin()
-
-    suspend fun publishSuccessfulReservation(result: ReservationMaker.Result.Success) =
-        publish("Made a Reservation on Club Locker", successfulReservationMsg(result))
-
-    private fun successfulReservationMsg(result: ReservationMaker.Result.Success): String =
-        """
-            |Successfully made a reservation:
-            |${print(result.toJsonElement())}
-            |
-            |Context:
-            |${print(JsonObject(context))}
-        """.trimMargin()
-
-    suspend fun publishFoundOpenSlot(result: List<Slot>) =
         publish(
-            "Squash Monitoring (${Instant.now().inBoston().toLocalDate()}): Found new open slots on Club Locker",
-            foundOpenSlotMsg(result),
+            "Processed: ${summary.summary()}",
+            """
+                |Successfully processed change:
+                |${print(Json.element(summary))}
+                |
+                |Context:
+                |${print(JsonObject(context))}
+            """.trimMargin()
         )
 
-    private fun foundOpenSlotMsg(result: List<Slot>): String =
-        """
-            |Found open slots:
-            |${result.joinToString("\n") { prettyPrint(it) }}
-        """.trimMargin()
+    suspend fun publishSuccessfulReservation(result: ReservationMaker.Result.Success) =
+        publish(
+            "Made a Reservation on Club Locker",
+            """
+                |Successfully made a reservation:
+                |${print(result.toJsonElement())}
+                |
+                |Context:
+                |${print(JsonObject(context))}
+            """.trimMargin()
+        )
 
-    private fun properNoun(name: String) =
-        CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.UPPER_CAMEL).convert(name)
+    suspend fun publishFailure(failure: Throwable) =
+        publish(
+            "Failed to Execute Club Locker Lambda",
+            """
+                |Could not execute lambda.
+                |
+                |Context:
+                |${print(JsonObject(context))}
+                |
+                |Stack trace:
+                |${print(failure)}
+            """.trimMargin()
+        )
+
+    suspend fun publishTokenUpdated(updateTime: Instant) =
+        publish("ClubLocker token updated", "ClubLocker token updated successfully at $updateTime")
+
+    suspend fun publishTokenInvalidated(reason: String) =
+        publish(
+            "ClubLocker token invalid - action required",
+            "ClubLocker token has been marked invalid. Reason: $reason. Please send a new token."
+        )
+
+    private suspend fun publish(subject: String, message: String) =
+        topicPublisher.publish(topicArn, subject, message)
+}
+
+class OpenSlotNotifier(
+    private val topicPublisher: TopicPublisher,
+    private val topicArn: String
+) {
+    suspend fun publishFoundOpenSlot(result: List<Slot>) =
+        topicPublisher.publish(
+            topicArn,
+            "Squash Monitoring (${Instant.now().inBoston().toLocalDate()}): Found new open slots on Club Locker",
+            result.joinToString("\n") { prettyPrint(it) }
+        )
 
     private fun prettyPrint(slot: Slot) =
         "${formatDate(slot)}: ${COURTS_BY_ID.getValue(slot.court).pretty}, " +
@@ -75,30 +88,17 @@ class Notifier(
         Instant.ofEpochSecond(slot.startUtc).inBoston().let {
             "${properNoun(it.dayOfWeek.name)}, ${properNoun(it.month.name)} ${it.dayOfMonth}"
         }
-
-    suspend fun publishFailure(t: Throwable) =
-        publish("Failed to Execute Club Locker Lambda", failureMsg(t))
-
-    private fun failureMsg(failure: Throwable): String =
-        """
-            |Could not execute lambda.
-            |
-            |Context:
-            |${print(JsonObject(context))}
-            |
-            |Stack trace:
-            |${print(failure)}
-        """.trimMargin()
-
-    suspend fun publishTokenUpdated(updateTime: Instant) =
-        publish("ClubLocker token updated", "ClubLocker token updated successfully at $updateTime")
-
-    suspend fun publishTokenInvalidated(reason: String) =
-        publish(
-            "ClubLocker token invalid - action required",
-            "ClubLocker token has been marked invalid. Reason: $reason. Please send a new token.",
-        )
-
-    private suspend fun publish(subject: String, message: String) =
-        topicPublisher.publish(topicArn, subject, message)
 }
+
+private fun print(value: JsonElement) =
+    try {
+        Json.prettyPrint(value)
+    } catch (ex: Exception) {
+        value.toString() + "[error while formatting JSON: $ex]"
+    }.replace("\n", "\n|")
+
+private fun print(throwable: Throwable) =
+    throwable.stackTraceToString().replace("\n", "\n|")
+
+private fun properNoun(name: String) =
+    CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.UPPER_CAMEL).convert(name)

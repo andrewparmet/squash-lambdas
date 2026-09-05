@@ -12,6 +12,53 @@ data class EmailNotificationConfig(
 )
 
 @Serializable
+data class EmailRoutingConfig(
+    val bucket: String,
+    val clubLockerEmail: String,
+    val clubLockerTokenKey: String,
+    val googleCalendarCredentialsKey: String,
+    val notificationTopicArn: String,
+    val tokenUpdateExpectedSender: String,
+    val tokenUpdateExpectedSubject: String,
+    val tenants: Map<String, EmailTenantConfig>
+) {
+    fun applicationConfig(tenant: EmailTenantConfig) =
+        EmailNotificationConfig(
+            clubLocker =
+            ClubLockerConfig(
+                token = FileConfig(location = "s3", bucket = bucket, key = clubLockerTokenKey),
+                email = clubLockerEmail
+            ),
+            googleCal =
+            GoogleCalConfig(
+                calendarId = tenant.googleCalendarId,
+                creds = FileConfig(location = "s3", bucket = bucket, key = googleCalendarCredentialsKey)
+            ),
+            sns = SnsConfig(myTopicArn = notificationTopicArn),
+            parse =
+            ParseConfig(
+                primaryRecipient = tenant.primaryRecipient,
+                inboundEmailBucket = bucket,
+                inboundEmailPrefix = tenant.inboundEmailPrefix
+            ),
+            tokenUpdate =
+            TokenUpdateConfig(
+                expectedSender = tokenUpdateExpectedSender,
+                expectedSubject = tokenUpdateExpectedSubject,
+                tokenDestination = FileConfig(location = "s3", bucket = bucket, key = clubLockerTokenKey)
+            )
+        )
+}
+
+@Serializable
+data class EmailTenantConfig(
+    val inboundRecipients: List<String>,
+    val inboundEmailPrefix: String,
+    val primaryRecipient: String,
+    val googleCalendarId: String
+)
+
+@Serializable
 data class TokenUpdateConfig(
     val expectedSender: String,
     val expectedSubject: String,
@@ -68,5 +115,7 @@ data class FileConfig(
 
 @Serializable
 data class ParseConfig(
-    val primaryRecipient: String
+    val primaryRecipient: String,
+    val inboundEmailBucket: String,
+    val inboundEmailPrefix: String
 )

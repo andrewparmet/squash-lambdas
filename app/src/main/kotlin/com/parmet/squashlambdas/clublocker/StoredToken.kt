@@ -18,6 +18,9 @@ data class StoredToken(
     fun invalidate(): StoredToken =
         copy(invalidTime = Instant.now())
 
+    override fun toString() =
+        "StoredToken(updateTime=$updateTime, invalidTime=$invalidTime)"
+
     companion object {
         fun create(token: String) =
             StoredToken(token, Instant.now())

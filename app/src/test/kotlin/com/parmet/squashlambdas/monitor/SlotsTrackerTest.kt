@@ -52,4 +52,5 @@ private fun slot(id: Int, reservationId: Int) =
         startTime = 1_800,
         endTime = 1_845,
         startUtc = 1_778_000_400,
+        type = "match",
     )

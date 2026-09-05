@@ -29,7 +29,7 @@ class MatchTest {
                 Instant.parse("2018-03-26T22:45:00Z"),
                 Instant.parse("2018-03-26T23:30:00Z"),
                 "foobar",
-                setOf(Player(name = "Philipp Rimmler"))
+                setOf(Player(name = "Opponent Player"))
             ).toEvent()
 
         assertThat(event.start)
@@ -42,12 +42,12 @@ class MatchTest {
             .isEqualTo("Court 2, Tennis and Racquet Club")
 
         assertThat(event.summary)
-            .isEqualTo("Squash v. Philipp Rimmler")
+            .isEqualTo("Squash v. Opponent Player")
 
         assertThat(event.description)
             .isEqualTo(
                 "Match(court=Court 2, start=2018-03-26T22:45:00Z, end=2018-03-26T23:30:00Z, " +
-                    "origin=foobar, players=[Player(name=Philipp Rimmler, email=null, memberId=null)])"
+                    "origin=foobar, players=[Player(name=Opponent Player, email=null, memberId=null)])"
             )
     }
 }

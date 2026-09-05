@@ -1,17 +1,24 @@
 package com.parmet.squashlambdas.integration
 
-import com.amazonaws.services.lambda.runtime.events.S3Event
-import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.model.Event
 import com.google.common.truth.Truth.assertThat
+import com.parmet.squashlambdas.EmailNotificationConfig
 import com.parmet.squashlambdas.EmailNotificationHandler
+import com.parmet.squashlambdas.EmailRoutingConfig
+import com.parmet.squashlambdas.EmailTenantConfig
 import com.parmet.squashlambdas.aws.ObjectStorage
 import com.parmet.squashlambdas.aws.TopicPublisher
 import com.parmet.squashlambdas.cal.CalendarProvider
 import com.parmet.squashlambdas.cal.ChangeSummaryResolver
 import com.parmet.squashlambdas.cal.ChangeSummaryTest
 import com.parmet.squashlambdas.clublocker.StoredToken
+import com.parmet.squashlambdas.email.SesEmailEvent
+import com.parmet.squashlambdas.email.SesEmailRecord
+import com.parmet.squashlambdas.email.SesMail
+import com.parmet.squashlambdas.email.SesMessage
+import com.parmet.squashlambdas.email.SesReceipt
+import com.parmet.squashlambdas.email.SesVerdict
 import com.parmet.squashlambdas.json.Json
 import com.parmet.squashlambdas.testutil.getResourceAsString
 import dev.zacsweers.metro.createGraphFactory
@@ -20,7 +27,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import org.junit.jupiter.api.Test
-import java.time.Instant
+import java.io.OutputStream
 
 class EmailNotificationHandlerTest {
     private val events = mockk<Calendar.Events>(relaxed = true)
@@ -32,13 +39,40 @@ class EmailNotificationHandlerTest {
     private val identityChangeSummaryResolver = ChangeSummaryResolver { it }
     private val objectStorage = InMemoryObjectStorage()
     private val topicPublisher = RecordingTopicPublisher()
+    private val routingConfig =
+        EmailRoutingConfig(
+            bucket = "test-bucket-name",
+            clubLockerEmail = "joecool@peanuts.com",
+            clubLockerTokenKey = "clublocker-token.json",
+            googleCalendarCredentialsKey = "google-credentials.json",
+            notificationTopicArn = "fake-arn",
+            tokenUpdateExpectedSender = "joecool@peanuts.com",
+            tokenUpdateExpectedSubject = "ClubLocker Token",
+            tenants =
+            mapOf(
+                "primary" to
+                    EmailTenantConfig(
+                        inboundRecipients = listOf("receiver@example.com"),
+                        inboundEmailPrefix = "",
+                        primaryRecipient = "joecool@peanuts.com",
+                        googleCalendarId = "primary"
+                    ),
+                "secondary" to
+                    EmailTenantConfig(
+                        inboundRecipients = listOf("second-receiver@example.com"),
+                        inboundEmailPrefix = "secondary",
+                        primaryRecipient = "second-user@example.com",
+                        googleCalendarId = "secondary"
+                    )
+            )
+        )
 
     @Test
     fun `react to a new reservation`() {
         objectStorage.objects["test-object-key"] =
             getResourceAsString(ChangeSummaryTest::class, "reservationCreated").encodeToByteArray()
 
-        configureHandler().handleRequest(S3Event(listOf(createRecord())), mockk())
+        handle()
 
         val event = slot<Event>()
         verify { events.insert("primary", capture(event)) }
@@ -57,25 +91,35 @@ class EmailNotificationHandlerTest {
                 .replace(Regex("(?m)^To: joecool@peanuts\\.com\\r?$"), "To: intermediate@example.com")
                 .encodeToByteArray()
 
-        configureHandler().handleRequest(S3Event(listOf(createRecord())), mockk())
+        handle()
 
         verify { events.insert("primary", any()) }
         assertThat(topicPublisher.messages).hasSize(1)
     }
 
     @Test
-    fun `react to every record in an S3 event`() {
+    fun `react to every record in an SES event`() {
         val email = getResourceAsString(ChangeSummaryTest::class, "reservationCreated").encodeToByteArray()
         objectStorage.objects["first-object-key"] = email
         objectStorage.objects["second-object-key"] = email
 
-        configureHandler().handleRequest(
-            S3Event(listOf(createRecord("first-object-key"), createRecord("second-object-key"))),
-            mockk()
-        )
+        handle(createRecord("first-object-key"), createRecord("second-object-key"))
 
         verify(exactly = 2) { events.insert("primary", any()) }
         assertThat(topicPublisher.messages).hasSize(2)
+    }
+
+    @Test
+    fun `route by the SES envelope recipient`() {
+        objectStorage.objects["secondary/second-object-key"] =
+            getResourceAsString(ChangeSummaryTest::class, "reservationCreated")
+                .replace("joecool@peanuts.com", "second-user@example.com")
+                .encodeToByteArray()
+
+        handle(createRecord("second-object-key", recipients = listOf("second-receiver@example.com")))
+
+        assertThat(objectStorage.readKeys).containsExactly("secondary/second-object-key")
+        verify { events.insert("secondary", any()) }
     }
 
     @Test
@@ -83,7 +127,7 @@ class EmailNotificationHandlerTest {
         objectStorage.objects["test-object-key"] =
             getResourceAsString(this::class, "tokenUpdateEmail").encodeToByteArray()
 
-        configureHandler().handleRequest(S3Event(listOf(createRecord())), mockk())
+        handle()
 
         val storedToken: StoredToken = Json.decode(
             objectStorage.objects.getValue("clublocker-token.json").decodeToString()
@@ -93,40 +137,57 @@ class EmailNotificationHandlerTest {
     }
 
     @Test
-    fun `ignore the SES setup notification`() {
-        configureHandler().handleRequest(
-            S3Event(listOf(createRecord("emails/primary/AMAZON_SES_SETUP_NOTIFICATION"))),
-            mockk()
-        )
+    fun `reject unauthenticated token update without publishing its body`() {
+        objectStorage.objects["test-object-key"] =
+            getResourceAsString(this::class, "tokenUpdateEmail").encodeToByteArray()
+
+        handle(createRecord(dmarcStatus = "FAIL"))
+
+        assertThat(objectStorage.objects).doesNotContainKey("clublocker-token.json")
+        assertThat(topicPublisher.messages.single().message).doesNotContain("test-token-123")
+    }
+
+    @Test
+    fun `reject unsafe mail before retrieving its body`() {
+        handle(createRecord(virusStatus = "FAIL"))
 
         assertThat(objectStorage.readKeys).isEmpty()
         verify(exactly = 0) { events.insert(any(), any()) }
-        assertThat(topicPublisher.messages).isEmpty()
+        assertThat(topicPublisher.messages).hasSize(1)
     }
 
-    private fun createRecord(objectKey: String = "test-object-key") =
-        S3EventNotification.S3EventNotificationRecord(
-            "region",
-            "eventName",
-            "eventSource",
-            Instant.now().toString(),
-            "eventVersion",
-            mockk(),
-            mockk(),
-            S3EventNotification.S3Entity(
-                "configurationId",
-                S3EventNotification.S3BucketEntity("test-bucket-name", mockk(), "arn"),
-                S3EventNotification.S3ObjectEntity(objectKey, 2319L, "eTag", "versionId", "sequencer"),
-                "s3SchemaVersion",
-            ),
-            mockk(),
+    private fun handle(vararg records: SesEmailRecord = arrayOf(createRecord())) {
+        val input = Json.encode(SesEmailEvent(records.toList())).byteInputStream()
+        configureHandler().handleRequest(input, OutputStream.nullOutputStream(), mockk())
+    }
+
+    private fun createRecord(
+        messageId: String = "test-object-key",
+        recipients: List<String> = listOf("receiver@example.com"),
+        dmarcStatus: String = "PASS",
+        spamStatus: String = "PASS",
+        virusStatus: String = "PASS"
+    ) =
+        SesEmailRecord(
+            SesMessage(
+                SesMail(messageId),
+                SesReceipt(
+                    recipients,
+                    SesVerdict(spamStatus),
+                    SesVerdict(virusStatus),
+                    SesVerdict(dmarcStatus)
+                )
+            )
         )
 
     private fun configureHandler() =
         object : EmailNotificationHandler() {
-            override fun buildGraph() =
+            override suspend fun loadRoutingConfig() =
+                routingConfig
+
+            override fun buildGraph(config: EmailNotificationConfig) =
                 createGraphFactory<EmailNotificationTestGraph.Factory>().create(
-                    "test-email-notification-handler.conf",
+                    config,
                     calendarProvider,
                     identityChangeSummaryResolver,
                     objectStorage,

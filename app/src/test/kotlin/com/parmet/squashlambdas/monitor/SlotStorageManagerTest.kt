@@ -18,7 +18,7 @@ class SlotStorageManagerTest {
     fun `saved slots expire after their date`() =
         runTest {
             val snapshot = slot<SlotSnapshot>()
-            manager.save(LocalDate.of(2026, 9, 5), listOf(Slot(1, 2, 3, 1800, 1845, 1788645600)))
+            manager.save(LocalDate.of(2026, 9, 5), listOf(Slot(1, 2, 3, 1800, 1845, 1788645600, "match")))
 
             coVerify { table.put(capture(snapshot)) }
             assertThat(snapshot.captured.ttl).isEqualTo(1788667200)
@@ -45,7 +45,7 @@ class SlotStorageManagerTest {
     fun `saved slots round trip`() =
         runTest {
             val date = LocalDate.of(2026, 9, 5)
-            val slots = listOf(Slot(1, 2, 3, 1800, 1845, 1788645600))
+            val slots = listOf(Slot(1, 2, 3, 1800, 1845, 1788645600, "match"))
             val snapshot = slot<SlotSnapshot>()
             manager.save(date, slots)
             coVerify { table.put(capture(snapshot)) }

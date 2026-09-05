@@ -25,7 +25,7 @@ class SlotsTracker(
             } catch (e: ClubLockerHttpException) {
                 if (e.statusCode in listOf(401, 403)) {
                     logger.warn { "Auth failure (${e.statusCode}), marking token invalid" }
-                    tokenStatusManager.markTokenInvalid("HTTP ${e.statusCode}: ${e.reasonPhrase}")
+                    tokenStatusManager.markTokenInvalid("HTTP ${e.statusCode}")
                 }
                 throw e
             }

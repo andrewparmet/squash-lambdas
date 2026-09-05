@@ -14,7 +14,7 @@ class ReservationResponseTest {
             start = Instant.parse("2026-08-18T22:00:00Z"),
             end = Instant.parse("2026-08-18T23:00:00Z"),
             origin = "test",
-            players = setOf(Player(name = "Repository Author"))
+            players = setOf(Player(name = "Joe Cool"))
         )
 
     @Test

@@ -24,12 +24,13 @@ class NotifierTest {
             }
         }
     private val context = mutableMapOf<String, JsonElement>()
-    private val notifier = Notifier(publisher, "some-arn", context)
+    private val operatorNotifier = OperatorNotifier(publisher, "some-arn", context)
+    private val openSlotNotifier = OpenSlotNotifier(publisher, "some-arn")
 
     @Test
     fun `notifier sends a reasonable message on success`() =
         runTest {
-            notifier.publishSuccessfulParse(
+            operatorNotifier.publishSuccessfulParse(
                 ChangeSummary(
                     Action.Create,
                     Match(Court.Court1, Instant.now(), Instant.now(), "", setOf(Player(name = "Opponent Player")))
@@ -49,7 +50,7 @@ class NotifierTest {
     fun `notifier sends a reasonable message on failure`() =
         runTest {
             context["key123"] = JsonPrimitive("val456")
-            notifier.publishFailure(ExceptionInInitializerError("something terrible has happened"))
+            operatorNotifier.publishFailure(ExceptionInInitializerError("something terrible has happened"))
 
             assertThat(received).hasSize(1)
             assertThat(received[0].topicArn).isEqualTo("some-arn")
@@ -62,8 +63,8 @@ class NotifierTest {
     @Test
     fun `notifier sends a reasonable message on success monitoring slots`() =
         runTest {
-            val slot = Slot(1, 1, 1411, 1, 1, Instant.parse("2019-06-01T00:31:31Z").epochSecond)
-            notifier.publishFoundOpenSlot(listOf(slot))
+            val slot = Slot(1, 1, 1411, 1, 1, Instant.parse("2019-06-01T00:31:31Z").epochSecond, "match")
+            openSlotNotifier.publishFoundOpenSlot(listOf(slot))
 
             assertThat(received).hasSize(1)
             assertThat(received[0].topicArn).isEqualTo("some-arn")

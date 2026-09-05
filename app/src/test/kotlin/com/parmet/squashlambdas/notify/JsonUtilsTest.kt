@@ -25,7 +25,7 @@ class JsonUtilsTest {
             Instant.parse("2018-03-26T22:45:00Z"),
             Instant.parse("2018-03-26T23:30:00Z"),
             "",
-            setOf(Player(name = "Philipp Rimmler"))
+            setOf(Player(name = "Opponent Player"))
         )
 
     private val clinic =

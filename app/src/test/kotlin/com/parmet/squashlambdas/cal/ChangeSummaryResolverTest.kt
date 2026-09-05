@@ -1,6 +1,7 @@
 package com.parmet.squashlambdas.cal
 
 import com.google.common.truth.Truth.assertThat
+import com.parmet.squashlambdas.activity.Clinic
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.activity.Player
@@ -26,7 +27,7 @@ class ChangeSummaryResolverTest {
     fun `populate players from current reservation`() =
         runTest {
             coEvery { client.slotsTaken(LocalDate.parse("2026-09-08"), LocalDate.parse("2026-09-08")) } returns
-                listOf(Slot(1, 2, 1690, 1700, 1800, start.epochSecond))
+                listOf(Slot(1, 2, 1690, 1700, 1800, start.epochSecond, "match"))
             coEvery { client.reservation(2) } returns
                 Reservation(
                     listOf(
@@ -61,7 +62,7 @@ class ChangeSummaryResolverTest {
     fun `replace a stale deletion with the current reservation`() =
         runTest {
             coEvery { client.slotsTaken(any(), any()) } returns
-                listOf(Slot(1, 2, 1690, 1700, 1800, start.epochSecond))
+                listOf(Slot(1, 2, 1690, 1700, 1800, start.epochSecond, "match"))
             coEvery { client.reservation(2) } returns
                 Reservation(
                     listOf(
@@ -76,6 +77,38 @@ class ChangeSummaryResolverTest {
                 ChangeSummary(Action.Update, match().copy(players = setOf(Player(name = "Current Player"))))
             )
         }
+
+    @Test
+    fun `confirm a clinic against current Club Locker slots`() =
+        runTest {
+            coEvery { client.slotsTaken(any(), any()) } returns
+                listOf(Slot(1, 2, 1689, 1700, 1800, start.epochSecond, "lesson"))
+            val clinic = clinic()
+
+            assertThat(resolver.resolve(ChangeSummary(Action.Create, clinic)))
+                .isEqualTo(ChangeSummary(Action.Update, clinic))
+        }
+
+    @Test
+    fun `delete a clinic absent from current Club Locker slots`() =
+        runTest {
+            coEvery { client.slotsTaken(any(), any()) } returns emptyList()
+            val clinic = clinic()
+
+            assertThat(resolver.resolve(ChangeSummary(Action.Create, clinic)))
+                .isEqualTo(ChangeSummary(Action.Delete, clinic))
+        }
+
+    @Test
+    fun `delete a clinic when the current slot is a match`() =
+        runTest {
+            coEvery { client.slotsTaken(any(), any()) } returns
+                listOf(Slot(1, 2, 1689, 1700, 1800, start.epochSecond, "match"))
+            val clinic = clinic()
+
+            assertThat(resolver.resolve(ChangeSummary(Action.Create, clinic)))
+                .isEqualTo(ChangeSummary(Action.Delete, clinic))
+        }
 }
 
 private fun match() =
@@ -85,4 +118,12 @@ private fun match() =
         end = end,
         origin = "email",
         players = setOf(Player(name = "Parsed Player")),
+    )
+
+private fun clinic() =
+    Clinic(
+        court = Court.Court3,
+        start = start,
+        end = end,
+        origin = "email"
     )

@@ -40,7 +40,7 @@ class SerializationTests {
                 1692,
                 LocalDate.parse("2019-02-02"),
                 Slot(LocalTime.parse("18:45"), LocalTime.parse("19:30")),
-                listOf(Player.member(167759, true, "Foo Bar"))
+                listOf(Player.member(123456, true, "Foo Bar"))
             )
 
         val actual = Json.parse(req.toJson())
@@ -60,7 +60,8 @@ class SerializationTests {
                 1411,
                 1930,
                 2015,
-                1495323000
+                1495323000,
+                "blocked"
             ),
             Slot(
                 535800,
@@ -68,7 +69,8 @@ class SerializationTests {
                 1411,
                 2015,
                 2100,
-                1495325700
+                1495325700,
+                "blocked"
             )
         )
     }
@@ -78,7 +80,7 @@ class SerializationTests {
         assertThat(Json.decode<UserResp>(getResourceAsString("user.json")))
             .isEqualTo(
                 UserResp(
-                    167759,
+                    123456,
                     listOf(Affiliation(1413, "Tennis & Racquet Club")),
                     "joecool@peanuts.com",
                 )
@@ -91,7 +93,7 @@ class SerializationTests {
             Json.decode(getResourceAsString("directory.json"))
 
         assertThat(directory).containsExactly(
-            User(167759, "Parmet, Andrew")
+            User(123456, "Cool, Joe")
         )
     }
 }

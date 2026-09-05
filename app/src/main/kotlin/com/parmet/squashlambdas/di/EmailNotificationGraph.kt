@@ -1,14 +1,10 @@
 package com.parmet.squashlambdas.di
 
-import com.parmet.squashlambdas.EmailNotificationHandler
+import com.parmet.squashlambdas.EmailNotificationConfig
+import com.parmet.squashlambdas.email.EmailNotificationProcessor
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
-import dev.zacsweers.metro.Named
 import dev.zacsweers.metro.Provides
-
-interface EmailNotificationInjector {
-    fun inject(target: EmailNotificationHandler)
-}
 
 @DependencyGraph(
     scope = AppScope::class,
@@ -19,9 +15,13 @@ interface EmailNotificationInjector {
         NotifierModule::class
     ]
 )
-interface EmailNotificationGraph : EmailNotificationInjector {
+interface EmailNotificationGraph : EmailNotificationProcessorProvider {
     @DependencyGraph.Factory
     fun interface Factory {
-        fun create(@Provides @Named("configName") configName: String): EmailNotificationGraph
+        fun create(@Provides config: EmailNotificationConfig): EmailNotificationGraph
     }
+}
+
+interface EmailNotificationProcessorProvider {
+    val processor: EmailNotificationProcessor
 }

@@ -3,9 +3,8 @@ package com.parmet.squashlambdas.clublocker
 import com.parmet.squashlambdas.ClubLockerConfig
 import com.parmet.squashlambdas.aws.ObjectStorage
 import com.parmet.squashlambdas.json.Json
-import com.parmet.squashlambdas.notify.Notifier
+import com.parmet.squashlambdas.notify.OperatorNotifier
 import dev.zacsweers.metro.Inject
-import dev.zacsweers.metro.Named
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger { }
@@ -14,7 +13,7 @@ private val logger = KotlinLogging.logger { }
 class TokenStatusManager(
     private val config: ClubLockerConfig,
     private val objectStorage: ObjectStorage,
-    @param:Named("myNotifier") private val notifier: Notifier
+    private val notifier: OperatorNotifier
 ) {
     suspend fun isTokenValid(): Boolean {
         val storedToken = loadToken()

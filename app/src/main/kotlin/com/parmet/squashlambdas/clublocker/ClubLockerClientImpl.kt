@@ -30,7 +30,6 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import org.jsoup.Jsoup
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -75,14 +74,9 @@ internal class ClubLockerClientImpl(
         val response = response(builder, requestBody)
         val code = response.statusCode()
         val respBody = response.body()
-        logger.info { "Received response: $code, $respBody" }
+        logger.info { "Received response: $code, ${respBody.length} characters" }
         if (code >= 400) {
-            try {
-                throw ClubLockerHttpException(code, Jsoup.parse(respBody).wholeText().replace("\n", ";"))
-            } catch (ex: Exception) {
-                logger.info(ex) { "Error while parsing response error body" }
-                throw ClubLockerHttpException(code, respBody.replace("\n", ";"))
-            }
+            throw ClubLockerHttpException(code)
         }
         return respBody
     }
@@ -96,7 +90,7 @@ internal class ClubLockerClientImpl(
                     }
                 }
                 .build()
-        logger.info { "Performing request: $request, body: $requestBody" }
+        logger.info { "Performing request: $request" }
         return httpClient.sendAsync(request, BodyHandlers.ofString()).await()
     }
 
