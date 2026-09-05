@@ -467,5 +467,5 @@ class ChangeSummaryTest {
 fun emailFromBody(fileName: String) =
     runBlocking {
         EmailRetriever(EmailReturningS3(getResourceAsString(fileName)))
-            .retrieveEmail("example-application-bucket", "emails/some-file-name")
+            .retrieveEmail("test-bucket-name", "emails/some-file-name")
     }
