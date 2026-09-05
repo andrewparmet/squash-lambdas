@@ -91,6 +91,7 @@ locals {
       for function_key, function_name in local.email_functions : function_key => [
         "${aws_s3_bucket.application.arn}/${trimsuffix(var.private_config.email_tenants[local.function_tenants[function_key]].inbound_email_prefix, "/")}/*",
         "${aws_s3_bucket.application.arn}/${var.private_config.google_calendar_credentials_key}",
+        "${aws_s3_bucket.application.arn}/${var.private_config.email_tenants[local.function_tenants[function_key]].token_key}",
       ]
     }
   )
