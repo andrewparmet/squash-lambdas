@@ -7,6 +7,7 @@ import com.parmet.squashlambdas.EmailNotificationConfig
 import com.parmet.squashlambdas.GoogleCalConfig
 import com.parmet.squashlambdas.MakeReservationConfig
 import com.parmet.squashlambdas.MonitorSlotsConfig
+import com.parmet.squashlambdas.RequestContext
 import com.parmet.squashlambdas.SnsConfig
 import com.parmet.squashlambdas.TokenUpdateConfig
 import com.parmet.squashlambdas.activity.Player
@@ -18,8 +19,6 @@ import com.parmet.squashlambdas.aws.TopicPublisher
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.clublocker.TokenManager
 import com.parmet.squashlambdas.configureClubLockerResources
-import com.parmet.squashlambdas.configureOpenSlotNotifier
-import com.parmet.squashlambdas.configureOperatorNotifier
 import com.parmet.squashlambdas.loadConfiguration
 import com.parmet.squashlambdas.notify.OpenSlotNotifier
 import com.parmet.squashlambdas.notify.OperatorNotifier
@@ -127,12 +126,12 @@ object NotifierModule {
     @Provides
     @SingleIn(AppScope::class)
     fun provideOperatorNotifier(config: SnsConfig, topicPublisher: TopicPublisher): OperatorNotifier =
-        withTiming { configureOperatorNotifier(config.myTopicArn, topicPublisher) }
+        withTiming { OperatorNotifier(topicPublisher, config.myTopicArn, RequestContext.context) }
 
     @Provides
     @SingleIn(AppScope::class)
     fun provideOpenSlotNotifier(config: SnsConfig, topicPublisher: TopicPublisher): OpenSlotNotifier =
-        withTiming { configureOpenSlotNotifier(config.publicTopicArn!!, topicPublisher) }
+        withTiming { OpenSlotNotifier(topicPublisher, requireNotNull(config.publicTopicArn)) }
 }
 
 @BindingContainer

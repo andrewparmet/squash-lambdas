@@ -23,11 +23,12 @@ data class EmailRoutingConfig(
     val tokenUpdateExpectedSubject: String,
     val tenants: Map<String, EmailTenantConfig>
 ) {
-    fun applicationConfig(tenant: EmailTenantConfig) =
-        EmailNotificationConfig(
+    fun applicationConfig(tenant: EmailTenantConfig): EmailNotificationConfig {
+        val token = FileConfig(location = "s3", bucket = bucket, key = clubLockerTokenKey)
+        return EmailNotificationConfig(
             clubLocker =
             ClubLockerConfig(
-                token = FileConfig(location = "s3", bucket = bucket, key = clubLockerTokenKey),
+                token = token,
                 email = clubLockerEmail
             ),
             googleCal =
@@ -47,9 +48,10 @@ data class EmailRoutingConfig(
             TokenUpdateConfig(
                 expectedSender = tokenUpdateExpectedSender,
                 expectedSubject = tokenUpdateExpectedSubject,
-                tokenDestination = FileConfig(location = "s3", bucket = bucket, key = clubLockerTokenKey)
+                tokenDestination = token
             )
         )
+    }
 }
 
 @Serializable

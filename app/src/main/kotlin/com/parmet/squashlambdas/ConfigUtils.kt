@@ -6,14 +6,10 @@ import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.CalendarScopes
 import com.google.auth.http.HttpCredentialsAdapter
 import com.google.auth.oauth2.GoogleCredentials
-import com.parmet.squashlambdas.Context.context
 import com.parmet.squashlambdas.activity.Player
-import com.parmet.squashlambdas.aws.TopicPublisher
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.clublocker.ClubLockerClientImpl
 import com.parmet.squashlambdas.clublocker.TokenManager
-import com.parmet.squashlambdas.notify.OpenSlotNotifier
-import com.parmet.squashlambdas.notify.OperatorNotifier
 import com.parmet.squashlambdas.util.FileLoader
 import com.typesafe.config.ConfigFactory
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -27,16 +23,6 @@ inline fun <reified T : Any> loadConfiguration(file: String): T {
             .resolveWith(ConfigFactory.systemEnvironment())
     return Hocon.decodeFromConfig(serializer(), config)
 }
-
-fun configureOperatorNotifier(topicArn: String, topicPublisher: TopicPublisher) =
-    OperatorNotifier(
-        topicPublisher,
-        topicArn,
-        context
-    )
-
-fun configureOpenSlotNotifier(topicArn: String, topicPublisher: TopicPublisher) =
-    OpenSlotNotifier(topicPublisher, topicArn)
 
 internal suspend fun configureCalendar(config: GoogleCalConfig, fileLoader: FileLoader) =
     Calendar.Builder(

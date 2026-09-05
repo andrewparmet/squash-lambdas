@@ -5,7 +5,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import java.util.concurrent.ConcurrentSkipListMap
 
-object Context {
+object RequestContext {
     private val logger = KotlinLogging.logger { }
 
     val context = ConcurrentSkipListMap<String, JsonElement>()
@@ -14,7 +14,7 @@ object Context {
         context[key] = value
     }
 
-    suspend fun <T> withInput(notifier: suspend (Throwable) -> Unit, input: Any, action: suspend () -> T) {
+    suspend fun handle(input: Any, publishFailure: suspend (Throwable) -> Unit, action: suspend () -> Unit) {
         addToContext("git sha", JsonPrimitive(GIT_SHA))
         addToContext("input", JsonPrimitive(input.toString()))
 
@@ -22,7 +22,12 @@ object Context {
             logger.info { "Starting handling of $input" }
             action()
         } catch (ex: Exception) {
-            notifier.invoke(ex)
+            try {
+                publishFailure(ex)
+            } catch (publishFailure: Exception) {
+                ex.addSuppressed(publishFailure)
+            }
+            logger.error(ex) { "Error while handling request" }
         } finally {
             context.clear()
         }

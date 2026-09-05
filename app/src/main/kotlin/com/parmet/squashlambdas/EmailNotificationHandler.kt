@@ -9,7 +9,6 @@ import com.parmet.squashlambdas.email.EmailNotificationProcessor
 import com.parmet.squashlambdas.email.SesEmailEvent
 import com.parmet.squashlambdas.json.Json
 import com.parmet.squashlambdas.util.SnapStartInitializer
-import com.parmet.squashlambdas.util.withErrorHandling
 import dev.zacsweers.metro.createGraphFactory
 import kotlinx.coroutines.runBlocking
 import java.io.InputStream
@@ -40,7 +39,7 @@ open class EmailNotificationHandler : RequestStreamHandler {
         val event = Json.decode<SesEmailEvent>(input.readBytes().decodeToString())
         runBlocking {
             event.records.forEach { record ->
-                withErrorHandling("SES message ${record.ses.mail.messageId}", {
+                RequestContext.handle("SES message ${record.ses.mail.messageId}", {
                     processors.values.first().processor.notifier.publishFailure(it)
                 }) {
                     val routed =

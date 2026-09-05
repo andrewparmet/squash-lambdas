@@ -1,9 +1,7 @@
 package com.parmet.squashlambdas
 
-import com.amazonaws.services.lambda.runtime.Context
-import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.amazonaws.services.lambda.runtime.events.ScheduledEvent
-import com.parmet.squashlambdas.Context.addToContext
+import com.parmet.squashlambdas.RequestContext.addToContext
 import com.parmet.squashlambdas.activity.Sport
 import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
 import com.parmet.squashlambdas.clublocker.Slot
@@ -15,12 +13,10 @@ import com.parmet.squashlambdas.notify.OpenSlotNotifier
 import com.parmet.squashlambdas.notify.OperatorNotifier
 import com.parmet.squashlambdas.util.SnapStartInitializer
 import com.parmet.squashlambdas.util.inBoston
-import com.parmet.squashlambdas.util.withErrorHandling
 import dev.zacsweers.metro.HasMemberInjections
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.createGraphFactory
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.JsonPrimitive
 import java.time.DayOfWeek.FRIDAY
 import java.time.DayOfWeek.MONDAY
@@ -31,10 +27,10 @@ import java.time.LocalTime
 private val logger = KotlinLogging.logger { }
 
 @HasMemberInjections
-open class MonitorSlotsHandler : RequestHandler<ScheduledEvent, Any> {
+open class MonitorSlotsHandler : LambdaRequestHandler<ScheduledEvent>() {
 
     @Inject
-    lateinit var notifier: OperatorNotifier
+    final override lateinit var notifier: OperatorNotifier
 
     @Inject
     lateinit var publicNotifier: OpenSlotNotifier
@@ -52,13 +48,12 @@ open class MonitorSlotsHandler : RequestHandler<ScheduledEvent, Any> {
         createGraphFactory<MonitorSlotsGraph.Factory>()
             .create("production-monitor-slots-handler.conf")
 
-    final override fun handleRequest(input: ScheduledEvent, context: Context) {
-        runBlocking {
-            withErrorHandling(input, { notifier.publishFailure(it) }) {
-                initializer.initialize()
-                doHandleRequest()
-            }
-        }
+    final override fun initialize() {
+        initializer.initialize()
+    }
+
+    final override suspend fun process(input: ScheduledEvent) {
+        doHandleRequest()
     }
 
     private suspend fun doHandleRequest() {

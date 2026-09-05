@@ -25,8 +25,7 @@ class OperatorNotifier(
                 |Successfully processed change:
                 |${print(Json.element(summary))}
                 |
-                |Context:
-                |${print(JsonObject(context))}
+                |${formattedContext()}
             """.trimMargin()
         )
 
@@ -37,8 +36,7 @@ class OperatorNotifier(
                 |Successfully made a reservation:
                 |${print(result.toJsonElement())}
                 |
-                |Context:
-                |${print(JsonObject(context))}
+                |${formattedContext()}
             """.trimMargin()
         )
 
@@ -48,8 +46,7 @@ class OperatorNotifier(
             """
                 |Could not execute lambda.
                 |
-                |Context:
-                |${print(JsonObject(context))}
+                |${formattedContext()}
                 |
                 |Stack trace:
                 |${print(failure)}
@@ -67,6 +64,9 @@ class OperatorNotifier(
 
     private suspend fun publish(subject: String, message: String) =
         topicPublisher.publish(topicArn, subject, message)
+
+    private fun formattedContext() =
+        "Context:\n${print(JsonObject(context))}"
 }
 
 class OpenSlotNotifier(

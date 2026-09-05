@@ -1,7 +1,7 @@
 package com.parmet.squashlambdas.email
 
-import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.EmailNotificationConfig
+import com.parmet.squashlambdas.RequestContext.addToContext
 import com.parmet.squashlambdas.cal.ChangeSummary
 import com.parmet.squashlambdas.cal.ChangeSummaryResolver
 import com.parmet.squashlambdas.cal.EventManager

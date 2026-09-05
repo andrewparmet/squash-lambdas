@@ -1,9 +1,7 @@
 package com.parmet.squashlambdas
 
-import com.amazonaws.services.lambda.runtime.Context
-import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.amazonaws.services.lambda.runtime.events.ScheduledEvent
-import com.parmet.squashlambdas.Context.addToContext
+import com.parmet.squashlambdas.RequestContext.addToContext
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.activity.fromPrettyName
@@ -18,12 +16,10 @@ import com.parmet.squashlambdas.reserve.TimeFilter
 import com.parmet.squashlambdas.reserve.mapNonEmptyLines
 import com.parmet.squashlambdas.util.FileLoader
 import com.parmet.squashlambdas.util.SnapStartInitializer
-import com.parmet.squashlambdas.util.withErrorHandling
 import dev.zacsweers.metro.HasMemberInjections
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.createGraphFactory
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.JsonPrimitive
 import java.io.InputStream
 import java.time.LocalDate
@@ -32,7 +28,7 @@ import java.time.LocalTime
 private val logger = KotlinLogging.logger { }
 
 @HasMemberInjections
-open class MakeReservationHandler : RequestHandler<ScheduledEvent, Any> {
+open class MakeReservationHandler : LambdaRequestHandler<ScheduledEvent>() {
 
     @Inject
     lateinit var config: MakeReservationConfig
@@ -41,7 +37,7 @@ open class MakeReservationHandler : RequestHandler<ScheduledEvent, Any> {
     lateinit var fileLoader: FileLoader
 
     @Inject
-    lateinit var notifier: OperatorNotifier
+    final override lateinit var notifier: OperatorNotifier
 
     @Inject
     lateinit var client: ClubLockerClient
@@ -56,13 +52,12 @@ open class MakeReservationHandler : RequestHandler<ScheduledEvent, Any> {
         createGraphFactory<MakeReservationGraph.Factory>()
             .create("production-make-reservation-handler.conf")
 
-    final override fun handleRequest(input: ScheduledEvent, context: Context) {
-        runBlocking {
-            withErrorHandling(input, { notifier.publishFailure(it) }) {
-                initializer.initialize()
-                doHandleRequest(input).also { logger.info { "Returning result: $it" } }
-            }
-        }
+    final override fun initialize() {
+        initializer.initialize()
+    }
+
+    final override suspend fun process(input: ScheduledEvent) {
+        doHandleRequest(input).also { logger.info { "Returning result: $it" } }
     }
 
     private suspend fun doHandleRequest(input: ScheduledEvent) {
