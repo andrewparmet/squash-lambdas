@@ -58,8 +58,9 @@ data class Reservation(
 
 @Serializable
 data class ReservationPlayer(
+    val type: String,
     val text: String,
-    val isMyself: Boolean
+    val isMyself: Boolean = false
 )
 
 sealed class ReservationResp {

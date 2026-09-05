@@ -31,10 +31,11 @@ class ChangeSummaryResolverTest {
             coEvery { client.reservation(2) } returns
                 Reservation(
                     listOf(
-                        ReservationPlayer("Host Player", true),
-                        ReservationPlayer("First Player", false),
-                        ReservationPlayer("Second Player", false),
-                        ReservationPlayer("Third Player", false),
+                        ReservationPlayer("member", "Host Player", true),
+                        ReservationPlayer("member", "First Player"),
+                        ReservationPlayer("member", "Second Player"),
+                        ReservationPlayer("member", "Third Player"),
+                        ReservationPlayer("fill", "Available"),
                     )
                 )
 
@@ -66,8 +67,8 @@ class ChangeSummaryResolverTest {
             coEvery { client.reservation(2) } returns
                 Reservation(
                     listOf(
-                        ReservationPlayer("Host Player", true),
-                        ReservationPlayer("Current Player", false),
+                        ReservationPlayer("member", "Host Player", true),
+                        ReservationPlayer("member", "Current Player"),
                     )
                 )
 

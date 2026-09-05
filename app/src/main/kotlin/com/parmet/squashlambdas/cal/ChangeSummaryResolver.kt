@@ -39,7 +39,9 @@ class ClubLockerChangeSummaryResolver(
         }
         val match = activity as? Match ?: return change.copy(action = Action.Update)
         val players =
-            client.reservation(slot.reservationId).players.filterNot { it.isMyself }.map { player ->
+            client.reservation(slot.reservationId).players.filterNot {
+                it.isMyself || it.type == "fill"
+            }.map { player ->
                 Player(name = player.text)
             }.toSet()
         return change.copy(action = Action.Update, activity = match.copy(players = players))

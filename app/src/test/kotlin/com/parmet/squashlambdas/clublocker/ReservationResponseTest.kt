@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.activity.Player
+import com.parmet.squashlambdas.json.Json
 import org.junit.jupiter.api.Test
 import java.time.Instant
 
@@ -16,6 +17,13 @@ class ReservationResponseTest {
             origin = "test",
             players = setOf(Player(name = "Joe Cool"))
         )
+
+    @Test
+    fun `parses an omitted isMyself value as false`() {
+        val reservation = Json.decode<Reservation>("""{"players":[{"type":"member","text":"Other Player"}]}""")
+
+        assertThat(reservation.players.single()).isEqualTo(ReservationPlayer("member", "Other Player"))
+    }
 
     @Test
     fun `parses primitive error`() {
