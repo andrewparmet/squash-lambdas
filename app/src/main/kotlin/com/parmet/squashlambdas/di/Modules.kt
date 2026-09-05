@@ -15,10 +15,6 @@ import com.parmet.squashlambdas.aws.ObjectStorage
 import com.parmet.squashlambdas.aws.S3ObjectStorage
 import com.parmet.squashlambdas.aws.SnsTopicPublisher
 import com.parmet.squashlambdas.aws.TopicPublisher
-import com.parmet.squashlambdas.cal.CalendarProvider
-import com.parmet.squashlambdas.cal.ChangeSummaryResolver
-import com.parmet.squashlambdas.cal.ClubLockerChangeSummaryResolver
-import com.parmet.squashlambdas.cal.GoogleCalendarProvider
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.clublocker.TokenManager
 import com.parmet.squashlambdas.configureClubLockerResources
@@ -57,13 +53,6 @@ object EmailNotificationModule {
     @Provides
     fun provideTokenUpdateConfig(config: EmailNotificationConfig): TokenUpdateConfig =
         config.tokenUpdate
-}
-
-@BindingContainer
-object ChangeSummaryResolverModule {
-    @Provides
-    fun provideChangeSummaryResolver(resolver: ClubLockerChangeSummaryResolver): ChangeSummaryResolver =
-        resolver
 }
 
 @BindingContainer
@@ -171,14 +160,6 @@ object ClubLockerModule {
     @Provides
     fun provideHostPlayer(resources: ClubLockerResources): Player =
         resources.player
-}
-
-@BindingContainer
-object CalendarModule {
-    @Provides
-    @SingleIn(AppScope::class)
-    fun provideCalendarProvider(provider: GoogleCalendarProvider): CalendarProvider =
-        provider
 }
 
 private inline fun <reified T> withTiming(block: () -> T): T =

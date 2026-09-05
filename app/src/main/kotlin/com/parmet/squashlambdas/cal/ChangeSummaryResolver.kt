@@ -5,12 +5,15 @@ import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
 import com.parmet.squashlambdas.util.inBoston
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 
 fun interface ChangeSummaryResolver {
     suspend fun resolve(change: ChangeSummary): ChangeSummary
 }
 
+@ContributesBinding(AppScope::class)
 @Inject
 class ClubLockerChangeSummaryResolver(
     private val client: ClubLockerClient
