@@ -23,6 +23,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.future.await
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
@@ -94,8 +95,15 @@ internal class ClubLockerClientImpl(
         return httpClient.sendAsync(request, BodyHandlers.ofString()).await()
     }
 
-    private suspend inline fun <reified T> get(resource: String): T =
-        Json.decode(responseBody(HttpRequest.newBuilder(URI(resource)).authorized()))
+    private suspend inline fun <reified T> get(resource: String): T {
+        val responseBody = responseBody(HttpRequest.newBuilder(URI(resource)).authorized())
+        return try {
+            Json.decode(responseBody)
+        } catch (failure: SerializationException) {
+            logger.error(failure) { "Failed to deserialize Club Locker response from $resource: $responseBody" }
+            throw failure
+        }
+    }
 
     override suspend fun makeReservation(match: Match): ReservationResp {
         try {
