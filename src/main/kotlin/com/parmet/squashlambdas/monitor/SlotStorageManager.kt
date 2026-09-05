@@ -27,7 +27,9 @@ class SlotStorageManager(
     fun save(date: LocalDate, slots: List<Slot>) {
         val item: MutableMap<String, AttributeValue> = mutableMapOf()
         item[primaryKey] = AttributeValue.builder().s("$date/taken").build()
-        item[entriesKey] = AttributeValue.builder().ss(slots.map { Json.encode(it) }).build()
+        if (slots.isNotEmpty()) {
+            item[entriesKey] = AttributeValue.builder().ss(slots.map { Json.encode(it) }).build()
+        }
         item[modifiedTimeKey] = AttributeValue.builder().s(Instant.now().toString()).build()
         item[ttlKey] =
             AttributeValue.builder().n(date.plusDays(1).atStartOfDay(BOSTON).toEpochSecond().toString()).build()
