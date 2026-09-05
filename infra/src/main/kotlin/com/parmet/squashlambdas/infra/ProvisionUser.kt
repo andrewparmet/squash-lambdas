@@ -31,11 +31,11 @@ private const val CALENDAR_NAME = "T&R"
 
 private class ProvisionUser : SuspendingCliktCommand(name = "provision-user") {
     private val repositoryDirectory by argument().path(mustExist = true, canBeFile = false)
-    private val user by option("--user").required()
+    private val forwardedRecipient by option("--forwarded-recipient").required()
     private val shareWith by option("--share-with").multiple()
 
     override suspend fun run() {
-        UserProvisioner(repositoryDirectory).provision(user, shareWith)
+        UserProvisioner(repositoryDirectory).provision(forwardedRecipient, shareWith)
     }
 }
 
@@ -46,9 +46,9 @@ private class UserProvisioner(private val repositoryDirectory: Path) {
     private val aws = Aws(profile, region)
     private val bootstrap = Bootstrap(aws)
 
-    suspend fun provision(user: String, additionalEditors: List<String>) {
-        val normalizedUser = user.trim().lowercase()
-        require('@' in normalizedUser) { "The user must be an email address" }
+    suspend fun provision(forwardedRecipient: String, calendarEditors: List<String>) {
+        val normalizedForwardedRecipient = forwardedRecipient.trim().lowercase()
+        require('@' in normalizedForwardedRecipient) { "The forwarded recipient must be an email address" }
         try {
             commands.awsLogin(profile, region)
             val loadedBootstrap = bootstrap.load()
@@ -59,16 +59,16 @@ private class UserProvisioner(private val repositoryDirectory: Path) {
             val existingTenant =
                 tenants.entries.singleOrNull { (_, value) ->
                     val recipient = value.jsonObject.requiredString("parse_primary_recipient")
-                    recipient.equals(normalizedUser, ignoreCase = true)
+                    recipient.equals(normalizedForwardedRecipient, ignoreCase = true)
                 }
-            val tenantId = existingTenant?.key ?: normalizedUser.sha256().take(12)
+            val tenantId = existingTenant?.key ?: normalizedForwardedRecipient.sha256().take(12)
             val calendar = loadGoogleCalendar(resourceNames, privateConfig)
             val calendarId =
                 existingTenant?.value?.jsonObject?.requiredString("google_calendar_id")
-                    ?: calendarId(calendar, normalizedUser)
+                    ?: calendarId(calendar, normalizedForwardedRecipient)
 
             setCalendarName(calendar, calendarId)
-            (listOf(normalizedUser) + additionalEditors).distinctBy(String::lowercase).forEach {
+            calendarEditors.distinctBy(String::lowercase).forEach {
                 share(calendar, calendarId, it)
             }
 
@@ -80,7 +80,7 @@ private class UserProvisioner(private val repositoryDirectory: Path) {
                         privateConfig,
                         tenants,
                         tenantId,
-                        normalizedUser,
+                        normalizedForwardedRecipient,
                         calendarId
                     )
                 } else {
@@ -106,7 +106,7 @@ private class UserProvisioner(private val repositoryDirectory: Path) {
         privateConfig: JsonObject,
         tenants: JsonObject,
         tenantId: String,
-        user: String,
+        forwardedRecipient: String,
         calendarId: String
     ): JsonObject {
         check(tenantId !in tenants) { "The generated tenant ID is already in use" }
@@ -122,7 +122,7 @@ private class UserProvisioner(private val repositoryDirectory: Path) {
                     "google_calendar_id" to JsonPrimitive(calendarId),
                     "inbound_email_prefix" to JsonPrimitive("emails/$tenantId"),
                     "inbound_recipients" to JsonArray(listOf(JsonPrimitive(receiver))),
-                    "parse_primary_recipient" to JsonPrimitive(user),
+                    "parse_primary_recipient" to JsonPrimitive(forwardedRecipient),
                     "token_key" to JsonPrimitive("tenants/$tenantId/club-locker-token.json")
                 )
             )

@@ -77,6 +77,6 @@ tasks.register<JavaExec>("provisionUser") {
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("com.parmet.squashlambdas.infra.ProvisionUserKt")
     args(rootProject.projectDir.absolutePath)
-    providers.gradleProperty("user").orNull?.let { args("--user", it) }
+    providers.gradleProperty("forwardedRecipient").orNull?.let { args("--forwarded-recipient", it) }
     providers.gradleProperty("shareWith").orNull?.split(",")?.forEach { args("--share-with", it) }
 }
