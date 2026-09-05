@@ -60,15 +60,9 @@ internal class InfrastructurePublisher(private val repositoryDirectory: Path) {
         val resourceNames = configuration.requiredObject("resource_names")
         val privateConfig = configuration.requiredObject("private_config")
         val backend = configuration.requiredObject("backend")
-        val googleCredentials =
-            aws.readObject(
-                resourceNames.requiredString("bucket"),
-                privateConfig.requiredString("google_calendar_credentials_key")
-            ).toString(Charsets.UTF_8)
         val terraformEnvironment =
             mapOf(
                 "AWS_PROFILE" to profile,
-                "GOOGLE_CREDENTIALS" to googleCredentials,
                 "TF_VAR_aws_region" to region,
                 "TF_VAR_resource_names" to resourceNames.toString(),
                 "TF_VAR_private_config" to privateConfig.toString()
