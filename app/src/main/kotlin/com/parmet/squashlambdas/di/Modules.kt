@@ -182,10 +182,7 @@ object CalendarModule {
 }
 
 private inline fun <reified T> withTiming(block: () -> T): T {
-    val result: T
-    val time = measureTime { result = block() }
-    logger.info { "Finished building $result in $time" }
-    return result
+    return withTiming(T::class.simpleName ?: "component", block)
 }
 
 private inline fun <T> withTiming(name: String, block: () -> T): T {
