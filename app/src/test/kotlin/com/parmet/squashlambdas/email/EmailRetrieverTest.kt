@@ -30,6 +30,17 @@ class EmailRetrieverTest {
             assertThat(data.recipients)
                 .containsExactly("intermediate@example.com")
         }
+
+    @Test
+    fun `only trusts the first SES authentication results header`() =
+        runTest {
+            val email =
+                getResourceAsString(ChangeSummaryTest::class.java, "reservationCreated2")
+                    .replace("Authentication-Results: amazonses.com;", "Authentication-Results: untrusted.example;")
+            val data = EmailRetriever(EmailReturningS3(email)).retrieveEmail("", "some-object-key")
+
+            assertThat(data.sesDkimAuthenticated).isFalse()
+        }
 }
 
 fun emailData() =
@@ -45,4 +56,5 @@ fun emailData() =
             area.
         """.trimIndent().replace("\n", " "),
         "some-object-key",
+        true,
     )

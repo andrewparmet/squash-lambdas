@@ -64,6 +64,7 @@ class TokenUpdateTest {
             recipients = listOf("lambda@example.com"),
             subject = subject,
             body = "some-token",
-            origin = "test"
+            origin = "test",
+            sesDkimAuthenticated = false,
         )
 }

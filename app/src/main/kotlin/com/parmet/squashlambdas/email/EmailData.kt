@@ -9,4 +9,5 @@ data class EmailData(
     val subject: String,
     val body: String,
     val origin: String,
+    val sesDkimAuthenticated: Boolean,
 )

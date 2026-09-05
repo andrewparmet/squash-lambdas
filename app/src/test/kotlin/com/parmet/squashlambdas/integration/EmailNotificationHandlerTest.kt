@@ -177,11 +177,13 @@ class EmailNotificationHandlerTest {
     }
 
     @Test
-    fun `reject a calendar email that fails DKIM`() {
+    fun `reject a calendar email without SES-authenticated DKIM`() {
         objectStorage.objects["inbound/test-object-key"] =
-            getResourceAsString(ChangeSummaryTest::class, "reservationCreated").encodeToByteArray()
+            getResourceAsString(ChangeSummaryTest::class, "reservationCreated")
+                .replace("Authentication-Results: amazonses.com;", "Authentication-Results: untrusted.example;")
+                .encodeToByteArray()
 
-        handle(createRecord(dkimStatus = "FAIL"))
+        handle()
 
         verify(exactly = 0) { events.insert(any(), any()) }
         assertThat(topicPublisher.messages.single().subject).isEqualTo("Failed to Execute Club Locker Lambda")
@@ -213,7 +215,6 @@ class EmailNotificationHandlerTest {
     private fun createRecord(
         messageId: String = "test-object-key",
         recipients: List<String> = listOf("receiver@example.com"),
-        dkimStatus: String = "PASS",
         dmarcStatus: String = "PASS",
         spamStatus: String = "PASS",
         virusStatus: String = "PASS"
@@ -225,7 +226,6 @@ class EmailNotificationHandlerTest {
                     recipients,
                     SesVerdict(spamStatus),
                     SesVerdict(virusStatus),
-                    SesVerdict(dkimStatus),
                     SesVerdict(dmarcStatus)
                 )
             )

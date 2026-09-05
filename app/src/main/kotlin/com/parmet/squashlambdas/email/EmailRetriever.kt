@@ -4,6 +4,7 @@ import com.parmet.squashlambdas.aws.ObjectStorage
 import dev.zacsweers.metro.Inject
 import jakarta.mail.internet.InternetAddress
 import jakarta.mail.internet.MimeMessage
+import jakarta.mail.internet.MimeUtility
 
 @Inject
 class EmailRetriever(
@@ -18,8 +19,17 @@ class EmailRetriever(
                 message.subject,
                 BodyExtractor.extract(message).toString(),
                 key,
+                message.sesDkimAuthenticated(),
             )
         }
+}
+
+private fun MimeMessage.sesDkimAuthenticated(): Boolean {
+    val authenticationResults =
+        getHeader("Authentication-Results")?.firstOrNull()?.let(MimeUtility::unfold) ?: return false
+    val authority = authenticationResults.substringBefore(';').trim()
+    return authority.equals("amazonses.com", ignoreCase = true) &&
+        Regex("""(?:^|[\s;])dkim=pass(?:[\s;(]|$)""", RegexOption.IGNORE_CASE).containsMatchIn(authenticationResults)
 }
 
 private fun MimeMessage.senderAddress() =
