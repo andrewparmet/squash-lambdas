@@ -181,9 +181,8 @@ object CalendarModule {
         provider
 }
 
-private inline fun <reified T> withTiming(block: () -> T): T {
-    return withTiming(T::class.simpleName ?: "component", block)
-}
+private inline fun <reified T> withTiming(block: () -> T): T =
+    withTiming(T::class.simpleName ?: "component", block)
 
 private inline fun <T> withTiming(name: String, block: () -> T): T {
     val result: T
