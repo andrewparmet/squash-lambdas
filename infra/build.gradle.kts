@@ -72,9 +72,11 @@ tasks.register<JavaExec>("deploy") {
     standardInput = System.`in`
 }
 
-tasks.register<JavaExec>("provisionCalendar") {
+tasks.register<JavaExec>("provisionUser") {
+    dependsOn(":app:spotlessCheck", ":app:test", ":app:shadowJar", "shadowJar")
     classpath = sourceSets.main.get().runtimeClasspath
-    mainClass.set("com.parmet.squashlambdas.infra.ProvisionCalendarKt")
+    mainClass.set("com.parmet.squashlambdas.infra.ProvisionUserKt")
     args(rootProject.projectDir.absolutePath)
+    providers.gradleProperty("user").orNull?.let { args("--user", it) }
     providers.gradleProperty("shareWith").orNull?.split(",")?.forEach { args("--share-with", it) }
 }

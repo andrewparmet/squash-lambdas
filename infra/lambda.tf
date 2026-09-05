@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_log_group" "lambda" {
   for_each = local.function_keys
 
-  name              = "/aws/lambda/${var.resource_names.functions[each.key]}"
+  name              = "/aws/lambda/${local.function_names[each.key]}"
   retention_in_days = 30
 
   lifecycle {
@@ -12,10 +12,10 @@ resource "aws_cloudwatch_log_group" "lambda" {
 resource "aws_lambda_function" "application" {
   for_each = local.function_keys
 
-  function_name    = var.resource_names.functions[each.key]
+  function_name    = local.function_names[each.key]
   filename         = "${path.module}/../app/build/libs/squash-lambdas-all.jar"
   source_code_hash = filebase64sha256("${path.module}/../app/build/libs/squash-lambdas-all.jar")
-  handler          = local.handlers[each.key]
+  handler          = local.handlers[local.function_kinds[each.key]]
   role             = aws_iam_role.lambda[each.key].arn
   runtime          = "java25"
   architectures    = ["arm64"]

@@ -36,18 +36,26 @@ internal class InfrastructurePublisher(private val repositoryDirectory: Path) {
     private val bootstrap = Bootstrap(aws)
 
     suspend fun publish() =
+        publish(authenticate = true)
+
+    suspend fun publishWithExistingLogin() =
+        publish(authenticate = false)
+
+    private suspend fun publish(authenticate: Boolean) =
         try {
-            publishAuthenticated()
+            if (authenticate) {
+                commands.awsLogin(profile, region)
+            }
+            publishConfiguration()
         } finally {
             aws.close()
         }
 
-    private suspend fun publishAuthenticated() {
+    private suspend fun publishConfiguration() {
         check(artifact.exists()) { "Build artifact is missing" }
         check(artifact.fileSize() <= MAX_DIRECT_UPLOAD_BYTES) {
             "Build artifact exceeds Lambda's 50 MB direct-upload limit"
         }
-        commands.awsLogin(profile, region)
         val configuration = bootstrap.load().value
         val resourceNames = configuration.requiredObject("resource_names")
         val privateConfig = configuration.requiredObject("private_config")
@@ -113,7 +121,11 @@ internal class InfrastructurePublisher(private val repositoryDirectory: Path) {
         require(keepCount > 0) { "LAMBDA_VERSIONS_TO_KEEP must be a positive integer" }
         var deletedCount = 0
 
-        functions.values.map { it.jsonPrimitive.content }.forEach { functionName ->
+        val functionNames =
+            functions.requiredObject("email_parsers").values.map { it.jsonPrimitive.content } +
+                functions.requiredString("monitor") +
+                functions.requiredString("reservation")
+        functionNames.forEach { functionName ->
             val aliasedVersions = aws.aliases(functionName)
             val versions = aws.versions(functionName)
 

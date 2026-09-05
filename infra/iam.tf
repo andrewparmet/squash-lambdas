@@ -12,7 +12,7 @@ data "aws_iam_policy_document" "lambda_assume_role" {
 resource "aws_iam_role" "lambda" {
   for_each = local.function_keys
 
-  name               = "${var.resource_names.functions[each.key]}-execution"
+  name               = "${local.function_names[each.key]}-execution"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
 
@@ -25,17 +25,17 @@ data "aws_iam_policy_document" "lambda" {
       "logs:PutLogEvents",
     ]
     resources = [
-      "arn:${data.aws_partition.current.partition}:logs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${var.resource_names.functions[each.key]}:*",
+      "arn:${data.aws_partition.current.partition}:logs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${local.function_names[each.key]}:*",
     ]
   }
 
   statement {
     actions   = ["sns:Publish"]
-    resources = each.key == "monitor" ? [aws_sns_topic.notifications.arn, aws_sns_topic.public.arn] : [aws_sns_topic.notifications.arn]
+    resources = local.function_kinds[each.key] == "monitor" ? [aws_sns_topic.notifications.arn, aws_sns_topic.public.arn] : [aws_sns_topic.notifications.arn]
   }
 
   dynamic "statement" {
-    for_each = each.key == "monitor" ? [1] : []
+    for_each = local.function_kinds[each.key] == "monitor" ? [1] : []
 
     content {
       actions = [
@@ -52,11 +52,13 @@ data "aws_iam_policy_document" "lambda" {
   }
 
   dynamic "statement" {
-    for_each = each.key == "email_parser" || each.key == "monitor" ? [1] : []
+    for_each = local.function_kinds[each.key] == "email_parser" || local.function_kinds[each.key] == "monitor" ? [1] : []
 
     content {
-      actions   = ["s3:PutObject"]
-      resources = ["${aws_s3_bucket.application.arn}/${var.private_config.token_key}"]
+      actions = ["s3:PutObject"]
+      resources = [
+        "${aws_s3_bucket.application.arn}/${local.function_kinds[each.key] == "email_parser" ? var.private_config.email_tenants[local.function_tenants[each.key]].token_key : var.private_config.token_key}",
+      ]
     }
   }
 }
