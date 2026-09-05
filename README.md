@@ -4,7 +4,8 @@ Kotlin AWS Lambdas for managing Tennis and Racquet Club reservations.
 
 ## Email calendar
 
-Each user gets an isolated S3 prefix, email-processing Lambda, Club Locker token, and service-account-owned Google Calendar.
+Each user gets an isolated S3 prefix, Club Locker token, and Google Calendar. One email Lambda routes messages to the matching
+user configuration.
 
 - Forwarded recipient: the address that received the original Club Locker message. Pass it as `-PforwardedRecipient`; it is
   used to route forwarded messages and does not receive calendar access automatically.
@@ -17,9 +18,9 @@ The processing flow is:
 1. Club Locker sends a reservation message to the forwarded recipient.
 2. That account forwards the message to its SES receiver.
 3. SES writes the message to the user's S3 prefix.
-4. S3 invokes the user's Lambda.
+4. SES invokes the email Lambda with its authentication verdicts and S3 message ID.
 5. The Lambda parses the action, activity type, court, and time from the message.
-6. For matches, the Lambda reconciles the event with Club Locker's current slot and player roster.
+6. The Lambda reconciles the event with Club Locker's current slot. Matches also reconcile the player roster.
 7. The Lambda updates the user's Google Calendar.
 
 Provision another receiver with:
