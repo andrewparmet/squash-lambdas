@@ -34,6 +34,11 @@ class EmailNotificationProcessor(
         if (tokenUpdateHandler.isTokenUpdateCandidate(email)) {
             throw SecurityException("Rejected unauthenticated token update")
         }
+        if (!config.parse.expectedSender.equals(email.sender, ignoreCase = true) ||
+            !record.ses.receipt.dmarcVerdict.passed
+        ) {
+            throw SecurityException("Rejected unauthenticated calendar email")
+        }
         if (config.parse.primaryRecipient.lowercase() !in email.recipients) {
             logger.info { "Ignoring email without the configured forwarded recipient" }
             return

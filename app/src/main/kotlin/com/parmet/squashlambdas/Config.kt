@@ -18,6 +18,7 @@ data class EmailRoutingConfig(
     val clubLockerTokenKey: String,
     val googleCalendarCredentialsKey: String,
     val notificationTopicArn: String,
+    val calendarExpectedSender: String,
     val tokenUpdateExpectedSender: String,
     val tokenUpdateExpectedSubject: String,
     val tenants: Map<String, EmailTenantConfig>
@@ -39,7 +40,8 @@ data class EmailRoutingConfig(
             ParseConfig(
                 primaryRecipient = tenant.primaryRecipient,
                 inboundEmailBucket = bucket,
-                inboundEmailPrefix = tenant.inboundEmailPrefix
+                inboundEmailPrefix = tenant.inboundEmailPrefix,
+                expectedSender = calendarExpectedSender
             ),
             tokenUpdate =
             TokenUpdateConfig(
@@ -117,5 +119,6 @@ data class FileConfig(
 data class ParseConfig(
     val primaryRecipient: String,
     val inboundEmailBucket: String,
-    val inboundEmailPrefix: String
+    val inboundEmailPrefix: String,
+    val expectedSender: String
 )

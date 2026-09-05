@@ -76,6 +76,15 @@ class SerializationTests {
     }
 
     @Test
+    fun `decode a slot snapshot without its type`() {
+        val slot = Json.decode<Slot>(
+            """{"id":1,"reservationId":2,"court":3,"startTime":1800,"endTime":1845,"startUtc":1}"""
+        )
+
+        assertThat(slot.type).isEqualTo("unknown")
+    }
+
+    @Test
     fun `test user parsing`() {
         assertThat(Json.decode<UserResp>(getResourceAsString("user.json")))
             .isEqualTo(

@@ -19,7 +19,7 @@ The processing flow is:
 2. That account forwards the message to its SES receiver.
 3. SES writes the message to the user's S3 prefix.
 4. SES invokes the email Lambda with its authentication verdicts and S3 message ID.
-5. The Lambda parses the action, activity type, court, and time from the message.
+5. The Lambda authenticates the sender, then parses the action, activity type, court, and time.
 6. The Lambda reconciles the event with Club Locker's current slot. Matches also reconcile the player roster.
 7. The Lambda updates the user's Google Calendar.
 

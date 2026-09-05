@@ -82,6 +82,7 @@ locals {
     clubLockerTokenKey           = var.private_config.token_key
     googleCalendarCredentialsKey = var.private_config.google_calendar_credentials_key
     notificationTopicArn         = aws_sns_topic.notifications.arn
+    calendarExpectedSender       = var.private_config.calendar_expected_sender
     tokenUpdateExpectedSender    = var.private_config.token_update_expected_sender
     tokenUpdateExpectedSubject   = var.private_config.token_update_expected_subject
     tenants = {

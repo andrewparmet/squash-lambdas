@@ -40,13 +40,13 @@ open class EmailNotificationHandler : RequestStreamHandler {
         val event = Json.decode<SesEmailEvent>(input.readBytes().decodeToString())
         runBlocking {
             event.records.forEach { record ->
-                val routed =
-                    processors.values.single { candidate ->
-                        candidate.tenant.matches(record.ses.receipt.recipients)
-                    }
                 withErrorHandling("SES message ${record.ses.mail.messageId}", {
-                    routed.processor.notifier.publishFailure(it)
+                    processors.values.first().processor.notifier.publishFailure(it)
                 }) {
+                    val routed =
+                        processors.values.single { candidate ->
+                            candidate.tenant.matches(record.ses.receipt.recipients)
+                        }
                     routed.processor.process(record)
                 }
             }

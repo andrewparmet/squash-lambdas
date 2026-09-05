@@ -46,6 +46,7 @@ class EmailNotificationHandlerTest {
             clubLockerTokenKey = "clublocker-token.json",
             googleCalendarCredentialsKey = "google-credentials.json",
             notificationTopicArn = "fake-arn",
+            calendarExpectedSender = "archived-contact@example.com",
             tokenUpdateExpectedSender = "joecool@peanuts.com",
             tokenUpdateExpectedSubject = "ClubLocker Token",
             tenants =
@@ -154,6 +155,33 @@ class EmailNotificationHandlerTest {
         assertThat(objectStorage.readKeys).isEmpty()
         verify(exactly = 0) { events.insert(any(), any()) }
         assertThat(topicPublisher.messages).hasSize(1)
+    }
+
+    @Test
+    fun `reject unauthenticated calendar email`() {
+        objectStorage.objects["test-object-key"] =
+            getResourceAsString(ChangeSummaryTest::class, "reservationCreated").encodeToByteArray()
+
+        handle(createRecord(dmarcStatus = "FAIL"))
+
+        verify(exactly = 0) { events.insert(any(), any()) }
+        assertThat(topicPublisher.messages.single().subject).isEqualTo("Failed to Execute Club Locker Lambda")
+    }
+
+    @Test
+    fun `notify for an unroutable record and continue`() {
+        objectStorage.objects["test-object-key"] =
+            getResourceAsString(ChangeSummaryTest::class, "reservationCreated").encodeToByteArray()
+
+        handle(
+            createRecord("unroutable", recipients = listOf("unknown@example.com")),
+            createRecord()
+        )
+
+        verify(exactly = 1) { events.insert("primary", any()) }
+        assertThat(topicPublisher.messages.map { it.subject })
+            .containsExactly("Failed to Execute Club Locker Lambda", "Processed: Squash Match")
+            .inOrder()
     }
 
     private fun handle(vararg records: SesEmailRecord = arrayOf(createRecord())) {

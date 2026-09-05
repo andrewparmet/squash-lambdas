@@ -48,7 +48,7 @@ data class Slot(
     val startTime: Int,
     val endTime: Int,
     val startUtc: Long,
-    val type: String
+    val type: String = "unknown"
 )
 
 @Serializable

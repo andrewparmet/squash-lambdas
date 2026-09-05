@@ -51,6 +51,7 @@ variable "private_config" {
     reservation_schedule_key      = string
     reservation_times_key         = string
     token_key                     = string
+    calendar_expected_sender      = string
     token_update_expected_sender  = string
     token_update_expected_subject = string
   })

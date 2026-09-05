@@ -36,16 +36,33 @@ resource "aws_s3_bucket_public_access_block" "application" {
 resource "aws_s3_bucket_lifecycle_configuration" "application" {
   bucket = aws_s3_bucket.application.id
 
+  dynamic "rule" {
+    for_each = local.email_tenants
+
+    content {
+      id     = "expire-inbound-email-${rule.key}"
+      status = "Enabled"
+
+      filter {
+        prefix = "${trimsuffix(var.private_config.email_tenants[rule.key].inbound_email_prefix, "/")}/"
+      }
+
+      expiration {
+        days = 30
+      }
+
+      noncurrent_version_expiration {
+        noncurrent_days = 30
+      }
+    }
+  }
+
   rule {
-    id     = "expire-inbound-email"
+    id     = "expire-token-history"
     status = "Enabled"
 
     filter {
-      prefix = "emails/"
-    }
-
-    expiration {
-      days = 30
+      prefix = var.private_config.token_key
     }
 
     noncurrent_version_expiration {
