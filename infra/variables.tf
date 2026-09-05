@@ -4,6 +4,12 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
+variable "calendar_expected_sender" {
+  description = "Club Locker address that sends reservation notifications."
+  type        = string
+  default     = "no-reply@clublocker.com"
+}
+
 variable "resource_names" {
   description = "Private deployed resource names supplied through SSM Parameter Store."
   sensitive   = true
@@ -20,10 +26,10 @@ variable "resource_names" {
       reservation_daylight = string
       reservation_standard = string
     })
-    ses_receipt_rules = map(object({
+    ses_receipt_rule = object({
       name  = string
       after = optional(string)
-    }))
+    })
     ses_receipt_rule_set = string
     table                = string
     topics = object({
@@ -41,17 +47,16 @@ variable "private_config" {
     club_locker_email               = string
     club_locker_name                = string
     google_calendar_credentials_key = string
+    inbound_email_prefix            = string
+    inbound_recipient               = string
     email_tenants = map(object({
-      google_calendar_id      = string
-      inbound_email_prefix    = string
-      inbound_recipients      = list(string)
-      parse_primary_recipient = string
+      forwarded_recipient = string
+      google_calendar_id  = string
     }))
     reservation_courts_key        = string
     reservation_schedule_key      = string
     reservation_times_key         = string
     token_key                     = string
-    calendar_expected_sender      = string
     token_update_expected_sender  = string
     token_update_expected_subject = string
   })

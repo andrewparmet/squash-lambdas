@@ -7,13 +7,14 @@ data class EmailNotificationConfig(
     val clubLocker: ClubLockerConfig,
     val googleCal: GoogleCalConfig,
     val sns: SnsConfig,
-    val parse: ParseConfig,
     val tokenUpdate: TokenUpdateConfig
 )
 
 @Serializable
 data class EmailRoutingConfig(
     val bucket: String,
+    val inboundEmailPrefix: String,
+    val inboundRecipient: String,
     val clubLockerEmail: String,
     val clubLockerTokenKey: String,
     val googleCalendarCredentialsKey: String,
@@ -37,13 +38,6 @@ data class EmailRoutingConfig(
                 creds = FileConfig(location = "s3", bucket = bucket, key = googleCalendarCredentialsKey)
             ),
             sns = SnsConfig(myTopicArn = notificationTopicArn),
-            parse =
-            ParseConfig(
-                primaryRecipient = tenant.primaryRecipient,
-                inboundEmailBucket = bucket,
-                inboundEmailPrefix = tenant.inboundEmailPrefix,
-                expectedSender = calendarExpectedSender
-            ),
             tokenUpdate =
             TokenUpdateConfig(
                 expectedSender = tokenUpdateExpectedSender,
@@ -56,9 +50,7 @@ data class EmailRoutingConfig(
 
 @Serializable
 data class EmailTenantConfig(
-    val inboundRecipients: List<String>,
-    val inboundEmailPrefix: String,
-    val primaryRecipient: String,
+    val forwardedRecipient: String,
     val googleCalendarId: String
 )
 
@@ -115,12 +107,4 @@ data class FileConfig(
     val bucket: String? = null,
     val key: String? = null,
     val fileName: String? = null
-)
-
-@Serializable
-data class ParseConfig(
-    val primaryRecipient: String,
-    val inboundEmailBucket: String,
-    val inboundEmailPrefix: String,
-    val expectedSender: String
 )

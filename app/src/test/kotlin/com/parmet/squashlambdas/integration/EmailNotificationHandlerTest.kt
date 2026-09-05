@@ -42,6 +42,8 @@ class EmailNotificationHandlerTest {
     private val routingConfig =
         EmailRoutingConfig(
             bucket = "test-bucket-name",
+            inboundEmailPrefix = "inbound",
+            inboundRecipient = "receiver@example.com",
             clubLockerEmail = "joecool@peanuts.com",
             clubLockerTokenKey = "clublocker-token.json",
             googleCalendarCredentialsKey = "google-credentials.json",
@@ -53,16 +55,12 @@ class EmailNotificationHandlerTest {
             mapOf(
                 "primary" to
                     EmailTenantConfig(
-                        inboundRecipients = listOf("receiver@example.com"),
-                        inboundEmailPrefix = "",
-                        primaryRecipient = "joecool@peanuts.com",
+                        forwardedRecipient = "joecool@peanuts.com",
                         googleCalendarId = "primary"
                     ),
                 "secondary" to
                     EmailTenantConfig(
-                        inboundRecipients = listOf("second-receiver@example.com"),
-                        inboundEmailPrefix = "secondary",
-                        primaryRecipient = "second-user@example.com",
+                        forwardedRecipient = "second-user@example.com",
                         googleCalendarId = "secondary"
                     )
             )
@@ -70,7 +68,7 @@ class EmailNotificationHandlerTest {
 
     @Test
     fun `react to a new reservation`() {
-        objectStorage.objects["test-object-key"] =
+        objectStorage.objects["inbound/test-object-key"] =
             getResourceAsString(ChangeSummaryTest::class, "reservationCreated").encodeToByteArray()
 
         handle()
@@ -86,23 +84,24 @@ class EmailNotificationHandlerTest {
     }
 
     @Test
-    fun `react when the primary recipient is forwarded`() {
-        objectStorage.objects["test-object-key"] =
+    fun `ignore X-Forwarded-To when routing`() {
+        objectStorage.objects["inbound/test-object-key"] =
             getResourceAsString(ChangeSummaryTest::class, "reservationCreated")
                 .replace(Regex("(?m)^To: joecool@peanuts\\.com\\r?$"), "To: intermediate@example.com")
                 .encodeToByteArray()
 
         handle()
 
-        verify { events.insert("primary", any()) }
+        verify(exactly = 0) { events.insert(any(), any()) }
         assertThat(topicPublisher.messages).hasSize(1)
+        assertThat(topicPublisher.messages.single().subject).isEqualTo("Failed to Execute Club Locker Lambda")
     }
 
     @Test
     fun `react to every record in an SES event`() {
         val email = getResourceAsString(ChangeSummaryTest::class, "reservationCreated").encodeToByteArray()
-        objectStorage.objects["first-object-key"] = email
-        objectStorage.objects["second-object-key"] = email
+        objectStorage.objects["inbound/first-object-key"] = email
+        objectStorage.objects["inbound/second-object-key"] = email
 
         handle(createRecord("first-object-key"), createRecord("second-object-key"))
 
@@ -111,21 +110,21 @@ class EmailNotificationHandlerTest {
     }
 
     @Test
-    fun `route by the SES envelope recipient`() {
-        objectStorage.objects["secondary/second-object-key"] =
+    fun `route by the original recipient`() {
+        objectStorage.objects["inbound/second-object-key"] =
             getResourceAsString(ChangeSummaryTest::class, "reservationCreated")
                 .replace("joecool@peanuts.com", "second-user@example.com")
                 .encodeToByteArray()
 
-        handle(createRecord("second-object-key", recipients = listOf("second-receiver@example.com")))
+        handle(createRecord("second-object-key"))
 
-        assertThat(objectStorage.readKeys).containsExactly("secondary/second-object-key")
+        assertThat(objectStorage.readKeys).containsExactly("inbound/second-object-key")
         verify { events.insert("secondary", any()) }
     }
 
     @Test
     fun `token update email stores token`() {
-        objectStorage.objects["test-object-key"] =
+        objectStorage.objects["inbound/test-object-key"] =
             getResourceAsString(this::class, "tokenUpdateEmail").encodeToByteArray()
 
         handle()
@@ -139,7 +138,7 @@ class EmailNotificationHandlerTest {
 
     @Test
     fun `reject unauthenticated token update without publishing its body`() {
-        objectStorage.objects["test-object-key"] =
+        objectStorage.objects["inbound/test-object-key"] =
             getResourceAsString(this::class, "tokenUpdateEmail").encodeToByteArray()
 
         handle(createRecord(dmarcStatus = "FAIL"))
@@ -158,8 +157,17 @@ class EmailNotificationHandlerTest {
     }
 
     @Test
+    fun `reject an unexpected SES recipient before retrieving its body`() {
+        handle(createRecord(recipients = listOf("unexpected@example.com")))
+
+        assertThat(objectStorage.readKeys).isEmpty()
+        verify(exactly = 0) { events.insert(any(), any()) }
+        assertThat(topicPublisher.messages).hasSize(1)
+    }
+
+    @Test
     fun `reject unauthenticated calendar email`() {
-        objectStorage.objects["test-object-key"] =
+        objectStorage.objects["inbound/test-object-key"] =
             getResourceAsString(ChangeSummaryTest::class, "reservationCreated").encodeToByteArray()
 
         handle(createRecord(dmarcStatus = "FAIL"))
@@ -170,11 +178,13 @@ class EmailNotificationHandlerTest {
 
     @Test
     fun `notify for an unroutable record and continue`() {
-        objectStorage.objects["test-object-key"] =
-            getResourceAsString(ChangeSummaryTest::class, "reservationCreated").encodeToByteArray()
+        val email = getResourceAsString(ChangeSummaryTest::class, "reservationCreated")
+        objectStorage.objects["inbound/unroutable"] =
+            email.replace(Regex("(?m)^To: joecool@peanuts\\.com\\r?$"), "To: unknown@example.com").encodeToByteArray()
+        objectStorage.objects["inbound/test-object-key"] = email.encodeToByteArray()
 
         handle(
-            createRecord("unroutable", recipients = listOf("unknown@example.com")),
+            createRecord("unroutable"),
             createRecord()
         )
 
@@ -210,7 +220,10 @@ class EmailNotificationHandlerTest {
 
     private fun configureHandler() =
         object : EmailNotificationHandler() {
-            override suspend fun loadRoutingConfig() =
+            override fun buildObjectStorage() =
+                objectStorage
+
+            override suspend fun loadRoutingConfig(objectStorage: ObjectStorage) =
                 routingConfig
 
             override fun buildGraph(config: EmailNotificationConfig) =

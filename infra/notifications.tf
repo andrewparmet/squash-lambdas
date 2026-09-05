@@ -21,8 +21,7 @@ data "aws_iam_policy_document" "ses_bucket" {
     sid     = "AllowSesReceiptRuleSet"
     actions = ["s3:PutObject"]
     resources = [
-      for tenant in values(var.private_config.email_tenants) :
-      "${aws_s3_bucket.application.arn}/${trimsuffix(tenant.inbound_email_prefix, "/")}/*"
+      "${aws_s3_bucket.application.arn}/${trimsuffix(var.private_config.inbound_email_prefix, "/")}/*"
     ]
 
     principals {
@@ -39,9 +38,7 @@ data "aws_iam_policy_document" "ses_bucket" {
     condition {
       test     = "ArnLike"
       variable = "AWS:SourceArn"
-      values = [
-        "arn:${data.aws_partition.current.partition}:ses:${var.aws_region}:${data.aws_caller_identity.current.account_id}:receipt-rule-set/${var.resource_names.ses_receipt_rule_set}:receipt-rule/*",
-      ]
+      values   = ["arn:${data.aws_partition.current.partition}:ses:${var.aws_region}:${data.aws_caller_identity.current.account_id}:receipt-rule-set/${var.resource_names.ses_receipt_rule_set}:receipt-rule/${var.resource_names.ses_receipt_rule.name}"]
     }
   }
 }
@@ -52,19 +49,17 @@ resource "aws_s3_bucket_policy" "application" {
 }
 
 resource "aws_ses_receipt_rule" "application" {
-  for_each = local.email_tenants
-
-  name          = var.resource_names.ses_receipt_rules[each.key].name
+  name          = var.resource_names.ses_receipt_rule.name
   rule_set_name = var.resource_names.ses_receipt_rule_set
-  after         = var.resource_names.ses_receipt_rules[each.key].after
+  after         = var.resource_names.ses_receipt_rule.after
   enabled       = true
   scan_enabled  = true
   tls_policy    = "Require"
-  recipients    = var.private_config.email_tenants[each.key].inbound_recipients
+  recipients    = [var.private_config.inbound_recipient]
 
   s3_action {
     bucket_name       = aws_s3_bucket.application.bucket
-    object_key_prefix = "${trimsuffix(var.private_config.email_tenants[each.key].inbound_email_prefix, "/")}/"
+    object_key_prefix = "${trimsuffix(var.private_config.inbound_email_prefix, "/")}/"
     position          = 1
   }
 
@@ -78,13 +73,11 @@ resource "aws_ses_receipt_rule" "application" {
 }
 
 resource "aws_lambda_permission" "email_receipt" {
-  for_each = local.email_tenants
-
-  statement_id   = "AllowExecutionFromSes-${each.key}"
+  statement_id   = "AllowExecutionFromSes"
   action         = "lambda:InvokeFunction"
   function_name  = aws_lambda_function.application["email_parser"].function_name
   qualifier      = aws_lambda_alias.live["email_parser"].name
   principal      = "ses.amazonaws.com"
-  source_arn     = "arn:${data.aws_partition.current.partition}:ses:${var.aws_region}:${data.aws_caller_identity.current.account_id}:receipt-rule-set/${var.resource_names.ses_receipt_rule_set}:receipt-rule/${var.resource_names.ses_receipt_rules[each.key].name}"
+  source_arn     = "arn:${data.aws_partition.current.partition}:ses:${var.aws_region}:${data.aws_caller_identity.current.account_id}:receipt-rule-set/${var.resource_names.ses_receipt_rule_set}:receipt-rule/${var.resource_names.ses_receipt_rule.name}"
   source_account = data.aws_caller_identity.current.account_id
 }

@@ -20,7 +20,7 @@ class EmailRetrieverTest {
         }
 
     @Test
-    fun `retrieveEmail includes forwarded recipients`() =
+    fun `retrieveEmail ignores forwarding headers`() =
         runTest {
             val email =
                 getResourceAsString(ChangeSummaryTest::class.java, "reservationCreated2")
@@ -28,18 +28,14 @@ class EmailRetrieverTest {
             val data = EmailRetriever(EmailReturningS3(email)).retrieveEmail("", "some-object-key")
 
             assertThat(data.recipients)
-                .containsExactly(
-                    "intermediate@example.com",
-                    "joecool@peanuts.com",
-                    "archived-contact@example.com",
-                ).inOrder()
+                .containsExactly("intermediate@example.com")
         }
 }
 
 fun emailData() =
     EmailData(
         "archived-contact@example.com",
-        listOf("joecool@peanuts.com", "archived-contact@example.com"),
+        listOf("joecool@peanuts.com"),
         "Tennis & Racquet Club Reservation Confirmation",
         """
             Hello Joe Cool, A reservation including you has been made via the Tennis & Racquet

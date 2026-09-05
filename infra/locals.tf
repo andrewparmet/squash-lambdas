@@ -1,6 +1,5 @@
 locals {
   shared_function_keys = toset(["monitor", "reservation"])
-  email_tenants        = toset(keys(nonsensitive(var.private_config.email_tenants)))
   function_keys        = setunion(local.shared_function_keys, ["email_parser"])
   email_config_key     = "config/email-routing.json"
   function_names = {
@@ -62,7 +61,7 @@ locals {
         "${aws_s3_bucket.application.arn}/${local.email_config_key}",
         "${aws_s3_bucket.application.arn}/${var.private_config.google_calendar_credentials_key}",
       ],
-      [for tenant in values(var.private_config.email_tenants) : "${aws_s3_bucket.application.arn}/${trimsuffix(tenant.inbound_email_prefix, "/")}/*"],
+      ["${aws_s3_bucket.application.arn}/${trimsuffix(var.private_config.inbound_email_prefix, "/")}/*"],
       ["${aws_s3_bucket.application.arn}/${var.private_config.token_key}"]
     )
     monitor = [
@@ -78,19 +77,19 @@ locals {
 
   email_routing_config = {
     bucket                       = aws_s3_bucket.application.bucket
+    inboundEmailPrefix           = var.private_config.inbound_email_prefix
+    inboundRecipient             = var.private_config.inbound_recipient
     clubLockerEmail              = var.private_config.club_locker_email
     clubLockerTokenKey           = var.private_config.token_key
     googleCalendarCredentialsKey = var.private_config.google_calendar_credentials_key
     notificationTopicArn         = aws_sns_topic.notifications.arn
-    calendarExpectedSender       = var.private_config.calendar_expected_sender
+    calendarExpectedSender       = var.calendar_expected_sender
     tokenUpdateExpectedSender    = var.private_config.token_update_expected_sender
     tokenUpdateExpectedSubject   = var.private_config.token_update_expected_subject
     tenants = {
       for tenant_id, tenant in var.private_config.email_tenants : tenant_id => {
+        forwardedRecipient = tenant.forwarded_recipient
         googleCalendarId   = tenant.google_calendar_id
-        inboundEmailPrefix = tenant.inbound_email_prefix
-        inboundRecipients  = tenant.inbound_recipients
-        primaryRecipient   = tenant.parse_primary_recipient
       }
     }
   }

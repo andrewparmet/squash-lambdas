@@ -16,7 +16,6 @@ import com.google.auth.http.HttpCredentialsAdapter
 import com.google.auth.oauth2.GoogleCredentials
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -58,7 +57,7 @@ private class UserProvisioner(private val repositoryDirectory: Path) {
             val tenants = privateConfig.requiredObject("email_tenants")
             val existingTenant =
                 tenants.entries.singleOrNull { (_, value) ->
-                    val recipient = value.jsonObject.requiredString("parse_primary_recipient")
+                    val recipient = value.jsonObject.requiredString("forwarded_recipient")
                     recipient.equals(normalizedForwardedRecipient, ignoreCase = true)
                 }
             val tenantId = existingTenant?.key ?: normalizedForwardedRecipient.sha256().take(12)
@@ -76,7 +75,6 @@ private class UserProvisioner(private val repositoryDirectory: Path) {
                 if (existingTenant == null) {
                     addTenant(
                         configuration,
-                        resourceNames,
                         privateConfig,
                         tenants,
                         tenantId,
@@ -90,8 +88,7 @@ private class UserProvisioner(private val repositoryDirectory: Path) {
                 bootstrap.update(loadedBootstrap, updatedConfiguration)
             }
 
-            val receiver = updatedConfiguration.requiredObject("private_config").requiredObject("email_tenants")
-                .getValue(tenantId).jsonObject.requiredStringList("inbound_recipients").single()
+            val receiver = updatedConfiguration.requiredObject("private_config").requiredString("inbound_recipient")
             println("Forward matching email to $receiver")
         } finally {
             aws.close()
@@ -102,7 +99,6 @@ private class UserProvisioner(private val repositoryDirectory: Path) {
 
     private fun addTenant(
         configuration: JsonObject,
-        resourceNames: JsonObject,
         privateConfig: JsonObject,
         tenants: JsonObject,
         tenantId: String,
@@ -110,34 +106,16 @@ private class UserProvisioner(private val repositoryDirectory: Path) {
         calendarId: String
     ): JsonObject {
         check(tenantId !in tenants) { "The generated tenant ID is already in use" }
-        val existingTenant = tenants.values.first().jsonObject
-        val existingReceiver = existingTenant.requiredStringList("inbound_recipients").single()
-        val receiver =
-            existingReceiver.substringBefore('@') + "+" + tenantId + "@" + existingReceiver.substringAfter('@')
-        val receiptRules = resourceNames.requiredObject("ses_receipt_rules")
         val newTenant =
             JsonObject(
                 mapOf(
+                    "forwarded_recipient" to JsonPrimitive(forwardedRecipient),
                     "google_calendar_id" to JsonPrimitive(calendarId),
-                    "inbound_email_prefix" to JsonPrimitive("emails/$tenantId"),
-                    "inbound_recipients" to JsonArray(listOf(JsonPrimitive(receiver))),
-                    "parse_primary_recipient" to JsonPrimitive(forwardedRecipient)
                 )
             )
         val updatedPrivateConfig =
             JsonObject(privateConfig + ("email_tenants" to JsonObject(tenants + (tenantId to newTenant))))
-        val receiptRuleBase = receiptRules.values.first().jsonObject.requiredString("name")
-        val newReceiptRule =
-            JsonObject(
-                mapOf(
-                    "name" to JsonPrimitive(resourceName(receiptRuleBase, tenantId)),
-                    "after" to JsonPrimitive(receiptRules.values.last().jsonObject.requiredString("name"))
-                )
-            )
-        val updatedReceiptRules = JsonObject(receiptRules + (tenantId to newReceiptRule))
-        val updatedResourceNames =
-            resourceNames.with("ses_receipt_rules", updatedReceiptRules)
-        return configuration.with("private_config", updatedPrivateConfig).with("resource_names", updatedResourceNames)
+        return configuration.with("private_config", updatedPrivateConfig)
     }
 
     private suspend fun calendarId(calendar: Calendar, user: String): String {
@@ -202,14 +180,8 @@ private class UserProvisioner(private val repositoryDirectory: Path) {
     }
 }
 
-private fun JsonObject.requiredStringList(name: String): List<String> =
-    getValue(name).let { value -> (value as JsonArray).map { it.jsonPrimitive.content } }
-
 private fun JsonObject.with(name: String, value: JsonElement): JsonObject =
     JsonObject(this + (name to value))
-
-private fun resourceName(base: String, tenantId: String): String =
-    "${base.take(64 - tenantId.length - 1).trimEnd('-')}-$tenantId"
 
 private fun String.sha256(): String =
     MessageDigest.getInstance("SHA-256").digest(toByteArray()).joinToString("") { "%02x".format(it) }

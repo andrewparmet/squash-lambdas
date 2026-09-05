@@ -26,10 +26,7 @@ private fun MimeMessage.senderAddress() =
     (from?.firstOrNull() as? InternetAddress)?.address?.lowercase().orEmpty()
 
 private fun MimeMessage.recipients() =
-    (
-        allRecipients.orEmpty().asSequence() +
-            getHeader("X-Forwarded-To").orEmpty().asSequence()
-                .flatMap { InternetAddress.parseHeader(it, false).asSequence() }
-        ).mapNotNull { (it as? InternetAddress)?.address?.lowercase() }
+    allRecipients.orEmpty().asSequence()
+        .mapNotNull { (it as? InternetAddress)?.address?.lowercase() }
         .distinct()
         .toList()
