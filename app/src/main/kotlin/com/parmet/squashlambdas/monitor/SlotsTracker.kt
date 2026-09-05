@@ -32,6 +32,8 @@ class SlotsTracker(
 
         slotStorageManager.save(date, slotsTaken)
 
-        return lastSlotsTaken - slotsTaken
+        return lastSlotsTaken.filter { previous ->
+            slotsTaken.none { current -> current.court == previous.court && current.startUtc == previous.startUtc }
+        }
     }
 }
