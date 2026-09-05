@@ -12,22 +12,13 @@ that provide an easy integration point for this Lambda.
 This Lambda uses Amazon Simple Email Service, S3, SNS, and the Google Calendar API to parse incoming reservation emails from
 Club Locker and manage their associated events in Google Calendars that can be shared with other users.
 
-Each user configuration has two separate address lists:
-
-- Forwarded recipient: the Gmail address that receives the original Club Locker message. Pass it as
-  `-PforwardedRecipient`; the Lambda uses the preserved `To` or `Cc` header to select the user's calendar.
-- Calendar editors: addresses that receive calendar edit access. Pass them as a comma-separated `-PshareWith` value. They do
-  not affect email routing. Include the forwarded recipient here if it also needs calendar access.
-
-Every Gmail account forwards Club Locker messages to the same SES receiver. The provisioning command prints that shared
-receiver. The Club Locker login and token are also shared application-wide rather than configured per user.
-
 ### Architecture overview
 
-1. Club Locker sends a reservation message to the forwarded recipient.
-2. Gmail forwards the message to the shared SES receiver.
-3. SES stores the message in S3 and invokes the email Lambda.
-4. The Lambda routes the message to the user's Google Calendar and sends an operational notification through SNS.
+1. Club Locker sends the user an email.
+2. The user forwards that email to SES.
+3. SES stores the email in S3 for the Lambda to process.
+4. The Lambda updates the user's Google Calendar.
+5. The Lambda sends a notification indicating whether it succeeded or failed.
 
 Provision another user with:
 
