@@ -5,7 +5,6 @@ import com.parmet.squashlambdas.activity.Activity
 import com.parmet.squashlambdas.activity.Clinic
 import com.parmet.squashlambdas.activity.Court
 import com.parmet.squashlambdas.activity.Match
-import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.email.EmailRetriever
 import com.parmet.squashlambdas.testutil.EmailReturningS3
 import com.parmet.squashlambdas.testutil.getResourceAsString
@@ -59,7 +58,7 @@ class ChangeSummaryTest {
                         Instant.parse("2018-03-26T22:45:00Z"),
                         Instant.parse("2018-03-26T23:30:00Z"),
                         "emails/some-file-name",
-                        playerSet("Philipp Rimmler")
+                        emptySet()
                     )
                 )
             )
@@ -93,7 +92,7 @@ class ChangeSummaryTest {
                         Instant.parse("2018-05-31T23:30:00Z"),
                         Instant.parse("2018-06-01T00:15:00Z"),
                         "emails/some-file-name",
-                        playerSet("Stephen Santulli")
+                        emptySet()
                     )
                 )
             )
@@ -110,7 +109,7 @@ class ChangeSummaryTest {
                         Instant.parse("2018-06-29T00:15:00Z"),
                         Instant.parse("2018-06-29T01:00:00Z"),
                         "emails/some-file-name",
-                        playerSet("Aaron bhole (Guest)")
+                        emptySet()
                     )
                 )
             )
@@ -127,7 +126,7 @@ class ChangeSummaryTest {
                         Instant.parse("2018-06-12T22:45:00Z"),
                         Instant.parse("2018-06-12T23:30:00Z"),
                         "emails/some-file-name",
-                        playerSet("James Wall")
+                        emptySet()
                     )
                 )
             )
@@ -144,7 +143,7 @@ class ChangeSummaryTest {
                         Instant.parse("2018-03-28T22:45:00Z"),
                         Instant.parse("2018-03-28T23:30:00Z"),
                         "emails/some-file-name",
-                        playerSet("Bruce Chafee")
+                        emptySet()
                     )
                 )
             )
@@ -195,7 +194,7 @@ class ChangeSummaryTest {
                         Instant.parse("2018-06-28T23:30:00Z"),
                         Instant.parse("2018-06-29T00:15:00Z"),
                         "emails/some-file-name",
-                        playerSet("Paul Cathcart")
+                        emptySet()
                     )
                 )
             )
@@ -212,7 +211,7 @@ class ChangeSummaryTest {
                         Instant.parse("2018-04-25T22:00:00Z"),
                         Instant.parse("2018-04-25T22:45:00Z"),
                         "emails/some-file-name",
-                        playerSet("Bruce Chafee")
+                        emptySet()
                     )
                 )
             )
@@ -229,7 +228,7 @@ class ChangeSummaryTest {
                         Instant.parse("2023-01-31T23:00:00Z"),
                         Instant.parse("2023-01-31T23:45:00Z"),
                         "emails/some-file-name",
-                        playerSet("Brad Ursprung")
+                        emptySet()
                     )
                 )
             )
@@ -283,7 +282,7 @@ class ChangeSummaryTest {
                         Instant.parse("2018-10-11T23:30:00Z"),
                         Instant.parse("2018-10-12T00:15:00Z"),
                         "emails/some-file-name",
-                        playerSet("Elisabeth Hill")
+                        emptySet()
                     )
                 )
             )
@@ -333,7 +332,7 @@ class ChangeSummaryTest {
                         Instant.parse("2019-07-09T23:30:00Z"),
                         Instant.parse("2019-07-10T00:30:00Z"),
                         "emails/some-file-name",
-                        playerSet("Brayden Minahan")
+                        emptySet()
                     )
                 )
             )
@@ -384,7 +383,7 @@ class ChangeSummaryTest {
                         Instant.parse("2020-01-30T21:30:00Z"),
                         Instant.parse("2020-01-30T22:30:00Z"),
                         "emails/some-file-name",
-                        playerSet("Andrew Peabody")
+                        emptySet()
                     )
                 )
             )
@@ -463,9 +462,6 @@ class ChangeSummaryTest {
 
     private fun summary(action: Action, activity: Activity) =
         ChangeSummary(action, activity)
-
-    private fun playerSet(name: String) =
-        setOf(Player(name = name))
 }
 
 fun emailFromBody(fileName: String) =

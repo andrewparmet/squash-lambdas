@@ -38,9 +38,7 @@ data class Match(
                 startAndEnd.start,
                 startAndEnd.end,
                 email.origin,
-                OtherPlayersParser.parse(email.body)
-                    .map { Player(name = it) }
-                    .toSet()
+                emptySet()
             )
         }
     }
