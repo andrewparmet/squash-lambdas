@@ -18,16 +18,13 @@ data class Match(
     val players: Set<Player>
 ) : AbstractActivity() {
     override fun summary() =
-        "${court.sport} ${renderOtherPlayers()}"
+        "${court.sport} ${renderPlayers()}"
 
-    private fun otherPlayers() =
-        players.filter { it.name != "Parmet, Andrew" && it.name != "Repository Author" }
-
-    private fun renderOtherPlayers() =
-        if (otherPlayers().isEmpty()) {
+    private fun renderPlayers() =
+        if (players.isEmpty()) {
             "Match"
         } else {
-            "v. ${otherPlayers().joinToString(", ") { it.name!! }}"
+            "v. ${players.joinToString(", ") { it.name!! }}"
         }
 
     companion object {

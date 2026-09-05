@@ -32,14 +32,14 @@ class NotifierTest {
             notifier.publishSuccessfulParse(
                 ChangeSummary(
                     Action.Create,
-                    Match(Court.Court1, Instant.now(), Instant.now(), "", setOf(Player(name = "Repository Author")))
+                    Match(Court.Court1, Instant.now(), Instant.now(), "", setOf(Player(name = "Opponent Player")))
                 )
             )
 
             assertThat(received).hasSize(1)
             assertThat(received[0].topicArn).isEqualTo("some-arn")
-            assertThat(received[0].subject).isEqualTo("Processed: Squash Match")
-            assertThat(received[0].message).contains("Repository Author")
+            assertThat(received[0].subject).isEqualTo("Processed: Squash v. Opponent Player")
+            assertThat(received[0].message).contains("Opponent Player")
             assertThat(received[0].message).contains("Court 1")
             assertThat(received[0].message).contains("Squash")
             assertThat(received[0].message).contains(Instant.now().atZone(ZoneOffset.UTC).toLocalDate().toString())
