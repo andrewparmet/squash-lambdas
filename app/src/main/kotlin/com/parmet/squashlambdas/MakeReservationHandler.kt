@@ -1,0 +1,135 @@
+package com.parmet.squashlambdas
+
+import com.amazonaws.services.lambda.runtime.Context
+import com.amazonaws.services.lambda.runtime.RequestHandler
+import com.amazonaws.services.lambda.runtime.events.ScheduledEvent
+import com.parmet.squashlambdas.Context.addToContext
+import com.parmet.squashlambdas.activity.Court
+import com.parmet.squashlambdas.activity.Player
+import com.parmet.squashlambdas.activity.fromPrettyName
+import com.parmet.squashlambdas.clublocker.ClubLockerClient
+import com.parmet.squashlambdas.di.MakeReservationGraph
+import com.parmet.squashlambdas.notify.Notifier
+import com.parmet.squashlambdas.notify.toJsonElement
+import com.parmet.squashlambdas.reserve.ReservationMaker
+import com.parmet.squashlambdas.reserve.ReservationMaker.Result
+import com.parmet.squashlambdas.reserve.Schedule
+import com.parmet.squashlambdas.reserve.TimeFilter
+import com.parmet.squashlambdas.reserve.mapNonEmptyLines
+import com.parmet.squashlambdas.util.FileLoader
+import com.parmet.squashlambdas.util.HasNotifier
+import com.parmet.squashlambdas.util.SnapStartInitializer
+import com.parmet.squashlambdas.util.withErrorHandling
+import dev.zacsweers.metro.HasMemberInjections
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Named
+import dev.zacsweers.metro.createGraphFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.JsonPrimitive
+import java.io.InputStream
+import java.time.LocalDate
+import java.time.LocalTime
+
+private val logger = KotlinLogging.logger { }
+
+@HasMemberInjections
+open class MakeReservationHandler :
+    RequestHandler<ScheduledEvent, Any>,
+    HasNotifier {
+
+    @Inject
+    lateinit var config: MakeReservationConfig
+
+    @Inject
+    lateinit var fileLoader: FileLoader
+
+    @Inject
+    @Named("myNotifier")
+    override lateinit var notifier: Notifier
+
+    @Inject
+    lateinit var client: ClubLockerClient
+
+    @Inject
+    lateinit var hostPlayer: Player
+
+    private val graph by lazy { buildGraph() }
+    private val initializer = SnapStartInitializer { graph.inject(this) }
+
+    private fun buildGraph(): MakeReservationGraph =
+        createGraphFactory<MakeReservationGraph.Factory>()
+            .create("production-make-reservation-handler.conf")
+
+    final override fun handleRequest(input: ScheduledEvent, context: Context) {
+        runBlocking {
+            withErrorHandling(input) {
+                initializer.initialize()
+                doHandleRequest(input).also { logger.info { "Returning result: $it" } }
+            }
+        }
+    }
+
+    private suspend fun doHandleRequest(input: ScheduledEvent) {
+        val timeFilter = TimeFilter(input.time)
+        val requestDate = timeFilter.requestDate
+
+        addToContext("requestDate", JsonPrimitive(requestDate.toString()))
+
+        val reservationTimeFiltered = timeFilter.filterBasedOnBostonTime()
+        if (!reservationTimeFiltered.shouldMakeReservation()) {
+            logger.info { "Not making a reservation: ${reservationTimeFiltered.reason}" }
+            reservationTimeFiltered.reason!!
+        } else {
+            processSchedule(requestDate)
+        }
+    }
+
+    private suspend fun processSchedule(requestDate: LocalDate): Any {
+        val schedule = getSchedule()
+        return if (schedule.shouldMakeReservation(requestDate)) {
+            makeReservation(requestDate)
+        } else {
+            logger.info { "No reservation requested for $requestDate ($schedule)" }
+            "No reservation requested for $requestDate"
+        }
+    }
+
+    private suspend fun makeReservation(requestDate: LocalDate): Any {
+        logger.info { "Attempting to book a reservation for $requestDate" }
+
+        val result =
+            ReservationMaker(
+                client,
+                ReservationMaker.Options(
+                    hostPlayer,
+                    getPreferredCourts(),
+                    getPreferredTimes(),
+                )
+            ).makeReservation(requestDate)
+
+        addToContext("result", result.toJsonElement())
+
+        when (result) {
+            is Result.Success -> notifier.publishSuccessfulReservation(result)
+            is Result.Failure -> error("error making reservation: $result")
+        }
+
+        return result
+    }
+
+    suspend fun getSchedule() =
+        Schedule.fromStream(fileLoader.streamFile(config.schedule))
+
+    suspend fun getPreferredCourts() =
+        getPreferredCourts(fileLoader.streamFile(config.courts))
+
+    suspend fun getPreferredTimes() =
+        getPreferredTimes(fileLoader.streamFile(config.times))
+}
+
+fun getPreferredCourts(stream: InputStream) =
+    stream.mapNonEmptyLines { Court.fromPrettyName(it) }
+
+fun getPreferredTimes(stream: InputStream) =
+    stream.mapNonEmptyLines { LocalTime.parse(it) }

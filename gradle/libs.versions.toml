@@ -1,8 +1,9 @@
 [versions]
-aws-v2 = "2.51.3"
+aws-kotlin = "1.8.47"
 aws-lambda-core = "1.4.0"
 aws-lambda-events = "3.16.1"
 buildConfig = "6.0.10"
+clikt = "5.1.0"
 crac = "1.5.0"
 google-calendar = "v3-rev20260708-2.0.0"
 google-oauth2-http = "1.50.0"
@@ -13,6 +14,7 @@ jsoup = "1.23.1"
 junit = "6.1.0"
 kotlin = "2.4.10"
 kotlinLogging = "8.0.4"
+kotlinxCoroutines = "1.11.0"
 kotlinxSerialization = "1.11.0"
 metro = "1.4.1"
 mockk = "1.14.11"
@@ -20,7 +22,6 @@ reflections = "0.10.2"
 shadow = "9.6.1"
 slf4j = "2.0.18"
 spotless = "8.9.0"
-testcontainers = "2.0.5"
 truth = "1.4.5"
 
 [plugins]
@@ -28,17 +29,22 @@ buildConfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildConfig
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
+awsKotlinDynamoDbMapper = { id = "aws.sdk.kotlin.hll.dynamodbmapper.schema.generator", version.ref = "aws-kotlin" }
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 [libraries]
-aws-bom = { module = "software.amazon.awssdk:bom", version.ref = "aws-v2" }
-aws-dynamodb = { module = "software.amazon.awssdk:dynamodb" }
+clikt = { module = "com.github.ajalt.clikt:clikt", version.ref = "clikt" }
+aws-kotlin-dynamodb = { module = "aws.sdk.kotlin:dynamodb", version.ref = "aws-kotlin" }
+aws-kotlin-dynamodb-mapper = { module = "aws.sdk.kotlin:dynamodb-mapper", version.ref = "aws-kotlin" }
+aws-kotlin-dynamodb-mapper-annotations = { module = "aws.sdk.kotlin:dynamodb-mapper-annotations", version.ref = "aws-kotlin" }
+aws-kotlin-lambda = { module = "aws.sdk.kotlin:lambda", version.ref = "aws-kotlin" }
+aws-kotlin-resource-groups-tagging-api = { module = "aws.sdk.kotlin:resourcegroupstaggingapi", version.ref = "aws-kotlin" }
+aws-kotlin-s3 = { module = "aws.sdk.kotlin:s3", version.ref = "aws-kotlin" }
+aws-kotlin-sns = { module = "aws.sdk.kotlin:sns", version.ref = "aws-kotlin" }
+aws-kotlin-ssm = { module = "aws.sdk.kotlin:ssm", version.ref = "aws-kotlin" }
 aws-lambda-core = { module = "com.amazonaws:aws-lambda-java-core", version.ref = "aws-lambda-core" }
 aws-lambda-events = { module = "com.amazonaws:aws-lambda-java-events", version.ref = "aws-lambda-events" }
-aws-s3 = { module = "software.amazon.awssdk:s3" }
-aws-sns = { module = "software.amazon.awssdk:sns" }
-aws-url-connection-client = { module = "software.amazon.awssdk:url-connection-client" }
 crac = { module = "org.crac:crac", version.ref = "crac" }
 google-calendar = { module = "com.google.apis:google-api-services-calendar", version.ref = "google-calendar" }
 google-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version.ref = "google-oauth2-http" }
@@ -48,12 +54,13 @@ jakarta-mail = { module = "com.sun.mail:jakarta.mail", version.ref = "jakarta-ma
 junit = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 junit-platformLauncher = { module = "org.junit.platform:junit-platform-launcher" }
 kotlinLogging = { module = "io.github.oshai:kotlin-logging", version.ref = "kotlinLogging" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-jdk8 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 kotlinx-serialization-hocon = { module = "org.jetbrains.kotlinx:kotlinx-serialization-hocon", version.ref = "kotlinxSerialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 reflections = { module = "org.reflections:reflections", version.ref = "reflections" }
 slf4j-jcl = { module = "org.slf4j:jcl-over-slf4j", version.ref = "slf4j" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
-testcontainers-localstack = { module = "org.testcontainers:testcontainers-localstack", version.ref = "testcontainers" }
-testcontainers-junit = { module = "org.testcontainers:testcontainers-junit-jupiter", version.ref = "testcontainers" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }

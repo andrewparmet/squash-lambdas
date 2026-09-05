@@ -1,0 +1,245 @@
+package com.parmet.squashlambdas.clublocker
+
+import com.google.common.collect.ImmutableBiMap
+import com.google.common.net.HttpHeaders.ACCEPT
+import com.google.common.net.HttpHeaders.AUTHORIZATION
+import com.google.common.net.HttpHeaders.CONTENT_TYPE
+import com.google.common.net.MediaType.JSON_UTF_8
+import com.parmet.squashlambdas.activity.Court
+import com.parmet.squashlambdas.activity.Court.Court1
+import com.parmet.squashlambdas.activity.Court.Court2
+import com.parmet.squashlambdas.activity.Court.Court3
+import com.parmet.squashlambdas.activity.Court.Court5
+import com.parmet.squashlambdas.activity.Court.Court6
+import com.parmet.squashlambdas.activity.Court.Court7
+import com.parmet.squashlambdas.activity.Court.FitnessClasses
+import com.parmet.squashlambdas.activity.Court.RacquetsCourt
+import com.parmet.squashlambdas.activity.Court.TennisCourt
+import com.parmet.squashlambdas.activity.Match
+import com.parmet.squashlambdas.json.Json
+import com.parmet.squashlambdas.reserve.slot
+import com.parmet.squashlambdas.util.inBoston
+import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.future.await
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import org.jsoup.Jsoup
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpRequest.BodyPublishers
+import java.net.http.HttpResponse
+import java.net.http.HttpResponse.BodyHandlers
+import java.time.LocalDate
+
+internal class ClubLockerClientImpl(
+    private val tokenManager: TokenManager
+) : ClubLockerClient {
+    private val logger = KotlinLogging.logger { }
+
+    private val httpClient = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NEVER).build()
+    private val baseUrl = "https://api.ussquash.com"
+    private val tennisAndRacquetClubId = 1413
+    private val resource = "$baseUrl/resources/res"
+    private val clubResource = "$resource/clubs/$tennisAndRacquetClubId"
+
+    private lateinit var directory: Directory
+
+    override fun init() {
+        directory = Directory(this)
+    }
+
+    override suspend fun user(): UserResp =
+        get("$resource/user")
+
+    override suspend fun courts(): List<CourtResp> =
+        get("$clubResource/courts")
+
+    override suspend fun directory(): List<User> =
+        get("$clubResource/players/directory")
+
+    override suspend fun slotsTaken(from: LocalDate, to: LocalDate): List<Slot> =
+        get("$clubResource/slots_taken/from/$from/to/$to")
+
+    private suspend fun responseBody(builder: HttpRequest.Builder, requestBody: String? = null): String {
+        val response = response(builder, requestBody)
+        val code = response.statusCode()
+        val respBody = response.body()
+        logger.info { "Received response: $code, $respBody" }
+        if (code >= 400) {
+            try {
+                throw ClubLockerHttpException(code, Jsoup.parse(respBody).wholeText().replace("\n", ";"))
+            } catch (ex: Exception) {
+                logger.info(ex) { "Error while parsing response error body" }
+                throw ClubLockerHttpException(code, respBody.replace("\n", ";"))
+            }
+        }
+        return respBody
+    }
+
+    private suspend fun response(builder: HttpRequest.Builder, requestBody: String? = null): HttpResponse<String> {
+        val request =
+            builder
+                .apply {
+                    if (requestBody != null) {
+                        POST(BodyPublishers.ofString(requestBody))
+                    }
+                }
+                .build()
+        logger.info { "Performing request: $request, body: $requestBody" }
+        return httpClient.sendAsync(request, BodyHandlers.ofString()).await()
+    }
+
+    private suspend inline fun <reified T> get(resource: String): T =
+        Json.decode(responseBody(HttpRequest.newBuilder(URI(resource)).authorized()))
+
+    override suspend fun makeReservation(match: Match): ReservationResp {
+        try {
+            val response =
+                response(
+                    HttpRequest.newBuilder()
+                        .uri(URI("$clubResource/reservations"))
+                        .authorized()
+                        .header(CONTENT_TYPE, JSON_UTF_8.toString()),
+                    match.toReservationRequest().toJson(),
+                )
+
+            val code = response.statusCode()
+            return parseReservationResponse(code, response.body(), match)
+        } catch (t: Throwable) {
+            return ReservationResp.Failure(t, match)
+        }
+    }
+
+    private suspend fun Match.toReservationRequest(): ReservationReq =
+        ReservationReq(
+            tennisAndRacquetClubId,
+            court.clubLockerId,
+            start.inBoston().toLocalDate(),
+            com.parmet.squashlambdas.reserve.Slot(
+                start.inBoston().toLocalTime(),
+                end.inBoston().toLocalTime(),
+            ),
+            players.map {
+                val id = directory.idForPlayer(it)
+                if (id != null) {
+                    logger.info { "Found id $id for $it" }
+                    Player.member(id, true, it.name!!)
+                } else {
+                    Player.guest(it.name!!)
+                }
+            },
+        )
+
+    private val Court.clubLockerId: Int
+        get() = COURTS_BY_ID.inverse().getValue(this)
+
+    private suspend fun HttpRequest.Builder.authorized() =
+        header(AUTHORIZATION, "Bearer ${tokenManager.getToken()}")
+            .header(ACCEPT, JSON_UTF_8.toString())
+}
+
+internal fun parseReservationResponse(code: Int, responseBody: String, match: Match): ReservationResp {
+    val body = Json.parse(responseBody).jsonObject
+    return if (code == 200) {
+        if (body.containsKey("createDenied")) {
+            ReservationResp.Error(code, body.getValue("reason").jsonPrimitive.content, match)
+        } else {
+            check(body.containsKey("id")) { "Deduced success but body contained no id: $body" }
+            ReservationResp.Success(body.getValue("id").jsonPrimitive.int, match)
+        }
+    } else {
+        ReservationResp.Error(code, body["error"].asMessage(), match)
+    }
+}
+
+private fun JsonElement?.asMessage(): String? =
+    when (this) {
+        null, JsonNull -> null
+        is JsonPrimitive -> content
+        is JsonObject -> this["message"].asMessage() ?: toString()
+        else -> toString()
+    }
+
+val COURTS_BY_ID =
+    ImmutableBiMap.builder<Int, Court>()
+        .put(1411, Court1)
+        .put(1688, Court2)
+        .put(1689, Court3)
+        .put(1692, Court5)
+        .put(1693, Court6)
+        .put(1694, Court7)
+        .put(1690, TennisCourt)
+        .put(1691, RacquetsCourt)
+        .put(2813, FitnessClasses)
+        .build()
+
+@Suppress("UNUSED")
+data class ReservationReq(
+    val clubId: Int,
+    val courtId: Int,
+    val localDate: LocalDate,
+    val timeSlot: com.parmet.squashlambdas.reserve.Slot,
+    val players: List<Player>
+) {
+    fun toJson() =
+        Json.encode(
+            ReservationRequestPayload(
+                clubId = clubId,
+                courtId = courtId,
+                players = players,
+                date = localDate.toString(),
+                slot = timeSlot.slot
+            )
+        )
+}
+
+@Suppress("UNUSED")
+@Serializable
+class Player(
+    val type: String,
+    val id: Int?,
+    val isMyself: Boolean,
+    val text: String?,
+    val guestName: String?
+) {
+    val confirmed = false
+
+    companion object {
+        fun member(id: Int, isMyself: Boolean, text: String) =
+            Player("member", id, isMyself, text, null)
+
+        fun guest(name: String) =
+            Player("guest", null, false, null, name)
+    }
+}
+
+@Serializable
+private data class ReservationRequestPayload(
+    val clubId: Int,
+    val courtId: Int,
+    val players: List<Player>,
+    val date: String,
+    val slot: String,
+    val type: String = "match",
+    val isPrivate: Boolean = false,
+    val notes: List<String> = emptyList(),
+    val applyUserRestrictionsForAdmin: Boolean = false,
+    val payingForAll: Boolean = false,
+    @SerialName("MatchProperties")
+    val matchProperties: MatchProperties = MatchProperties()
+)
+
+@Serializable
+private data class MatchProperties(
+    val restrictJoinByRating: Boolean = false,
+    val matchType: Int = 1,
+    val customMatchType: Int = 144
+)

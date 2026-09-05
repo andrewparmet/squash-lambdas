@@ -1,0 +1,52 @@
+package com.parmet.squashlambdas.email
+
+import com.google.common.truth.Truth.assertThat
+import com.parmet.squashlambdas.cal.ChangeSummaryTest
+import com.parmet.squashlambdas.testutil.EmailReturningS3
+import com.parmet.squashlambdas.testutil.getResourceAsString
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Test
+
+class EmailRetrieverTest {
+    @Test
+    fun `retrieveEmail properly deserializes S3 object`() =
+        runTest {
+            val s3 =
+                EmailReturningS3(
+                    getResourceAsString(ChangeSummaryTest::class.java, "reservationCreated2"),
+                )
+            val data = EmailRetriever(s3).retrieveEmail("", "some-object-key")
+            assertThat(data).isEqualTo(emailData())
+        }
+
+    @Test
+    fun `retrieveEmail includes forwarded recipients`() =
+        runTest {
+            val email =
+                getResourceAsString(ChangeSummaryTest::class.java, "reservationCreated2")
+                    .replace(Regex("(?m)^To: joecool@peanuts\\.com\\r?$"), "To: intermediate@example.com")
+            val data = EmailRetriever(EmailReturningS3(email)).retrieveEmail("", "some-object-key")
+
+            assertThat(data.recipients)
+                .containsExactly(
+                    "intermediate@example.com",
+                    "joecool@peanuts.com",
+                    "redacted@example.com",
+                ).inOrder()
+        }
+}
+
+fun emailData() =
+    EmailData(
+        "Club Locker <no-reply@clublocker.com>",
+        listOf("joecool@peanuts.com", "redacted@example.com"),
+        "Tennis & Racquet Club Reservation Confirmation",
+        """
+            Hello Repository Author, A reservation including you has been made via the Tennis & Racquet
+            Club court reservation system. Reservation details: Court: Court #7 - Hardball
+            Date: Wednesday, March 28th 2018 Time: 09:00 PM to 09:45 PM To cancel your spot
+            or the whole reservation please log into Club Locker and use the My Reservations
+            area.
+        """.trimIndent().replace("\n", " "),
+        "some-object-key",
+    )
