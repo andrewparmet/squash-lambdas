@@ -33,6 +33,34 @@ resource "aws_s3_bucket_public_access_block" "application" {
   restrict_public_buckets = true
 }
 
+resource "aws_s3_bucket_lifecycle_configuration" "application" {
+  bucket = aws_s3_bucket.application.id
+
+  rule {
+    id     = "expire-inbound-email"
+    status = "Enabled"
+
+    filter {
+      prefix = "emails/"
+    }
+
+    expiration {
+      days = 30
+    }
+
+    noncurrent_version_expiration {
+      noncurrent_days = 30
+    }
+  }
+}
+
+resource "aws_s3_object" "email_routing_config" {
+  bucket                 = aws_s3_bucket.application.id
+  key                    = local.email_config_key
+  content                = jsonencode(local.email_routing_config)
+  server_side_encryption = "AES256"
+}
+
 resource "aws_dynamodb_table" "slots" {
   name                        = var.resource_names.table
   billing_mode                = "PROVISIONED"

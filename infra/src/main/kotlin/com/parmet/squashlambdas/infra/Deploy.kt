@@ -6,7 +6,6 @@ import com.github.ajalt.clikt.command.main
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.types.path
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
@@ -116,7 +115,7 @@ internal class InfrastructurePublisher(private val repositoryDirectory: Path) {
         var deletedCount = 0
 
         val functionNames =
-            functions.requiredObject("email_parsers").values.map { it.jsonPrimitive.content } +
+            listOf(functions.requiredString("email_parser")) +
                 functions.requiredString("monitor") +
                 functions.requiredString("reservation")
         functionNames.forEach { functionName ->

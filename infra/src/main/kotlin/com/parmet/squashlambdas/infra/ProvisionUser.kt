@@ -114,7 +114,6 @@ private class UserProvisioner(private val repositoryDirectory: Path) {
         val existingReceiver = existingTenant.requiredStringList("inbound_recipients").single()
         val receiver =
             existingReceiver.substringBefore('@') + "+" + tenantId + "@" + existingReceiver.substringAfter('@')
-        val emailFunctions = resourceNames.requiredObject("functions").requiredObject("email_parsers")
         val receiptRules = resourceNames.requiredObject("ses_receipt_rules")
         val newTenant =
             JsonObject(
@@ -122,13 +121,11 @@ private class UserProvisioner(private val repositoryDirectory: Path) {
                     "google_calendar_id" to JsonPrimitive(calendarId),
                     "inbound_email_prefix" to JsonPrimitive("emails/$tenantId"),
                     "inbound_recipients" to JsonArray(listOf(JsonPrimitive(receiver))),
-                    "parse_primary_recipient" to JsonPrimitive(forwardedRecipient),
-                    "token_key" to JsonPrimitive("tenants/$tenantId/club-locker-token.json")
+                    "parse_primary_recipient" to JsonPrimitive(forwardedRecipient)
                 )
             )
         val updatedPrivateConfig =
             JsonObject(privateConfig + ("email_tenants" to JsonObject(tenants + (tenantId to newTenant))))
-        val functionBase = emailFunctions.values.first().jsonPrimitive.content
         val receiptRuleBase = receiptRules.values.first().jsonObject.requiredString("name")
         val newReceiptRule =
             JsonObject(
@@ -137,14 +134,9 @@ private class UserProvisioner(private val repositoryDirectory: Path) {
                     "after" to JsonPrimitive(receiptRules.values.last().jsonObject.requiredString("name"))
                 )
             )
-        val functions = resourceNames.requiredObject("functions")
-        val functionName = resourceName(functionBase, tenantId)
-        val updatedEmailFunctions = JsonObject(emailFunctions + (tenantId to JsonPrimitive(functionName)))
-        val updatedFunctions =
-            JsonObject(functions + ("email_parsers" to updatedEmailFunctions))
         val updatedReceiptRules = JsonObject(receiptRules + (tenantId to newReceiptRule))
         val updatedResourceNames =
-            resourceNames.with("functions", updatedFunctions).with("ses_receipt_rules", updatedReceiptRules)
+            resourceNames.with("ses_receipt_rules", updatedReceiptRules)
         return configuration.with("private_config", updatedPrivateConfig).with("resource_names", updatedResourceNames)
     }
 

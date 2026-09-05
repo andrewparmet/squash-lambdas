@@ -34,6 +34,7 @@ resource "aws_lambda_function" "application" {
   depends_on = [
     aws_cloudwatch_log_group.lambda,
     aws_iam_role_policy.lambda,
+    aws_s3_object.email_routing_config,
   ]
 }
 

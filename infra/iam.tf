@@ -34,6 +34,20 @@ data "aws_iam_policy_document" "lambda" {
     resources = local.function_kinds[each.key] == "monitor" ? [aws_sns_topic.notifications.arn, aws_sns_topic.public.arn] : [aws_sns_topic.notifications.arn]
   }
 
+  statement {
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey*",
+    ]
+    resources = ["arn:${data.aws_partition.current.partition}:kms:${var.aws_region}:${data.aws_caller_identity.current.account_id}:key/*"]
+
+    condition {
+      test     = "ForAnyValue:StringEquals"
+      variable = "kms:ResourceAliases"
+      values   = ["alias/aws/sns"]
+    }
+  }
+
   dynamic "statement" {
     for_each = local.function_kinds[each.key] == "monitor" ? [1] : []
 
@@ -55,10 +69,8 @@ data "aws_iam_policy_document" "lambda" {
     for_each = local.function_kinds[each.key] == "email_parser" || local.function_kinds[each.key] == "monitor" ? [1] : []
 
     content {
-      actions = ["s3:PutObject"]
-      resources = [
-        "${aws_s3_bucket.application.arn}/${local.function_kinds[each.key] == "email_parser" ? var.private_config.email_tenants[local.function_tenants[each.key]].token_key : var.private_config.token_key}",
-      ]
+      actions   = ["s3:PutObject"]
+      resources = ["${aws_s3_bucket.application.arn}/${var.private_config.token_key}"]
     }
   }
 }

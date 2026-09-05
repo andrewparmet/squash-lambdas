@@ -11,9 +11,9 @@ variable "resource_names" {
   type = object({
     bucket = string
     functions = object({
-      email_parsers = map(string)
-      monitor       = string
-      reservation   = string
+      email_parser = string
+      monitor      = string
+      reservation  = string
     })
     schedules = object({
       monitor              = string
@@ -46,7 +46,6 @@ variable "private_config" {
       inbound_email_prefix    = string
       inbound_recipients      = list(string)
       parse_primary_recipient = string
-      token_key               = string
     }))
     reservation_courts_key        = string
     reservation_schedule_key      = string
