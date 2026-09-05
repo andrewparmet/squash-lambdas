@@ -24,6 +24,7 @@ locals {
     email_parser = {
       CLUB_LOCKER_TOKEN_BUCKET      = aws_s3_bucket.application.bucket
       CLUB_LOCKER_TOKEN_KEY         = var.private_config.token_key
+      GOOGLE_CALENDAR_ID            = var.private_config.google_calendar_id
       GOOGLE_CAL_CREDS_BUCKET       = aws_s3_bucket.application.bucket
       GOOGLE_CAL_CREDS_KEY          = var.private_config.google_calendar_credentials_key
       MY_TOPIC_ARN                  = aws_sns_topic.notifications.arn

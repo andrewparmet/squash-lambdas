@@ -1,6 +1,6 @@
 # squash-lambdas
 
-This project contains several AWS Lambdas. Build with `./gradlew shadowJar`.
+This project contains several AWS Lambdas. Build with `./gradlew :app:shadowJar`.
 
 ## Email Parser
 
@@ -37,7 +37,7 @@ to be able to make reservations with other players or at configurable times if, 
 on some day. I'll write some sort of cleaner interface rather than manually upload a new schedule to S3 to manage these 
 preferences - perhaps another Lambda reacting to emails.
 
-This Lambda is configured to run at 4:32 and 5:32 GMT, with the code inferring from the current date whether or not it is running during EST or EDT and making a reservation always and only at 12:32 am in Boston. See [TimeFilter](https://github.com/andrewparmet/squash_lambdas/blob/master/src/main/kotlin/com/parmet/squashlambdas/reserve/TimeFilter.kt) and [TimeFilterTest](https://github.com/andrewparmet/squash_lambdas/blob/master/src/test/kotlin/com/parmet/squashlambdas/reserve/TimeFilterTest.kt) for examples.
+This Lambda is configured to run at 4:32 and 5:32 GMT, with the code inferring from the current date whether or not it is running during EST or EDT and making a reservation always and only at 12:32 am in Boston. See [TimeFilter](https://github.com/andrewparmet/squash_lambdas/blob/master/app/src/main/kotlin/com/parmet/squashlambdas/reserve/TimeFilter.kt) and [TimeFilterTest](https://github.com/andrewparmet/squash_lambdas/blob/master/app/src/test/kotlin/com/parmet/squashlambdas/reserve/TimeFilterTest.kt) for examples.
 
 I deduced the necessary US Squash REST API by examining the behavior of the web interface in the Chrome debugger.
 

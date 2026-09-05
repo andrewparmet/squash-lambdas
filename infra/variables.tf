@@ -38,6 +38,7 @@ variable "private_config" {
   type = object({
     club_locker_email               = string
     club_locker_name                = string
+    google_calendar_id              = string
     google_calendar_credentials_key = string
     inbound_email_prefix            = string
     inbound_recipients              = list(string)

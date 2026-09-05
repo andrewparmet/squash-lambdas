@@ -13,8 +13,8 @@ resource "aws_lambda_function" "application" {
   for_each = local.function_keys
 
   function_name    = var.resource_names.functions[each.key]
-  filename         = "${path.module}/../build/libs/squash-lambdas-all.jar"
-  source_code_hash = filebase64sha256("${path.module}/../build/libs/squash-lambdas-all.jar")
+  filename         = "${path.module}/../app/build/libs/squash-lambdas-all.jar"
+  source_code_hash = filebase64sha256("${path.module}/../app/build/libs/squash-lambdas-all.jar")
   handler          = local.handlers[each.key]
   role             = aws_iam_role.lambda[each.key].arn
   runtime          = "java25"
@@ -43,14 +43,14 @@ resource "terraform_data" "await_snap_start" {
   triggers_replace = [aws_lambda_function.application[each.key].version]
 
   provisioner "local-exec" {
-    command = "kotlin \"${abspath("${path.module}/../scripts/deploy.main.kts")}\" wait-for-snapstart"
+    command = "java -cp \"${abspath("${path.module}/build/libs/squash-infra-all.jar")}\" com.parmet.squashlambdas.infra.WaitForSnapStartKt"
 
     environment = {
       AWS_REGION                 = var.aws_region
       FUNCTION_LABEL             = each.key
       FUNCTION_NAME              = aws_lambda_function.application[each.key].function_name
       FUNCTION_VERSION           = aws_lambda_function.application[each.key].version
-      SNAPSTART_DIAGNOSTICS_FILE = abspath("${path.module}/../build/snapstart-diagnostics.log")
+      SNAPSTART_DIAGNOSTICS_FILE = abspath("${path.module}/build/snapstart-diagnostics.log")
     }
   }
 }
