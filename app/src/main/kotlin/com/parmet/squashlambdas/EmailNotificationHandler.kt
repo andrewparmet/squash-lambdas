@@ -3,6 +3,7 @@ package com.parmet.squashlambdas
 import com.amazonaws.services.lambda.runtime.Context
 import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.amazonaws.services.lambda.runtime.events.S3Event
+import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification.S3EventNotificationRecord
 import com.parmet.squashlambdas.Context.addToContext
 import com.parmet.squashlambdas.cal.ChangeSummary
 import com.parmet.squashlambdas.cal.ChangeSummaryResolver
@@ -61,35 +62,41 @@ open class EmailNotificationHandler :
 
     final override fun handleRequest(input: S3Event, context: Context) {
         runBlocking {
-            withErrorHandling(input) {
-                initializer.initialize()
-                val info = getS3Info(input)
-                if (info.objectKey.substringAfterLast('/') == SES_SETUP_NOTIFICATION) {
-                    logger.info { "Ignoring the Amazon SES setup notification" }
-                    return@withErrorHandling
-                }
-                val email = getEmail(info)
-
-                if (tokenUpdateHandler.isTokenUpdateEmail(email)) {
-                    tokenUpdateHandler.handle(email)
-                    return@withErrorHandling
-                }
-
-                ChangeSummary.fromEmail(email)?.let { changeSummaryResolver.resolve(it) }?.also {
-                    addToContext("changeSummary", Json.element(it))
-                    if (config.parse.primaryRecipient in email.recipients) {
-                        it.process(eventManager)
-                        notifier.publishSuccessfulParse(it)
-                    } else {
-                        logger.info { "Not notifying for info: $info" }
-                    }
+            input.records.forEach { record ->
+                withErrorHandling(record) {
+                    process(record)
                 }
             }
         }
     }
 
-    private fun getS3Info(input: S3Event) =
-        S3EmailNotification.fromInputObject(input).s3ObjectInfo.also {
+    private suspend fun process(record: S3EventNotificationRecord) {
+        initializer.initialize()
+        val info = getS3Info(record)
+        if (info.objectKey.substringAfterLast('/') == SES_SETUP_NOTIFICATION) {
+            logger.info { "Ignoring the Amazon SES setup notification" }
+            return
+        }
+        val email = getEmail(info)
+
+        if (tokenUpdateHandler.isTokenUpdateEmail(email)) {
+            tokenUpdateHandler.handle(email)
+            return
+        }
+
+        ChangeSummary.fromEmail(email)?.let { changeSummaryResolver.resolve(it) }?.also {
+            addToContext("changeSummary", Json.element(it))
+            if (config.parse.primaryRecipient in email.recipients) {
+                it.process(eventManager)
+                notifier.publishSuccessfulParse(it)
+            } else {
+                logger.info { "Not notifying for info: $info" }
+            }
+        }
+    }
+
+    private fun getS3Info(record: S3EventNotificationRecord) =
+        S3EmailNotification.fromRecord(record).s3ObjectInfo.also {
             addToContext("s3CreateObjectInfo", Json.element(it))
         }
 

@@ -1,6 +1,6 @@
 package com.parmet.squashlambdas.s3
 
-import com.amazonaws.services.lambda.runtime.events.S3Event
+import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification.S3EventNotificationRecord
 import com.parmet.squashlambdas.json.InstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -18,8 +18,8 @@ internal data class S3EmailNotification(
     val s3ObjectInfo: S3CreateObjectInfo
 ) {
     companion object {
-        fun fromInputObject(input: S3Event) =
-            input.records.first().run {
+        fun fromRecord(record: S3EventNotificationRecord) =
+            record.run {
                 S3EmailNotification(
                     eventVersion,
                     eventSource,

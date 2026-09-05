@@ -64,6 +64,21 @@ class EmailNotificationHandlerTest {
     }
 
     @Test
+    fun `react to every record in an S3 event`() {
+        val email = getResourceAsString(ChangeSummaryTest::class, "reservationCreated").encodeToByteArray()
+        objectStorage.objects["first-object-key"] = email
+        objectStorage.objects["second-object-key"] = email
+
+        configureHandler().handleRequest(
+            S3Event(listOf(createRecord("first-object-key"), createRecord("second-object-key"))),
+            mockk()
+        )
+
+        verify(exactly = 2) { events.insert("primary", any()) }
+        assertThat(topicPublisher.messages).hasSize(2)
+    }
+
+    @Test
     fun `token update email stores token`() {
         objectStorage.objects["test-object-key"] =
             getResourceAsString(this::class, "tokenUpdateEmail").encodeToByteArray()
