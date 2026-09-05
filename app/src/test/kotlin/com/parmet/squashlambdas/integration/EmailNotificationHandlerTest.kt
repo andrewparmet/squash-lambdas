@@ -77,7 +77,19 @@ class EmailNotificationHandlerTest {
         assertThat(topicPublisher.messages.single().subject).isEqualTo("ClubLocker token updated")
     }
 
-    private fun createRecord() =
+    @Test
+    fun `ignore the SES setup notification`() {
+        configureHandler().handleRequest(
+            S3Event(listOf(createRecord("emails/primary/AMAZON_SES_SETUP_NOTIFICATION"))),
+            mockk()
+        )
+
+        assertThat(objectStorage.readKeys).isEmpty()
+        verify(exactly = 0) { events.insert(any(), any()) }
+        assertThat(topicPublisher.messages).isEmpty()
+    }
+
+    private fun createRecord(objectKey: String = "test-object-key") =
         S3EventNotification.S3EventNotificationRecord(
             "region",
             "eventName",
@@ -89,7 +101,7 @@ class EmailNotificationHandlerTest {
             S3EventNotification.S3Entity(
                 "configurationId",
                 S3EventNotification.S3BucketEntity("test-bucket-name", mockk(), "arn"),
-                S3EventNotification.S3ObjectEntity("test-object-key", 2319L, "eTag", "versionId", "sequencer"),
+                S3EventNotification.S3ObjectEntity(objectKey, 2319L, "eTag", "versionId", "sequencer"),
                 "s3SchemaVersion",
             ),
             mockk(),
@@ -110,9 +122,12 @@ class EmailNotificationHandlerTest {
 
 private class InMemoryObjectStorage : ObjectStorage {
     val objects = mutableMapOf<String, ByteArray>()
+    val readKeys = mutableListOf<String>()
 
-    override suspend fun read(bucket: String, key: String) =
-        objects.getValue(key)
+    override suspend fun read(bucket: String, key: String): ByteArray {
+        readKeys += key
+        return objects.getValue(key)
+    }
 
     override suspend fun write(bucket: String, key: String, contents: ByteArray) {
         objects[key] = contents

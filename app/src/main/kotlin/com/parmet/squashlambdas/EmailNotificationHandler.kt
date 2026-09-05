@@ -26,6 +26,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.runBlocking
 
 private val logger = KotlinLogging.logger { }
+private const val SES_SETUP_NOTIFICATION = "AMAZON_SES_SETUP_NOTIFICATION"
 
 @HasMemberInjections
 open class EmailNotificationHandler :
@@ -63,6 +64,10 @@ open class EmailNotificationHandler :
             withErrorHandling(input) {
                 initializer.initialize()
                 val info = getS3Info(input)
+                if (info.objectKey.substringAfterLast('/') == SES_SETUP_NOTIFICATION) {
+                    logger.info { "Ignoring the Amazon SES setup notification" }
+                    return@withErrorHandling
+                }
                 val email = getEmail(info)
 
                 if (tokenUpdateHandler.isTokenUpdateEmail(email)) {
