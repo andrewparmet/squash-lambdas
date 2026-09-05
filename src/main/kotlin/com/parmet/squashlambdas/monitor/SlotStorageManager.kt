@@ -3,6 +3,7 @@ package com.parmet.squashlambdas.monitor
 import com.parmet.squashlambdas.DynamoDbConfig
 import com.parmet.squashlambdas.clublocker.Slot
 import com.parmet.squashlambdas.json.Json
+import com.parmet.squashlambdas.util.BOSTON
 import dev.zacsweers.metro.Inject
 import io.github.oshai.kotlinlogging.KotlinLogging
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
@@ -21,12 +22,15 @@ class SlotStorageManager(
     private val primaryKey = "filename"
     private val entriesKey = "entries"
     private val modifiedTimeKey = "modifiedTime"
+    private val ttlKey = "ttl"
 
     fun save(date: LocalDate, slots: List<Slot>) {
         val item: MutableMap<String, AttributeValue> = mutableMapOf()
         item[primaryKey] = AttributeValue.builder().s("$date/taken").build()
         item[entriesKey] = AttributeValue.builder().ss(slots.map { Json.encode(it) }).build()
         item[modifiedTimeKey] = AttributeValue.builder().s(Instant.now().toString()).build()
+        item[ttlKey] =
+            AttributeValue.builder().n(date.plusDays(1).atStartOfDay(BOSTON).toEpochSecond().toString()).build()
 
         dynamoDb.putItem(
             PutItemRequest.builder()
