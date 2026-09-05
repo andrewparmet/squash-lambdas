@@ -22,16 +22,12 @@ Each user configuration has two separate address lists:
 Every Gmail account forwards Club Locker messages to the same SES receiver. The provisioning command prints that shared
 receiver. The Club Locker login and token are also shared application-wide rather than configured per user.
 
-### Implementation
+### Architecture overview
 
 1. Club Locker sends a reservation message to the forwarded recipient.
 2. Gmail forwards the message to the shared SES receiver.
-3. SES scans the message and writes it as a separate object under the shared inbound S3 prefix.
-4. SES invokes the email Lambda with its authentication verdicts and the S3 message ID.
-5. The Lambda authenticates the sender and routes the message using its original `To` or `Cc` recipient.
-6. The Lambda parses the action, activity type, court, and time.
-7. The Lambda reconciles the event with Club Locker's current slot. Matches also reconcile the player roster.
-8. The Lambda updates the routed user's Google Calendar and sends a success or failure notification.
+3. SES stores the message in S3 and invokes the email Lambda.
+4. The Lambda routes the message to the user's Google Calendar and sends an operational notification through SNS.
 
 Provision another user with:
 
