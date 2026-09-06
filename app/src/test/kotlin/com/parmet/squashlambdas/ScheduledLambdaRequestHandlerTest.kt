@@ -1,7 +1,6 @@
 package com.parmet.squashlambdas
 
 import com.amazonaws.services.lambda.runtime.Context
-import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.amazonaws.services.lambda.runtime.events.ScheduledEvent
 import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.notify.OperatorNotifier
@@ -9,7 +8,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 
-class LambdaRequestHandlerTest {
+class ScheduledLambdaRequestHandlerTest {
     private val notifier = mockk<OperatorNotifier>(relaxed = true)
 
     @Test
@@ -17,9 +16,9 @@ class LambdaRequestHandlerTest {
         val actions = mutableListOf<String>()
         val handler = TestHandler(notifier, actions)
 
-        handler.handleRequest("input", mockk())
+        handler.handleRequest(ScheduledEvent(), mockk())
 
-        assertThat(actions).containsExactly("initialize", "process input").inOrder()
+        assertThat(actions).containsExactly("initialize", "process").inOrder()
     }
 
     @Test
@@ -27,7 +26,7 @@ class LambdaRequestHandlerTest {
         val failure = IllegalStateException("failure")
         val handler = TestHandler(notifier, mutableListOf(), failure)
 
-        handler.handleRequest("input", mockk())
+        handler.handleRequest(ScheduledEvent(), mockk())
 
         coVerify(exactly = 1) { notifier.publishFailure(failure) }
         assertThat(RequestContext.context).isEmpty()
@@ -36,13 +35,13 @@ class LambdaRequestHandlerTest {
     @Test
     fun `scheduled handlers expose concrete input types`() {
         listOf(MakeReservationHandler::class.java, MonitorSlotsHandler::class.java).forEach { handlerClass ->
-            val method = handlerClass.getDeclaredMethod(
+            val method = handlerClass.getMethod(
                 "handleRequest",
                 ScheduledEvent::class.java,
                 Context::class.java
             )
 
-            assertThat(method.declaringClass).isEqualTo(handlerClass)
+            assertThat(method.parameterTypes.first()).isEqualTo(ScheduledEvent::class.java)
         }
     }
 }
@@ -51,16 +50,13 @@ private class TestHandler(
     override val notifier: OperatorNotifier,
     private val actions: MutableList<String>,
     private val failure: Exception? = null
-) : LambdaRequestHandler(),
-    RequestHandler<String, Any> {
+) : ScheduledLambdaRequestHandler() {
     override fun initialize() {
         actions += "initialize"
     }
 
-    override fun handleRequest(input: String, context: Context) {
-        handle(input) {
-            failure?.let { throw it }
-            actions += "process $input"
-        }
+    override suspend fun process(input: ScheduledEvent) {
+        failure?.let { throw it }
+        actions += "process"
     }
 }

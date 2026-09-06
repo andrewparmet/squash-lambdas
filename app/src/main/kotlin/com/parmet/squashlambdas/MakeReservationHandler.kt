@@ -1,7 +1,5 @@
 package com.parmet.squashlambdas
 
-import com.amazonaws.services.lambda.runtime.Context
-import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.amazonaws.services.lambda.runtime.events.ScheduledEvent
 import com.parmet.squashlambdas.RequestContext.addToContext
 import com.parmet.squashlambdas.activity.Court
@@ -30,9 +28,7 @@ import java.time.LocalTime
 private val logger = KotlinLogging.logger { }
 
 @HasMemberInjections
-open class MakeReservationHandler :
-    LambdaRequestHandler(),
-    RequestHandler<ScheduledEvent, Any> {
+open class MakeReservationHandler : ScheduledLambdaRequestHandler() {
 
     @Inject
     lateinit var config: MakeReservationConfig
@@ -60,25 +56,21 @@ open class MakeReservationHandler :
         initializer.initialize()
     }
 
-    final override fun handleRequest(input: ScheduledEvent, context: Context) {
-        handle(input) {
-            doHandleRequest(input).also { logger.info { "Returning result: $it" } }
-        }
-    }
-
-    private suspend fun doHandleRequest(input: ScheduledEvent) {
+    final override suspend fun process(input: ScheduledEvent) {
         val timeFilter = TimeFilter(input.time)
         val requestDate = timeFilter.requestDate
 
         addToContext("requestDate", JsonPrimitive(requestDate.toString()))
 
         val reservationTimeFiltered = timeFilter.filterBasedOnBostonTime()
-        if (!reservationTimeFiltered.shouldMakeReservation()) {
-            logger.info { "Not making a reservation: ${reservationTimeFiltered.reason}" }
-            reservationTimeFiltered.reason!!
-        } else {
-            processSchedule(requestDate)
-        }
+        val result =
+            if (!reservationTimeFiltered.shouldMakeReservation()) {
+                logger.info { "Not making a reservation: ${reservationTimeFiltered.reason}" }
+                reservationTimeFiltered.reason!!
+            } else {
+                processSchedule(requestDate)
+            }
+        logger.info { "Returning result: $result" }
     }
 
     private suspend fun processSchedule(requestDate: LocalDate): Any {

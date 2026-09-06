@@ -1,7 +1,5 @@
 package com.parmet.squashlambdas
 
-import com.amazonaws.services.lambda.runtime.Context
-import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.amazonaws.services.lambda.runtime.events.ScheduledEvent
 import com.parmet.squashlambdas.RequestContext.addToContext
 import com.parmet.squashlambdas.activity.Sport
@@ -29,9 +27,7 @@ import java.time.LocalTime
 private val logger = KotlinLogging.logger { }
 
 @HasMemberInjections
-open class MonitorSlotsHandler :
-    LambdaRequestHandler(),
-    RequestHandler<ScheduledEvent, Any> {
+open class MonitorSlotsHandler : ScheduledLambdaRequestHandler() {
 
     @Inject
     final override lateinit var notifier: OperatorNotifier
@@ -56,13 +52,7 @@ open class MonitorSlotsHandler :
         initializer.initialize()
     }
 
-    final override fun handleRequest(input: ScheduledEvent, context: Context) {
-        handle(input) {
-            doHandleRequest()
-        }
-    }
-
-    private suspend fun doHandleRequest() {
+    final override suspend fun process(input: ScheduledEvent) {
         if (!tokenStatusManager.isTokenValid()) {
             logger.info { "Token is marked invalid, skipping slot monitoring" }
             return
