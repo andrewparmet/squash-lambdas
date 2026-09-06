@@ -1,5 +1,7 @@
 package com.parmet.squashlambdas
 
+import com.amazonaws.services.lambda.runtime.Context
+import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.amazonaws.services.lambda.runtime.events.ScheduledEvent
 import com.parmet.squashlambdas.RequestContext.addToContext
 import com.parmet.squashlambdas.activity.Court
@@ -28,7 +30,9 @@ import java.time.LocalTime
 private val logger = KotlinLogging.logger { }
 
 @HasMemberInjections
-open class MakeReservationHandler : LambdaRequestHandler<ScheduledEvent>() {
+open class MakeReservationHandler :
+    LambdaRequestHandler(),
+    RequestHandler<ScheduledEvent, Any> {
 
     @Inject
     lateinit var config: MakeReservationConfig
@@ -56,8 +60,10 @@ open class MakeReservationHandler : LambdaRequestHandler<ScheduledEvent>() {
         initializer.initialize()
     }
 
-    final override suspend fun process(input: ScheduledEvent) {
-        doHandleRequest(input).also { logger.info { "Returning result: $it" } }
+    final override fun handleRequest(input: ScheduledEvent, context: Context) {
+        handle(input) {
+            doHandleRequest(input).also { logger.info { "Returning result: $it" } }
+        }
     }
 
     private suspend fun doHandleRequest(input: ScheduledEvent) {

@@ -1,5 +1,7 @@
 package com.parmet.squashlambdas
 
+import com.amazonaws.services.lambda.runtime.Context
+import com.amazonaws.services.lambda.runtime.RequestHandler
 import com.amazonaws.services.lambda.runtime.events.ScheduledEvent
 import com.parmet.squashlambdas.RequestContext.addToContext
 import com.parmet.squashlambdas.activity.Sport
@@ -27,7 +29,9 @@ import java.time.LocalTime
 private val logger = KotlinLogging.logger { }
 
 @HasMemberInjections
-open class MonitorSlotsHandler : LambdaRequestHandler<ScheduledEvent>() {
+open class MonitorSlotsHandler :
+    LambdaRequestHandler(),
+    RequestHandler<ScheduledEvent, Any> {
 
     @Inject
     final override lateinit var notifier: OperatorNotifier
@@ -52,8 +56,10 @@ open class MonitorSlotsHandler : LambdaRequestHandler<ScheduledEvent>() {
         initializer.initialize()
     }
 
-    final override suspend fun process(input: ScheduledEvent) {
-        doHandleRequest()
+    final override fun handleRequest(input: ScheduledEvent, context: Context) {
+        handle(input) {
+            doHandleRequest()
+        }
     }
 
     private suspend fun doHandleRequest() {
