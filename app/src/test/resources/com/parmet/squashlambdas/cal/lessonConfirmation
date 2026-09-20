@@ -1,0 +1,15 @@
+From: Club Locker <no-reply@clublocker.com>
+To: user@example.com
+Subject: Tennis & Racquet Club Reservation Confirmation
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+
+<p>Hello Example User,</p>
+<p>A reservation including you has been made via the Tennis &amp; Racquet Club reservation system.</p>
+<p>
+Reservation details:<br/>
+<strong>With coach:</strong><br/> Coach Name <br/>
+<strong>Court:</strong> Court Tennis - Court Tennis<br/>
+<strong>Date:</strong> Tuesday, May 19th 2026<br/>
+<strong>Time:</strong> 05:00 PM to 06:00 PM<br/>
+</p>

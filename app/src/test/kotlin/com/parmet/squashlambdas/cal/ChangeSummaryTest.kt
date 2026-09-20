@@ -320,6 +320,23 @@ class ChangeSummaryTest {
     }
 
     @Test
+    fun `create a confirmed lesson`() {
+        assertThat(getSummary("lessonConfirmation"))
+            .isEqualTo(
+                summary(
+                    Action.Create,
+                    Lesson(
+                        Court.TennisCourt,
+                        Instant.parse("2026-05-19T21:00:00Z"),
+                        Instant.parse("2026-05-19T22:00:00Z"),
+                        "emails/some-file-name",
+                        "Coach Name"
+                    )
+                )
+            )
+    }
+
+    @Test
     fun `lesson reminder does nothing`() {
         assertThat(getSummary("lessonReminder")).isNull()
     }

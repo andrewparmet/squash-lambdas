@@ -21,14 +21,18 @@ data class Lesson(
         "${court.sport} Lesson with $coach"
 
     companion object {
-        private val coachPattern =
-            Regex("lesson(?:\\s+you\\s+have)?\\s+with\\s+(.+?)\\s+at\\s+", RegexOption.IGNORE_CASE)
+        private val coachPatterns =
+            listOf(
+                Regex("With coach:\\s*(.+?)\\s+Court:", RegexOption.IGNORE_CASE),
+                Regex("lesson(?:\\s+you\\s+have)?\\s+with\\s+(.+?)\\s+at\\s+", RegexOption.IGNORE_CASE)
+            )
 
         fun fromEmailData(email: EmailData): Lesson {
             val startAndEnd = TimeParser.parse(email.body)
-            val coach = requireNotNull(coachPattern.find(email.body)?.groupValues?.get(1)) {
-                "Unable to parse lesson coach"
-            }
+            val coach =
+                requireNotNull(coachPatterns.firstNotNullOfOrNull { it.find(email.body)?.groupValues?.get(1) }) {
+                    "Unable to parse lesson coach"
+                }
             return Lesson(
                 Court.fromLocationString(email.body),
                 startAndEnd.start,
