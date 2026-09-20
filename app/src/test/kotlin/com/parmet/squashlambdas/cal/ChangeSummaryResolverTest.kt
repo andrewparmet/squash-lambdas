@@ -91,6 +91,17 @@ class ChangeSummaryResolverTest {
         }
 
     @Test
+    fun `confirm a lesson against current Club Locker slots`() =
+        runTest {
+            coEvery { client.slotsTaken(any(), any()) } returns
+                listOf(Slot(1, 2, 1689, 1700, 1800, start.epochSecond, "lesson"))
+            val clinic = clinic()
+
+            assertThat(resolver.resolve(ChangeSummary(Action.Create, clinic)))
+                .isEqualTo(ChangeSummary(Action.Update, clinic))
+        }
+
+    @Test
     fun `delete a clinic absent from current Club Locker slots`() =
         runTest {
             coEvery { client.slotsTaken(any(), any()) } returns emptyList()
