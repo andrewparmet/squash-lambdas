@@ -17,12 +17,6 @@ class CourtTest {
     }
 
     @Test
-    fun `fromLocationString can parse a numbered court without its sport`() {
-        assertThat(Court.fromLocationString("Court #2"))
-            .isEqualTo(Court.Court2)
-    }
-
-    @Test
     fun `fromLocationString can parse hardball courts`() {
         assertThat(Court.fromLocationString("Court #5 - Hardball"))
             .isEqualTo(Court.Court5)

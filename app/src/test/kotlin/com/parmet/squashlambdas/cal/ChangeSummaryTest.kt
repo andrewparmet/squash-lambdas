@@ -306,20 +306,28 @@ class ChangeSummaryTest {
     }
 
     @Test
-    fun `requesting a lesson`() {
-        assertThat(getSummary("lessonRequested"))
+    fun `parse a lesson reminder`() {
+        assertThat(Activity.fromEmailData(emailFromBody("lessonReminder")))
             .isEqualTo(
-                summary(
-                    Action.Create,
-                    Lesson(
-                        Court.Court2,
-                        Instant.parse("2026-09-24T21:15:00Z"),
-                        Instant.parse("2026-09-24T22:00:00Z"),
-                        "emails/some-file-name",
-                        "Coach Name"
-                    )
+                Lesson(
+                    Court.Court2,
+                    Instant.parse("2026-09-24T21:15:00Z"),
+                    Instant.parse("2026-09-24T22:00:00Z"),
+                    "emails/some-file-name",
+                    "Coach Name"
                 )
             )
+    }
+
+    @Test
+    fun `lesson reminder does nothing`() {
+        assertThat(getSummary("lessonReminder")).isNull()
+    }
+
+    @Test
+    fun `lesson request does nothing`() {
+        assertThat(Action.parseFromSubject("You have requested a lesson"))
+            .isEqualTo(Action.None)
     }
 
     @Test

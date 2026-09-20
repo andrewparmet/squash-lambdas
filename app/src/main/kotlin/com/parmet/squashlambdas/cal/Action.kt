@@ -19,8 +19,7 @@ enum class Action(
                 "You've joined a reservation",
                 "You have joined a reservation",
                 "You have been added to the activity",
-                "You have been added to a reservation",
-                "You have requested a lesson"
+                "You have been added to a reservation"
             )
 
         private val UPDATING =
@@ -45,7 +44,8 @@ enum class Action(
             listOf(
                 "This is a reminder",
                 "Here are your scores recorded",
-                "has re-confirmed a reservation made"
+                "has re-confirmed a reservation made",
+                "You have requested a lesson"
             )
 
         fun parseFromSubject(body: String): Action =

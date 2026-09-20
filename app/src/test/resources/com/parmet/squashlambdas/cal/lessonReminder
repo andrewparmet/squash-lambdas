@@ -1,14 +1,14 @@
 From: Club Locker <no-reply@clublocker.com>
 To: user@example.com
-Subject: Tennis & Racquet Club Lesson Requested
+Subject: Tennis & Racquet Club Lesson Reminder
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 
 <p>Hello Example User,</p>
-<p>You have requested a lesson with Coach Name at Tennis &amp; Racquet Club.</p>
+<p>This is a reminder about a lesson you have with Coach Name at Tennis &amp; Racquet Club.</p>
 <p>
 Lesson details:<br/>
-<strong>Court:</strong> Court #2<br/>
+<strong>Court:</strong> Court #2 - Squash<br/>
 <strong>Date:</strong> Thursday, September 24th 2026<br/>
 <strong>Time:</strong> 05:15 PM to 06:00 PM<br/>
 </p>
