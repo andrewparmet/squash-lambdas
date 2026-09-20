@@ -19,7 +19,8 @@ enum class Action(
                 "You've joined a reservation",
                 "You have joined a reservation",
                 "You have been added to the activity",
-                "You have been added to a reservation"
+                "You have been added to a reservation",
+                "You have requested a lesson"
             )
 
         private val UPDATING =

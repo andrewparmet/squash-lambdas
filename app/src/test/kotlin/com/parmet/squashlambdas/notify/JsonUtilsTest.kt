@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.activity.Activity
 import com.parmet.squashlambdas.activity.Clinic
 import com.parmet.squashlambdas.activity.Court
+import com.parmet.squashlambdas.activity.Lesson
 import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.activity.Sport
@@ -36,12 +37,22 @@ class JsonUtilsTest {
             ""
         )
 
+    private val lesson =
+        Lesson(
+            Court.Court2,
+            Instant.parse("2018-03-26T22:45:00Z"),
+            Instant.parse("2018-03-26T23:30:00Z"),
+            "",
+            "Coach Name"
+        )
+
     @Test
     fun `activity adapter works for all subclasses`() {
         val instances: Map<KClass<*>, *> =
             mapOf(
                 Match::class to match,
-                Clinic::class to clinic
+                Clinic::class to clinic,
+                Lesson::class to lesson
             )
 
         assertHasAnExampleOfEachConcreteSubclass(Activity::class, instances)

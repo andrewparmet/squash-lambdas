@@ -3,6 +3,7 @@ package com.parmet.squashlambdas.cal
 import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.activity.Clinic
 import com.parmet.squashlambdas.activity.Court
+import com.parmet.squashlambdas.activity.Lesson
 import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.clublocker.ClubLockerClient
@@ -95,10 +96,10 @@ class ChangeSummaryResolverTest {
         runTest {
             coEvery { client.slotsTaken(any(), any()) } returns
                 listOf(Slot(1, 2, 1689, 1700, 1800, start.epochSecond, "lesson"))
-            val clinic = clinic()
+            val lesson = lesson()
 
-            assertThat(resolver.resolve(ChangeSummary(Action.Create, clinic)))
-                .isEqualTo(ChangeSummary(Action.Update, clinic))
+            assertThat(resolver.resolve(ChangeSummary(Action.Create, lesson)))
+                .isEqualTo(ChangeSummary(Action.Update, lesson))
         }
 
     @Test
@@ -121,6 +122,17 @@ class ChangeSummaryResolverTest {
             assertThat(resolver.resolve(ChangeSummary(Action.Create, clinic)))
                 .isEqualTo(ChangeSummary(Action.Delete, clinic))
         }
+
+    @Test
+    fun `delete a clinic when the current slot is a lesson`() =
+        runTest {
+            coEvery { client.slotsTaken(any(), any()) } returns
+                listOf(Slot(1, 2, 1689, 1700, 1800, start.epochSecond, "lesson"))
+            val clinic = clinic()
+
+            assertThat(resolver.resolve(ChangeSummary(Action.Create, clinic)))
+                .isEqualTo(ChangeSummary(Action.Delete, clinic))
+        }
 }
 
 private fun match() =
@@ -138,4 +150,13 @@ private fun clinic() =
         start = start,
         end = end,
         origin = "email"
+    )
+
+private fun lesson() =
+    Lesson(
+        court = Court.Court3,
+        start = start,
+        end = end,
+        origin = "email",
+        coach = "Coach Name"
     )

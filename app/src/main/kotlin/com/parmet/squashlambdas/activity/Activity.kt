@@ -14,18 +14,15 @@ sealed interface Activity {
 
     companion object {
         fun fromEmailData(email: EmailData) =
-            if (email.isMatch()) {
-                Match.fromEmailData(email)
-            } else {
-                require(email.isClinic()) { "unknown activity type: $email" }
-                Clinic.fromEmailData(email)
+            when {
+                email.isLesson() -> Lesson.fromEmailData(email)
+                email.isClinic() -> Clinic.fromEmailData(email)
+                else -> Match.fromEmailData(email)
             }
 
-        // This is imperfect.
-        private fun EmailData.isMatch() =
-            !isClinic()
+        private fun EmailData.isLesson() =
+            subject.contains("Lesson", ignoreCase = true) || body.contains("Lesson details:", ignoreCase = true)
 
-        // This seems to be reliable.
         private fun EmailData.isClinic() =
             body.contains("Clinic")
     }

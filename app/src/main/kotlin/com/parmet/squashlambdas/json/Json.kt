@@ -2,6 +2,7 @@ package com.parmet.squashlambdas.json
 
 import com.parmet.squashlambdas.activity.Activity
 import com.parmet.squashlambdas.activity.Clinic
+import com.parmet.squashlambdas.activity.Lesson
 import com.parmet.squashlambdas.activity.Match
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
@@ -25,6 +26,7 @@ object Json {
                     polymorphic(Activity::class) {
                         subclass(Match::class, Match.serializer())
                         subclass(Clinic::class, Clinic.serializer())
+                        subclass(Lesson::class, Lesson.serializer())
                     }
                 }
         }

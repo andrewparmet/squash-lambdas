@@ -2,6 +2,7 @@ package com.parmet.squashlambdas.cal
 
 import com.parmet.squashlambdas.activity.AbstractActivity
 import com.parmet.squashlambdas.activity.Clinic
+import com.parmet.squashlambdas.activity.Lesson
 import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.activity.Player
 import com.parmet.squashlambdas.clublocker.COURTS_BY_ID
@@ -33,8 +34,13 @@ class ClubLockerChangeSummaryResolver(
                     it.startUtc == activity.start.epochSecond
             }
                 ?: return change.copy(action = Action.Delete)
-        val expectedTypes = if (activity is Clinic) setOf("clinic", "lesson") else setOf("match")
-        if (slot.type !in expectedTypes) {
+        val expectedType =
+            when (activity) {
+                is Clinic -> "clinic"
+                is Lesson -> "lesson"
+                else -> "match"
+            }
+        if (slot.type != expectedType) {
             return change.copy(action = Action.Delete)
         }
         val match = activity as? Match ?: return change.copy(action = Action.Update)

@@ -32,7 +32,7 @@ enum class Court(
 
 // "Court: Court #x" (match creation)
 // "Courts: Court #x" (activity creation)
-private val NUMBERED_COURT = Pattern.compile(".*Court #(\\d) [/\\-] (Squash|Hardball).*")
+private val NUMBERED_COURT = Pattern.compile(".*Court #(\\d)(?: [/\\-] (?:Squash|Hardball))?.*")
 
 // "Court: Court Tennis - Court Tennis" (match creation)
 // "Court: Court Tennis / Court Tennis" (player joins)

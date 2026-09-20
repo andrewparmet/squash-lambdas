@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.parmet.squashlambdas.activity.Activity
 import com.parmet.squashlambdas.activity.Clinic
 import com.parmet.squashlambdas.activity.Court
+import com.parmet.squashlambdas.activity.Lesson
 import com.parmet.squashlambdas.activity.Match
 import com.parmet.squashlambdas.email.EmailRetriever
 import com.parmet.squashlambdas.testutil.EmailReturningS3
@@ -299,6 +300,23 @@ class ChangeSummaryTest {
                         Instant.parse("2018-12-03T23:45:00Z"),
                         Instant.parse("2018-12-04T00:30:00Z"),
                         "emails/some-file-name"
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun `requesting a lesson`() {
+        assertThat(getSummary("lessonRequested"))
+            .isEqualTo(
+                summary(
+                    Action.Create,
+                    Lesson(
+                        Court.Court2,
+                        Instant.parse("2026-09-24T21:15:00Z"),
+                        Instant.parse("2026-09-24T22:00:00Z"),
+                        "emails/some-file-name",
+                        "Coach Name"
                     )
                 )
             )
