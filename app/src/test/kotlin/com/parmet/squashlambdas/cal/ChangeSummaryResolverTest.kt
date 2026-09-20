@@ -83,7 +83,7 @@ class ChangeSummaryResolverTest {
     fun `confirm a clinic against current Club Locker slots`() =
         runTest {
             coEvery { client.slotsTaken(any(), any()) } returns
-                listOf(Slot(1, 2, 1689, 1700, 1800, start.epochSecond, "lesson"))
+                listOf(Slot(1, 2, 1689, 1700, 1800, start.epochSecond, "clinic"))
             val clinic = clinic()
 
             assertThat(resolver.resolve(ChangeSummary(Action.Create, clinic)))

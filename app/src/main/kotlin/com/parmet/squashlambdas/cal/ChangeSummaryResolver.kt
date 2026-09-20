@@ -33,7 +33,7 @@ class ClubLockerChangeSummaryResolver(
                     it.startUtc == activity.start.epochSecond
             }
                 ?: return change.copy(action = Action.Delete)
-        val expectedType = if (activity is Clinic) "lesson" else "match"
+        val expectedType = if (activity is Clinic) "clinic" else "match"
         if (slot.type != expectedType) {
             return change.copy(action = Action.Delete)
         }
