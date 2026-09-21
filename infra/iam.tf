@@ -9,6 +9,35 @@ data "aws_iam_policy_document" "lambda_assume_role" {
   }
 }
 
+data "aws_iam_policy_document" "scheduler_assume_role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["scheduler.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "scheduler" {
+  name_prefix        = substr("${var.resource_names.schedules.reservation_daylight}-", 0, 38)
+  assume_role_policy = data.aws_iam_policy_document.scheduler_assume_role.json
+}
+
+data "aws_iam_policy_document" "scheduler" {
+  statement {
+    actions   = ["lambda:InvokeFunction"]
+    resources = [aws_lambda_alias.live["reservation"].arn]
+  }
+}
+
+resource "aws_iam_role_policy" "scheduler" {
+  name   = "invoke-reservation"
+  role   = aws_iam_role.scheduler.id
+  policy = data.aws_iam_policy_document.scheduler.json
+}
+
 resource "aws_iam_role" "lambda" {
   for_each = local.function_keys
 

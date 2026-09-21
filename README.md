@@ -41,7 +41,7 @@ reservations with other players or at configurable times if, say, I want to play
 write some sort of cleaner interface rather than manually upload a new schedule to S3 to manage these preferences, perhaps
 another Lambda reacting to emails.
 
-Separate daylight and standard time schedules run the Lambda at the same local time in Boston throughout the year. See
+An EventBridge Scheduler flexible time window runs the Lambda shortly after midnight Boston time. See
 [TimeFilter](app/src/main/kotlin/com/parmet/squashlambdas/reserve/TimeFilter.kt) and
 [TimeFilterTest](app/src/test/kotlin/com/parmet/squashlambdas/reserve/TimeFilterTest.kt) for examples.
 

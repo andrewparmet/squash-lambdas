@@ -27,3 +27,23 @@ resource "aws_lambda_permission" "schedule" {
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.schedule[each.key].arn
 }
+
+resource "aws_scheduler_schedule" "reservation" {
+  name                         = var.resource_names.schedules.reservation_daylight
+  schedule_expression          = "cron(25 0 * * ? *)"
+  schedule_expression_timezone = "America/New_York"
+  state                        = "ENABLED"
+
+  flexible_time_window {
+    mode                      = "FLEXIBLE"
+    maximum_window_in_minutes = 15
+  }
+
+  target {
+    arn      = aws_lambda_alias.live["reservation"].arn
+    role_arn = aws_iam_role.scheduler.arn
+    input    = <<-JSON
+      {"time":"<aws.scheduler.scheduled-time>"}
+    JSON
+  }
+}

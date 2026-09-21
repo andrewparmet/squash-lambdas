@@ -17,15 +17,11 @@ locals {
   function_kinds = { for function_key in local.function_keys : function_key => function_key }
 
   schedule_expressions = {
-    monitor              = "cron(0/5 13-22 ? * MON-FRI *)"
-    reservation_daylight = "cron(32 04 * * ? *)"
-    reservation_standard = "cron(32 05 * * ? *)"
+    monitor = "cron(0/5 13-22 ? * MON-FRI *)"
   }
 
   schedule_targets = {
-    monitor              = "monitor"
-    reservation_daylight = "reservation"
-    reservation_standard = "reservation"
+    monitor = "monitor"
   }
 
   lambda_environment = {
