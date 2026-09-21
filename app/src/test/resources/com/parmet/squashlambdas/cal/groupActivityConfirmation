@@ -1,0 +1,14 @@
+From: Club Locker <no-reply@clublocker.com>
+To: user@example.com
+Subject: You have been added to an activity at Example Club
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+
+<p>Hello Example User,</p>
+<p>You have been added to the activity "Example Practice" at Example Club</p>
+<p>
+Group activity details:<br/>
+<strong>Date:</strong> Tuesday, September 22nd 2026<br/>
+<strong>Time:</strong> 07:00 PM to 08:00 PM<br/>
+<strong>Location:</strong> Court Tennis - Court Tennis<br/>
+</p>

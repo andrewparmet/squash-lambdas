@@ -26,6 +26,7 @@ sealed interface Activity {
                 body.contains("With coach:", ignoreCase = true)
 
         private fun EmailData.isClinic() =
-            body.contains("Clinic")
+            body.contains("Clinic", ignoreCase = true) ||
+                body.contains("Group activity details:", ignoreCase = true)
     }
 }

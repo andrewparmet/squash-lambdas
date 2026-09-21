@@ -472,12 +472,27 @@ class ChangeSummaryTest {
             .isEqualTo(
                 summary(
                     Action.Create,
-                    Match(
+                    Clinic(
                         Court.Court3,
                         Instant.parse("2024-07-13T13:45:00Z"),
                         Instant.parse("2024-07-13T15:15:00Z"),
-                        "emails/some-file-name",
-                        emptySet()
+                        "emails/some-file-name"
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun `added to a group activity`() {
+        assertThat(getSummary("groupActivityConfirmation"))
+            .isEqualTo(
+                summary(
+                    Action.Create,
+                    Clinic(
+                        Court.TennisCourt,
+                        Instant.parse("2026-09-22T23:00:00Z"),
+                        Instant.parse("2026-09-23T00:00:00Z"),
+                        "emails/some-file-name"
                     )
                 )
             )
