@@ -22,7 +22,7 @@ class ClubLockerChangeSummaryResolver(
     private val client: ClubLockerClient
 ) : ChangeSummaryResolver {
     override suspend fun resolve(change: ChangeSummary): ChangeSummary {
-        if (change.action == Action.None) {
+        if (change.action == Action.None || change.action == Action.Delete) {
             return change
         }
         val activity = change.activity as AbstractActivity

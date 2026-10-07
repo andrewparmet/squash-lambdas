@@ -11,6 +11,7 @@ import com.parmet.squashlambdas.clublocker.Reservation
 import com.parmet.squashlambdas.clublocker.ReservationPlayer
 import com.parmet.squashlambdas.clublocker.Slot
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -61,23 +62,29 @@ class ChangeSummaryResolverTest {
         }
 
     @Test
-    fun `replace a stale deletion with the current reservation`() =
+    fun `preserve removal when the reservation still exists`() =
         runTest {
             coEvery { client.slotsTaken(any(), any()) } returns
                 listOf(Slot(1, 2, 1690, 1700, 1800, start.epochSecond, "match"))
             coEvery { client.reservation(2) } returns
-                Reservation(
-                    listOf(
-                        ReservationPlayer("member", "Host Player", true),
-                        ReservationPlayer("member", "Current Player"),
-                    )
-                )
+                Reservation(listOf(ReservationPlayer("member", "Remaining Player")))
+            val change = ChangeSummary(Action.Delete, match())
 
-            val resolved = resolver.resolve(ChangeSummary(Action.Delete, match()))
+            assertThat(resolver.resolve(change)).isEqualTo(change)
+            coVerify(exactly = 0) { client.slotsTaken(any(), any()) }
+            coVerify(exactly = 0) { client.reservation(any()) }
+        }
 
-            assertThat(resolved).isEqualTo(
-                ChangeSummary(Action.Update, match().copy(players = setOf(Player(name = "Current Player"))))
-            )
+    @Test
+    fun `preserve another calendar recipient removal when the token owner is still a player`() =
+        runTest {
+            coEvery { client.slotsTaken(any(), any()) } returns
+                listOf(Slot(1, 2, 1690, 1700, 1800, start.epochSecond, "match"))
+            coEvery { client.reservation(2) } returns
+                Reservation(listOf(ReservationPlayer("member", "Token Owner", true)))
+            val change = ChangeSummary(Action.Delete, match())
+
+            assertThat(resolver.resolve(change)).isEqualTo(change)
         }
 
     @Test
